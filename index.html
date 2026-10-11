@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#EDF4FF">
+<meta name="theme-color" content="#101018">
 <meta name="format-detection" content="telephone=no">
 <meta name="description" content="Расписание группы ИМС-1-25 — Казанский государственный энергетический университет">
 <title>Расписание ИМС-1-25 · КГЭУ</title>
@@ -313,7 +313,139 @@ svg{display:block;flex:none}
 .toast svg{color:var(--lec)}
 .toast.err svg{color:var(--pr)}
 
+
+/* ===================== v2: графит + liquid glass ===================== */
+:root{
+  --bg1:#E3E3E8; --bg2:#ECECF0; --bg3:#F5F5F7;
+  --blob1:rgba(255,255,255,.85); --blob2:rgba(120,120,132,.20); --blob3:rgba(255,255,255,.7);
+  --text:#1C1C1E; --text2:#55555C; --text3:#8E8E93;
+  --primary:#2C2C30; --primary-deep:#000; --on-primary:#FFFFFF;
+  --grad-primary:linear-gradient(155deg,#4C4C54 0%,#2B2B31 55%,#17171C 100%);
+  --grad-navy:linear-gradient(135deg,#55555E 0%,#33333A 52%,#1D1D23 100%);
+  --card:rgba(255,255,255,.58); --card-solid:#FFFFFF; --card-line:rgba(255,255,255,.9);
+  --card-shadow:0 1px 1px rgba(0,0,0,.03),0 8px 22px rgba(0,0,0,.07);
+  --glass:linear-gradient(165deg,rgba(255,255,255,.6),rgba(255,255,255,.34));
+  --glass-strong:linear-gradient(165deg,rgba(255,255,255,.74),rgba(248,248,250,.56));
+  --sheet-bg:linear-gradient(170deg,rgba(252,252,253,.95),rgba(236,236,240,.93));
+  --glass-shadow:0 14px 34px rgba(0,0,0,.12),0 2px 6px rgba(0,0,0,.05);
+  --glass-hl:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(255,255,255,.3);
+  --rim:linear-gradient(140deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.3) 35%,rgba(190,190,200,.28) 65%,rgba(255,255,255,.9) 100%);
+  --sheen:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0));
+  --fill:rgba(0,0,0,.05); --fill2:rgba(0,0,0,.07); --thumb:#FFFFFF;
+  --sep:rgba(0,0,0,.08); --sep2:rgba(0,0,0,.16); --gapbg:rgba(255,255,255,.38);
+  --sel-sh:0 10px 22px rgba(0,0,0,.25);
+  --lec:#30D158; --lec-t:#30D158; --lec-bg:rgba(48,209,88,.15); --lec-s:rgba(48,209,88,.35); --lec-g:linear-gradient(90deg,#30D158,#6BE38A);
+  --pr:#FF453A;  --pr-t:#FF453A;  --pr-bg:rgba(255,69,58,.13);  --pr-s:rgba(255,69,58,.33);  --pr-g:linear-gradient(90deg,#FF453A,#FF7D74);
+  --lab:#BF5AF2; --lab-t:#BF5AF2; --lab-bg:rgba(191,90,242,.14); --lab-s:rgba(191,90,242,.34); --lab-g:linear-gradient(90deg,#BF5AF2,#D58FF7);
+}
+:root[data-theme=dark]{
+  --bg1:rgb(16,16,24); --bg2:rgb(16,16,24); --bg3:rgb(20,20,29);
+  --blob1:rgba(255,255,255,.07); --blob2:rgba(150,150,170,.07); --blob3:rgba(255,255,255,.045);
+  --text:#F5F5F7; --text2:rgba(235,235,245,.66); --text3:rgba(235,235,245,.4);
+  --primary:#F5F5F7; --primary-deep:#FFFFFF; --on-primary:#101018;
+  --grad-primary:linear-gradient(160deg,#FFFFFF 0%,#DCDCE1 55%,#B4B4BC 100%);
+  --grad-navy:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.07));
+  --card:rgba(255,255,255,.08); --card-solid:#1F1F28; --card-line:rgba(255,255,255,.12);
+  --card-shadow:0 8px 24px rgba(0,0,0,.25);
+  --glass:linear-gradient(165deg,rgba(255,255,255,.15),rgba(255,255,255,.08));
+  --glass-strong:linear-gradient(165deg,rgba(255,255,255,.15),rgba(255,255,255,.07));
+  --sheet-bg:linear-gradient(170deg,rgba(40,40,50,.9),rgba(22,22,30,.93));
+  --glass-shadow:0 14px 34px rgba(0,0,0,.25);
+  --glass-hl:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.06);
+  --rim:linear-gradient(140deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.22) 30%,rgba(255,255,255,.08) 62%,rgba(255,255,255,.3) 100%);
+  --sheen:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0));
+  --fill:rgba(255,255,255,.07); --fill2:rgba(255,255,255,.1); --thumb:rgba(255,255,255,.22);
+  --sep:rgba(255,255,255,.1); --sep2:rgba(255,255,255,.22); --gapbg:rgba(255,255,255,.04);
+  --sel-sh:0 10px 24px rgba(0,0,0,.4),0 0 18px rgba(255,255,255,.12);
+  --lec-t:#30D158; --lec-bg:rgba(48,209,88,.17);
+  --pr-t:#FF453A;  --pr-bg:rgba(255,69,58,.17);
+  --lab-t:#BF5AF2; --lab-bg:rgba(191,90,242,.19);
+}
+/* тонированное стекло (как «Tinted» в iOS) */
+:root[data-glass=tinted]{
+  --card:rgba(255,255,255,.88); --glass:linear-gradient(165deg,rgba(255,255,255,.9),rgba(244,244,247,.82));
+  --glass-strong:linear-gradient(165deg,rgba(255,255,255,.94),rgba(242,242,245,.88));
+}
+:root[data-theme=dark][data-glass=tinted]{
+  --card:rgba(46,46,56,.92); --card-line:rgba(255,255,255,.14);
+  --glass:linear-gradient(165deg,rgba(62,62,74,.92),rgba(40,40,50,.9));
+  --glass-strong:linear-gradient(165deg,rgba(60,60,72,.94),rgba(36,36,46,.92));
+  --grad-navy:linear-gradient(135deg,#4A4A56,#2C2C36);
+}
+.card{-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:var(--card-shadow),var(--glass-hl)}
+.card::before{display:none}
+.app-ic{background:var(--grad-primary);color:var(--on-primary);box-shadow:0 8px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.55)}
+.dcell.sel{background:var(--grad-primary);box-shadow:var(--sel-sh),inset 0 1px 0 rgba(255,255,255,.5)}
+.dcell.sel .wd{color:var(--on-primary);opacity:.66}
+.dcell.sel .dn{color:var(--on-primary)}
+.dcell.sel .dots i{box-shadow:0 0 0 1.5px var(--on-primary)}
+.day-head{background:var(--grad-navy);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);box-shadow:0 12px 26px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 0 1px rgba(255,255,255,.22)}
+.day-head::before{background:radial-gradient(90% 130% at 0% 0%,rgba(255,255,255,.22),transparent 55%),radial-gradient(60% 100% at 100% 100%,rgba(255,255,255,.08),transparent 62%)}
+.wk.is-sel .day-head{box-shadow:0 0 0 2px rgba(255,255,255,.55),0 12px 26px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45)}
+:root:not([data-theme=dark]) .wk.is-sel .day-head{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px rgba(0,0,0,.35),0 12px 26px rgba(0,0,0,.2)}
+.seg .thumb{box-shadow:0 4px 12px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.6)}
+.theme-seg button.on{box-shadow:0 3px 10px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.4)}
+.next-btn,.join,.qbtn.primary,.cday.sel{background:var(--grad-primary);color:var(--on-primary);box-shadow:var(--sel-sh)}
+.cday.sel .dots i{box-shadow:0 0 0 1.2px var(--on-primary)}
+.backdrop{background:rgba(0,0,0,.32)}
+.sic,.sic.green,.sic.violet,.sic.navy{background:var(--grad-primary);color:var(--on-primary)}
+/* карточка пары без цветного блока времени */
+.lesson{display:block}
+.row0{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.tm{display:inline-flex;align-items:center;gap:7px;font-size:16px;font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--text)}
+.tm svg{color:var(--text2)}
+.tm .dash{color:var(--text3);font-weight:700}
+.name .pg{white-space:nowrap}
+.lesson.now .card{box-shadow:0 0 0 1.5px var(--c),0 14px 30px var(--s),var(--glass-hl)}
+.gap{grid-template-columns:minmax(0,1fr)}
+.gap .gi{display:none}
+.gap .gt{display:flex;align-items:center;gap:8px}
+.gap .gt svg{color:var(--text3)}
+.sk-row{grid-template-columns:1fr}.sk-row .sk:first-child{display:none}
+/* чипы без подписей вместо плиток */
+.pills{display:flex;gap:7px;margin:6px 0 12px;overflow-x:auto;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;padding:8px 13px;border-radius:999px;font-size:13.5px;font-weight:750;white-space:nowrap;letter-spacing:-.005em}
+/* настройки: Liquid Glass */
+.glass-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 12px 12px;border-radius:18px;background:var(--card);border:1px solid var(--card-line)}
+.gopt{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.gprev{position:relative;width:100%;max-width:132px;aspect-ratio:9/13;border-radius:20px;overflow:hidden;background:
+  radial-gradient(60% 45% at 25% 25%,rgba(191,90,242,.55),transparent 70%),
+  radial-gradient(55% 40% at 80% 55%,rgba(48,209,88,.45),transparent 70%),
+  radial-gradient(60% 45% at 30% 90%,rgba(255,69,58,.45),transparent 70%),
+  linear-gradient(160deg,#3A3A44,#101018);box-shadow:0 6px 16px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.12);transition:box-shadow .25s}
+.gprev .gp-time{position:absolute;left:0;right:0;top:16%;text-align:center;color:#fff;font-size:24px;font-weight:700;letter-spacing:-.02em;text-shadow:0 1px 6px rgba(0,0,0,.25)}
+.gprev .gp-card{position:absolute;left:10%;right:10%;top:44%;height:20%;border-radius:12px}
+.gprev .gp-dock{position:absolute;left:12%;right:12%;bottom:7%;height:13%;border-radius:999px}
+.gprev .gp-card,.gprev .gp-dock{-webkit-backdrop-filter:blur(8px) saturate(170%);backdrop-filter:blur(8px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 0 1px rgba(255,255,255,.22),0 4px 10px rgba(0,0,0,.25)}
+.gprev.clear .gp-card,.gprev.clear .gp-dock{background:rgba(255,255,255,.15)}
+.gprev.tinted .gp-card,.gprev.tinted .gp-dock{background:rgba(58,58,68,.86)}
+.gprev .gp-card::after{content:"";position:absolute;left:12%;right:30%;top:30%;height:5px;border-radius:3px;background:rgba(255,255,255,.75);box-shadow:0 10px 0 -1px rgba(255,255,255,.4)}
+.gname{font-size:14.5px;font-weight:700;color:var(--text)}
+.gradio{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--sep2);display:grid;place-items:center;color:var(--on-primary)}
+.gopt.on .gradio{background:var(--grad-primary);box-shadow:none}
+.gopt.on .gradio::after{content:"";width:9px;height:5px;border-left:2.2px solid currentColor;border-bottom:2.2px solid currentColor;transform:translateY(-1px) rotate(-45deg)}
+.gopt.on .gprev{box-shadow:0 0 0 2px var(--primary),0 6px 16px rgba(0,0,0,.25)}
+.ghint{font-size:12.5px;line-height:1.45;color:var(--text3);margin:8px 6px 0}
+.sitem.static{cursor:default}
+.sitem .s2{display:flex;flex-direction:column;min-width:0}
+.sitem .s2 small{font-size:12.5px;font-weight:600;color:var(--text3);margin-top:1px}
+
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}}
+.dcell.sel .dots i,.cday.sel .dots i,.dots i{box-shadow:none!important}
+.soon{display:none!important}
+
+/* графитовые блики на фоне */
+:root[data-theme=dark]{--blob1:rgba(255,255,255,.20);--blob2:rgba(190,190,210,.17);--blob3:rgba(255,255,255,.13)}
+:root:not([data-theme=dark]){--blob1:rgba(255,255,255,1);--blob2:rgba(90,90,105,.26);--blob3:rgba(120,120,135,.22)}
+.bg::before,.bg::after{content:"";position:absolute;pointer-events:none;border-radius:50%;filter:blur(28px)}
+.bg::before{width:160%;height:110px;left:-30%;top:34%;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,var(--streak) 45%,var(--streak2) 55%,transparent);animation:drift2 26s ease-in-out infinite alternate}
+.bg::after{width:120%;height:70px;left:-10%;top:70%;transform:rotate(-24deg);background:linear-gradient(90deg,transparent,var(--streak2) 50%,transparent);animation:drift1 30s ease-in-out infinite alternate}
+:root[data-theme=dark]{--streak:rgba(255,255,255,.16);--streak2:rgba(255,255,255,.08)}
+:root:not([data-theme=dark]){--streak:rgba(255,255,255,.95);--streak2:rgba(150,150,165,.22)}
+.b1{width:420px;height:420px;left:-140px;top:120px}
+.b2{width:380px;height:380px;right:-150px;top:380px}
+.b3{width:460px;height:460px;left:-60px;bottom:-200px}
 </style>
 </head>
 <body>
@@ -376,17 +508,17 @@ svg{display:block;flex:none}
   <div class="sh-title"><h2>Настройки</h2><button class="close" data-close aria-label="Закрыть"></button></div>
   <div class="slabel">Оформление</div>
   <div class="theme-seg" id="themeSeg"><button data-th="light">Светлая</button><button data-th="dark">Тёмная</button><button data-th="auto">Авто</button></div>
-  <div class="slabel">Действия</div>
+  <div class="slabel">Liquid Glass</div>
+  <div class="glass-opts" id="glassSeg">
+    <button class="gopt" data-gl="clear"><span class="gprev clear"><span class="gp-time">9:41</span><span class="gp-card"></span><span class="gp-dock"></span></span><span class="gname">Прозрачное</span><span class="gradio"></span></button>
+    <button class="gopt" data-gl="tinted"><span class="gprev tinted"><span class="gp-time">9:41</span><span class="gp-card"></span><span class="gp-dock"></span></span><span class="gname">Тонированное</span><span class="gradio"></span></button>
+  </div>
+  <p class="ghint">Прозрачное стекло сильнее показывает фон под собой. Тонированное — плотнее и контрастнее, текст читается легче.</p>
+  <div class="slabel">Данные</div>
   <div class="sgroup">
-    <button class="sitem" id="sRefresh"><span class="sic" id="sRefreshIc"></span>Обновить расписание<span class="sv" id="sUpdated"></span></button>
+    <button class="sitem" id="sRefresh"><span class="sic" id="sRefreshIc"></span><span class="s2">Расписание обновлено<small id="sUpdAgo"></small></span><span class="sv" id="sUpdated"></span></button>
     <button class="sitem" id="homeItem" hidden><span class="sic green" id="homeIc"></span>На экран «Домой»<span class="sv" id="homeVal"></span></button>
     <button class="sitem" id="sSite"><span class="sic violet" id="siteIc"></span>Открыть на сайте КГЭУ<span class="sv" id="siteChev"></span></button>
-  </div>
-  <div class="slabel">Обозначения</div>
-  <div class="sgroup">
-    <div class="lgrow t-lec"><span class="sw"></span>Лекция<span class="tchip"><i></i>Лек</span></div>
-    <div class="lgrow t-pr"><span class="sw"></span>Практика<span class="tchip"><i></i>Пр</span></div>
-    <div class="lgrow t-lab"><span class="sw"></span>Лабораторная работа<span class="tchip"><i></i>Лаб</span></div>
   </div>
   <p class="about" id="about">Данные загружаются с kabinet.kgeu.ru и сохраняются на устройстве — расписание открывается даже без интернета.</p>
 </section>
@@ -476,7 +608,7 @@ svg{display:block;flex:none}
     home: sv('<path d="M4 11.2 12 4.5l8 6.7V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M12 10.8v6M9 13.8h6"/>', 18, 2),
     close: sv('<path d="M7 7l10 10M17 7 7 17"/>', 15, 2.6)
   };
-  var ART_EMPTY = '<svg viewBox="0 0 120 120" width="112" height="112" aria-hidden="true"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#56C3FF"/><stop offset=".55" stop-color="#3B86FF"/><stop offset="1" stop-color="#1F55FF"/></linearGradient></defs><circle cx="60" cy="62" r="50" fill="url(#eg)" opacity=".14"/><rect class="ea-card" x="27" y="31" width="66" height="60" rx="16" stroke="url(#eg)" stroke-width="3.2"/><path d="M27.5 50h65" stroke="url(#eg)" stroke-width="3.2"/><path d="M45 24v13M75 24v13" stroke="url(#eg)" stroke-width="4.4" stroke-linecap="round"/><circle cx="49" cy="64" r="3" fill="#2563FF"/><circle cx="71" cy="64" r="3" fill="#2563FF"/><path d="M48.5 73c3.2 3.6 7 5.4 11.5 5.4s8.3-1.8 11.5-5.4" stroke="#2563FF" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M98 22l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z" fill="#56C3FF"/><path d="M18 84l1.5 3.4 3.4 1.5-3.4 1.5-1.5 3.4-1.5-3.4-3.4-1.5 3.4-1.5z" fill="#3B86FF" opacity=".7"/></svg>';
+  var ART_EMPTY = '<svg viewBox="0 0 120 120" width="112" height="112" aria-hidden="true"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C7C7CC"/><stop offset=".55" stop-color="#8E8E93"/><stop offset="1" stop-color="#5A5A62"/></linearGradient></defs><circle cx="60" cy="62" r="50" fill="url(#eg)" opacity=".14"/><rect class="ea-card" x="27" y="31" width="66" height="60" rx="16" stroke="url(#eg)" stroke-width="3.2"/><path d="M27.5 50h65" stroke="url(#eg)" stroke-width="3.2"/><path d="M45 24v13M75 24v13" stroke="url(#eg)" stroke-width="4.4" stroke-linecap="round"/><circle cx="49" cy="64" r="3" fill="#8E8E93"/><circle cx="71" cy="64" r="3" fill="#8E8E93"/><path d="M48.5 73c3.2 3.6 7 5.4 11.5 5.4s8.3-1.8 11.5-5.4" stroke="#8E8E93" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M98 22l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z" fill="#C7C7CC"/><path d="M18 84l1.5 3.4 3.4 1.5-3.4 1.5-1.5 3.4-1.5-3.4-3.4-1.5 3.4-1.5z" fill="#8E8E93" opacity=".7"/></svg>';
   var ART_ERR = '<svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true"><defs><linearGradient id="er" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#56C3FF"/><stop offset="1" stop-color="#1F55FF"/></linearGradient></defs><circle cx="60" cy="60" r="50" fill="url(#er)" opacity=".14"/><path d="M26 52a48 48 0 0 1 68 0M36 63a34 34 0 0 1 48 0M47 74a19 19 0 0 1 26 0" stroke="url(#er)" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="60" cy="86" r="5" fill="#2563FF"/><path d="M30 30l60 60" stroke="#FF2D3D" stroke-width="5" stroke-linecap="round"/></svg>';
 
   /* ================= РАЗБОР ДАННЫХ ================= */
@@ -546,7 +678,7 @@ svg{display:block;flex:none}
   /* ================= СОСТОЯНИЕ ================= */
   var S = {
     data: null, byDate: {}, sel: today(), mode: LS.get('kgeu.mode', 'day') === 'week' ? 'week' : 'day',
-    theme: LS.get('kgeu.theme', 'light'), calMonth: null, error: null, offline: false, loading: false, lastToday: today()
+    theme: LS.get('kgeu.theme', 'dark'), glass: LS.get('kgeu.glass', 'clear'), calMonth: null, error: null, offline: false, loading: false, lastToday: today()
   };
 
   function indexData() {
@@ -680,11 +812,11 @@ svg{display:block;flex:none}
     if (D) for (var i = 0; i < 7; i++) cnt += pairsCount(lessonsFor(addDays(m, i)));
     var sem = D && D.sem ? (D.sem === 1 ? '🍂 Осень' : '🌱 Весна') : '—';
     var year = D && D.year ? D.year.replace(/^(\d{4})\s*-\s*\d{2}(\d{2})$/, '$1–$2') : '—';
-    return '<div class="tiles">' +
-      '<div class="tile lg"><div class="k">Группа</div><div class="v">' + esc(D ? D.group : CONFIG.groupName) + '</div></div>' +
-      '<div class="tile lg"><div class="k">Уч. год</div><div class="v">' + esc(year) + '</div></div>' +
-      '<div class="tile lg"><div class="k">Семестр</div><div class="v">' + sem + '</div></div>' +
-      '<div class="tile lg"><div class="k">Нагрузка</div><div class="v">' + (D ? cnt + ' ' + plural(cnt, PAIRS) : '—') + '</div></div>' +
+    return '<div class="pills">' +
+      '<span class="pill lg">' + esc(D ? D.group : CONFIG.groupName) + '</span>' +
+      '<span class="pill lg">' + esc(year) + '</span>' +
+      '<span class="pill lg">' + sem + '</span>' +
+      '<span class="pill lg">' + (D ? cnt + ' ' + plural(cnt, PAIRS) + ' за неделю' : '—') + '</span>' +
       '</div>';
   }
 
@@ -700,6 +832,7 @@ svg{display:block;flex:none}
       '<span class="dh-r">' + (badge ? '<span class="dh-badge">' + badge + '</span>' : '') + '<span class="dh-date">' + dmy(date) + '</span></span></button>';
   }
 
+  var ICON_CLOCK = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>';
   function lessonHTML(l, st, n) {
     var extra = '';
     if (st === 'now') {
@@ -711,14 +844,13 @@ svg{display:block;flex:none}
       extra = '<div class="soon">' + ICON.checkS.replace('width="18" height="18"', 'width="14" height="14"') + (left <= 1 ? 'Начинается' : 'Через ' + fmtDur(left)) + '</div>';
     }
     var chips = [];
-    if (l.sub) chips.push('<span class="chip">Подгруппа ' + l.sub + '</span>');
     if (l.repl) chips.push('<span class="chip warn">Замена</span>');
     var pos = l.teacher && l.teacher.indexOf(',') < 0 ? posName(l.pos) : '';
     return '<article class="lesson t-' + l.type + (st ? ' ' + st : '') + '">' +
-      '<div class="time"><span>' + esc(l.start) + '</span><i></i><span class="t2">' + esc(l.end) + '</span></div>' +
       '<div class="card">' +
-      '<div class="row1"><span class="tchip"><i></i>' + TYPES[l.type] + '</span>' + (l.num ? '<span class="nchip">' + l.num + '-я пара</span>' : '') + '</div>' +
-      '<h3 class="name">' + esc(l.name) + '</h3>' +
+      '<div class="row0"><span class="tm">' + ICON_CLOCK + esc(l.start) + '<span class="dash">–</span>' + esc(l.end) + '</span>' + (l.num ? '<span class="nchip">' + l.num + '-я пара</span>' : '') + '</div>' +
+      '<div class="row1"><span class="tchip"><i></i>' + TYPES[l.type] + '</span></div>' +
+      '<h3 class="name">' + esc(l.name) + (l.sub ? ' <span class="pg">(п/г ' + l.sub + ')</span>' : '') + '</h3>' +
       (l.teacher ? '<div class="meta">' + ICON.person + '<span>' + esc(l.teacher) + '</span>' + (pos ? '<span class="pos">· ' + esc(pos) + '</span>' : '') + '</div>' : '') +
       (l.room ? '<div class="meta">' + ICON.pin + '<span>Аудитория ' + esc(l.room) + '</span></div>' : '') +
       (l.topic ? '<div class="meta">' + ICON.book + '<span>' + esc(l.topic) + '</span></div>' : '') +
@@ -728,7 +860,7 @@ svg{display:block;flex:none}
   }
 
   function gapHTML(mins) {
-    return '<div class="gap"><div class="gi">' + ICON.cup + '</div><div class="gt">Свободное время' + (mins > 0 ? ' · <b>' + fmtDur(mins) + '</b>' : '') + '</div></div>';
+    return '<div class="gap"><div class="gi"></div><div class="gt">' + ICON.cup + '<span>Свободное время' + (mins > 0 ? ' · <b>' + fmtDur(mins) + '</b>' : '') + '</span></div></div>';
   }
 
   function lessonsHTML(date, list) {
@@ -789,7 +921,6 @@ svg{display:block;flex:none}
   function renderMain(anim) {
     var el = $('#view'), h = '';
     if (S.offline && S.data) h += '<div class="banner">' + ICON.wifiOff + '<span>Нет связи с сайтом — показано сохранённое расписание</span></div>';
-    h += tilesHTML();
     if (!S.data) {
       h += S.error ? errorHTML() : skeletonHTML();
     } else if (S.mode === 'day') {
@@ -815,7 +946,7 @@ svg{display:block;flex:none}
           (l2.length ? '<div class="lessons">' + lessonsHTML(d, l2) + '</div>' : '<div class="noclass">' + (dow(d) === 0 ? 'Выходной' : 'Пар нет') + '</div>') + '</section>';
       }
     }
-    if (S.data) h += legendHTML() + footHTML();
+    if (S.data) h += footHTML();
     el.innerHTML = h;
     animate(el, anim);
   }
@@ -936,8 +1067,17 @@ svg{display:block;flex:none}
     var h = Math.round(m / 60); if (h < 24) return h + ' ч назад';
     var d = Math.round(h / 24); return d + ' ' + plural(d, ['день', 'дня', 'дней']) + ' назад';
   }
+  function whenText(ts) {
+    var d = new Date(ts + CONFIG.tz * 60000), k = iso(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())));
+    var t = ('0' + d.getUTCHours()).slice(-2) + ':' + ('0' + d.getUTCMinutes()).slice(-2);
+    if (k === today()) return 'сегодня в ' + t;
+    if (k === addDays(today(), -1)) return 'вчера в ' + t;
+    return dmy(k).slice(0, 5) + ' в ' + t;
+  }
   function updateSettings() {
-    $('#sUpdated').textContent = S.data ? agoText(S.data.fetchedAt) : '';
+    $('#sUpdated').textContent = S.data ? whenText(S.data.fetchedAt) : '';
+    $('#sUpdAgo').textContent = S.data ? agoText(S.data.fetchedAt) : '';
+    $$('#glassSeg .gopt').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-gl') === S.glass); });
     $$('#themeSeg button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-th') === S.theme); });
     updateHomeItem();
   }
@@ -951,12 +1091,13 @@ svg{display:block;flex:none}
     var t = S.theme;
     if (t === 'auto') t = (inTG && tg.colorScheme) ? tg.colorScheme : ((window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', t);
-    var head = t === 'dark' ? '#0C1C46' : '#EDF4FF', bg = t === 'dark' ? '#050F2B' : '#E2EDFF';
+    var head = t === 'dark' ? '#101018' : '#ECECF0', bg = t === 'dark' ? '#101018' : '#E3E3E8';
+    document.documentElement.setAttribute('data-glass', S.glass);
     var meta = $('meta[name=theme-color]'); if (meta) meta.setAttribute('content', head);
     if (inTG) {
       try { if (tg.isVersionAtLeast('6.9')) tg.setHeaderColor(head); } catch (e) {}
       try { if (tg.isVersionAtLeast('6.1')) tg.setBackgroundColor(bg); } catch (e) {}
-      try { if (tg.isVersionAtLeast('7.10')) tg.setBottomBarColor(t === 'dark' ? '#0A1D4C' : '#F9FBFF'); } catch (e) {}
+      try { if (tg.isVersionAtLeast('7.10')) tg.setBottomBarColor(t === 'dark' ? '#14141D' : '#F5F5F7'); } catch (e) {}
     }
     $$('#themeSeg button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-th') === S.theme); });
   }
@@ -1047,7 +1188,7 @@ svg{display:block;flex:none}
 
     $('#strip').addEventListener('click', function (e) { var b = e.target.closest('.dcell'); if (b) setSel(b.getAttribute('data-date')); });
     $('#prevWeek').addEventListener('click', function () { setSel(addDays(S.sel, -7)); });
-    $('#nextWeek').addEventListener('click', function () { setSel(addDays(S.sel, 7)); });
+    $('#nextWeek').addEventListener('click', function () { setSel(addDays(monday(S.sel), 8)); });
     $('#monthBtn').addEventListener('click', openCal);
     $('#btnCal').addEventListener('click', openCal);
     $('#btnToday').addEventListener('click', goToday);
@@ -1083,12 +1224,15 @@ svg{display:block;flex:none}
     $$('#themeSeg button').forEach(function (b) {
       b.addEventListener('click', function () { S.theme = b.getAttribute('data-th'); LS.set('kgeu.theme', S.theme); applyTheme(); haptic('sel'); });
     });
+    $$('#glassSeg .gopt').forEach(function (b) {
+      b.addEventListener('click', function () { S.glass = b.getAttribute('data-gl'); LS.set('kgeu.glass', S.glass); applyTheme(); updateSettings(); haptic('sel'); });
+    });
     $('#sRefresh').addEventListener('click', function () { load(true).then(updateSettings); });
     $('#sSite').addEventListener('click', function () { openLink(CONFIG.site + CONFIG.groupId); });
     $('#homeItem').addEventListener('click', function () { try { tg.addToHomeScreen(); } catch (e) {} });
 
     swipe($('#content'), function () { shift(1); }, function () { shift(-1); });
-    swipe($('#strip'), function () { setSel(addDays(S.sel, 7)); }, function () { setSel(addDays(S.sel, -7)); });
+    swipe($('#strip'), function () { setSel(addDays(monday(S.sel), 8)); }, function () { setSel(addDays(S.sel, -7)); });
     swipe($('#calGrid'), function () { shiftMonth(1); }, function () { shiftMonth(-1); });
     sheetDrag($('#calSheet')); sheetDrag($('#setSheet'));
 
