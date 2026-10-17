@@ -591,7 +591,7 @@ svg{display:block;flex:none}
     groupName: 'ИМС-1-25',
     api: 'https://kabinet.kgeu.ru/api',
     site: 'https://kabinet.kgeu.ru/WebApp/#/Rasp/Group/',
-    proxy: '',           // необязательно: запасной прокси, например 'https://my-proxy.example.com/?url='
+    scheduleApi: 'https://kgeu-brs.frightencd.workers.dev/schedule', // публичное расписание через наш Worker
     tz: 180,             // часовой пояс Казани: UTC+3 (в минутах)
     refreshMin: 15       // как часто обновлять данные в фоне (минуты)
   };
@@ -773,8 +773,7 @@ svg{display:block;flex:none}
 
   /* ================= ЗАГРУЗКА ================= */
   function getJSON(path) {
-    var url = CONFIG.api + path, urls = [url];
-    if (CONFIG.proxy) urls.push(CONFIG.proxy + encodeURIComponent(url));
+    var url = CONFIG.scheduleApi + path, urls = [url];
     var i = 0;
     function attempt() {
       var u = urls[i++];
@@ -815,7 +814,7 @@ svg{display:block;flex:none}
       if (manual) toast(changed && hadData ? 'Расписание обновлено' : 'Расписание актуально', 'ok');
     }).catch(function (e) {
       S.error = e;
-      if (S.data) { S.offline = true; render(); if (manual) toast('Не удалось обновить — нет связи с сайтом', 'err'); }
+      if (S.data) { S.offline = true; render(); if (manual) toast('Не удалось обновить. Сохранённая копия доступна', 'err'); }
       else render();
     }).then(function () { S.loading = false; spin(false); loadingP = null; });
     return loadingP;
@@ -975,7 +974,7 @@ svg{display:block;flex:none}
 
   function renderMain(anim) {
     var el = $('#view'), h = '';
-    if (S.offline && S.data) h += '<div class="banner">' + ICON.wifiOff + '<span>Нет связи с сайтом — показано сохранённое расписание</span></div>';
+    if (S.offline && S.data) h += '<div class="banner">' + ICON.wifiOff + '<span>Не удалось обновить расписание — показана сохранённая копия</span></div>';
     if (!S.data) {
       h += S.error ? errorHTML() : skeletonHTML();
     } else if (S.mode === 'day') {
