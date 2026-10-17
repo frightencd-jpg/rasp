@@ -493,6 +493,29 @@ svg{display:block;flex:none}
 .sheet{clip-path:inset(0 round 32px 32px 0 0);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 1px 0 0 rgba(255,255,255,.05),inset -1px 0 0 rgba(255,255,255,.05)}
 [data-theme=light] .sheet{box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 .5px rgba(0,0,0,.06)}
 .bt{font-size:12.5px;color:var(--text3);font-weight:600;margin-top:4px}
+
+/* Выбор группы: стеклянная кнопка и панель с поиском. */
+.title-row{gap:8px}.title-row>.ibtn{width:44px;height:44px;flex:none}
+.group-picker{position:relative;display:flex;align-items:center;gap:9px;min-width:0;flex:1;height:48px;padding:5px 12px 5px 7px;border-radius:999px;background:var(--glass);box-shadow:var(--glass-hl),0 4px 16px #0002}
+.group-picker:active{transform:scale(.98)}.group-symbol{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;flex:none;background:rgba(255,255,255,.13)}
+.group-name{font-size:17px;font-weight:750;letter-spacing:-.025em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.group-arrow{margin-left:auto;color:var(--text2);flex:none;transition:transform .25s}.group-picker[aria-expanded=true] .group-arrow{transform:rotate(180deg)}
+#groupSheet{height:75vh;max-height:calc(100dvh - 88px);padding:0 16px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;isolation:isolate;background:linear-gradient(155deg,rgba(54,54,65,.98),rgba(25,25,34,.98));border:1px solid rgba(255,255,255,.24);border-bottom:0;box-shadow:0 -20px 80px #0004,inset 0 1px 0 #ffffff35}
+#groupSheet::before{display:none}#groupSheet .grab{flex:none;margin:10px auto 15px;background:#ffffff42}
+#groupSheet .sh-title{margin:0 0 2px;flex:none}#groupSheet h2{font-size:25px;font-weight:760;letter-spacing:-.025em}#groupSheet .close{width:44px;height:44px}
+.group-caption{margin:0 0 17px;color:#c3c3cd;font-size:14px;line-height:1.4}
+.group-search{display:flex;align-items:center;gap:10px;flex:none;min-height:48px;padding:0 13px;border-radius:17px;background:rgba(255,255,255,.085);box-shadow:inset 0 1px 0 #ffffff15;border:1px solid #ffffff12;color:#bcbcc9}
+.group-search input::-webkit-search-cancel-button,.group-search input::-webkit-search-decoration{display:none;-webkit-appearance:none}.group-search:focus-within{border-color:#ffffff80;box-shadow:0 0 0 2px #ffffff0b}.group-search input{font:500 16px var(--font);color:#f5f5f7;background:none;border:0;outline:0;min-width:0;width:100%;user-select:text;-webkit-user-select:text}.group-search input::placeholder{color:#bcbcc9}.search-clear{width:30px;height:44px;display:grid;place-items:center;flex:none}
+.group-scroll{margin-top:18px;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding-bottom:18px;scrollbar-width:none}.group-scroll::-webkit-scrollbar{display:none}
+.group-section-title{display:flex;align-items:center;justify-content:space-between;color:#c6c6d1;font-size:14px;font-weight:650;padding:0 8px;margin:2px 0 9px;letter-spacing:.01em}.group-section-title .sort{display:flex;align-items:center;gap:5px;font-size:14px;color:#acacbb;font-weight:500}
+.group-rows{background:rgba(255,255,255,.045);border:1px solid #ffffff0c;border-radius:21px;overflow:hidden;margin-bottom:21px}
+.group-row{width:100%;display:flex;align-items:center;justify-content:space-between;min-height:65px;padding:12px 15px;gap:12px;border-bottom:1px solid #ffffff0b}.group-row:last-child{border-bottom:0}.group-row:hover{background:#ffffff08}.group-row.selected{background:linear-gradient(110deg,#ffffff13,#ffffff09)}
+.group-row .gn{display:block;font-size:17px;font-weight:700;letter-spacing:-.015em;color:#f5f5f7}.group-row .gm{display:block;font-size:14px;color:#c2c2ce;margin-top:4px;line-height:1.2}.group-row .picked{display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:50%;background:linear-gradient(140deg,#fff,#c8c8d2);color:#21212a}.group-row .row-arrow{color:#9a9aaa}
+.group-empty{padding:30px 16px;text-align:center;color:#c3c3d0;font-size:16px;line-height:1.5}.group-empty b{display:block;color:#f5f5f7;font-size:19px;margin-bottom:6px}
+:root:not([data-theme=dark]) #groupSheet{background:linear-gradient(155deg,#f5f5f9f9,#e4e4ecfb);border-color:#fff9}:root:not([data-theme=dark]) #groupSheet .group-caption,:root:not([data-theme=dark]) #groupSheet .group-section-title{color:#565663}:root:not([data-theme=dark]) #groupSheet .group-search{background:#ffffffa0;color:#606070;border-color:#0001}:root:not([data-theme=dark]) #groupSheet input,:root:not([data-theme=dark]) #groupSheet .gn{color:#15151f}:root:not([data-theme=dark]) #groupSheet .gm{color:#606070}:root:not([data-theme=dark]) #groupSheet .group-rows{background:#ffffff75;border-color:#0001}:root:not([data-theme=dark]) #groupSheet .group-row{border-color:#0001}:root:not([data-theme=dark]) #groupSheet .group-row.selected{background:#ffffffcc}
+@media(max-width:355px){.title-row{gap:5px}.title-row>.ibtn{width:40px}.group-picker{gap:6px;padding-right:8px}.group-name{font-size:15px}.group-symbol{width:29px}}
+
+.group-row-text{min-width:0}.group-row .gn,.group-row .gm{overflow-wrap:anywhere}.group-status{font-size:14px;line-height:1.4;color:var(--text2);padding:10px 8px 0;margin:0}.group-retry{display:block;min-height:44px;margin:16px auto 0;padding:10px 18px;border-radius:999px;background:var(--fill2);font-weight:700;color:var(--text)}#groupSheetTitle:focus{outline:0}.group-search input::-webkit-search-cancel-button,.group-search input::-webkit-search-decoration{display:none;-webkit-appearance:none}:root:not([data-theme=dark]) #groupSheet .group-empty{color:#606070}:root:not([data-theme=dark]) #groupSheet .group-empty b{color:#15151f}:root:not([data-theme=dark]) #groupSheet .group-section-title .sort{color:#626270}:root:not([data-theme=dark]) #groupSheet .group-search input::placeholder{color:#626270}:root:not([data-theme=dark]) #groupSheet .group-row.selected{background:#ffffffcc}:root:not([data-theme=dark]) #groupSheet .group-row .picked{background:#33333d;color:#fff}
+
 </style>
 </head>
 <body>
@@ -501,11 +524,8 @@ svg{display:block;flex:none}
 <div class="app">
   <header class="top lg" id="top">
     <div class="title-row">
-      <div class="app-ic" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="4"/><path d="M8 3v4M16 3v4"/><path d="M12.9 9.2 9.7 14h2.8l-1 3.9 3.5-5h-2.8z" fill="currentColor" stroke-width="1.2"/></svg>
-      </div>
-      <div class="titles"><h1>Расписание</h1><div class="sub" id="subTitle">ИМС-1-25 · КГЭУ</div></div>
-      <button class="ibtn lg" id="btnBrs" aria-label="Баллы"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.6c0 1.3 2.5 2.9 5.5 2.9s5.5-1.6 5.5-2.9V11"/><path d="M21.5 9v5"/></svg></button>
+      <button class="group-picker lg" id="groupPicker" aria-label="Выбрать группу" aria-haspopup="dialog" aria-expanded="false" aria-controls="groupSheet"><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
+      <button class="ibtn lg" id="btnBrs" aria-label="Личные баллы" title="Баллы вашего аккаунта КГЭУ"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.6c0 1.3 2.5 2.9 5.5 2.9s5.5-1.6 5.5-2.9V11"/><path d="M21.5 9v5"/></svg></button>
       <button class="ibtn lg" id="btnRefresh" aria-label="Обновить расписание"></button>
       <button class="ibtn lg" id="btnMore" aria-label="Настройки"></button>
     </div>
@@ -532,6 +552,14 @@ svg{display:block;flex:none}
 </nav>
 
 <div class="backdrop" id="backdrop"></div>
+
+<section class="sheet" id="groupSheet" role="dialog" aria-modal="true" aria-labelledby="groupSheetTitle" inert>
+<div class="grab" aria-hidden="true"></div><div class="sh-title"><h2 id="groupSheetTitle" tabindex="-1">Выбор группы</h2><button class="close" data-close aria-label="Закрыть выбор группы"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+<p class="group-caption">КГЭУ · <span id="groupCount">Загружаем список…</span></p>
+<label class="group-search"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg><input id="groupSearch" type="search" placeholder="Найти группу" aria-label="Найти группу" autocomplete="off" spellcheck="false"><button class="search-clear" id="searchClear" hidden type="button" aria-label="Очистить поиск"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 7 10 10M17 7 7 17"/></svg></button></label>
+<p class="group-status" id="groupStatus" hidden></p>
+<div class="group-scroll" id="groupResults" aria-live="polite"></div></section>
+
 
 <section class="sheet lg strong" id="calSheet" role="dialog" aria-label="Выбор даты">
   <div class="grab"></div>
@@ -772,51 +800,53 @@ svg{display:block;flex:none}
   }
 
   /* ================= ЗАГРУЗКА ================= */
-  function getJSON(path) {
-    var url = CONFIG.scheduleApi + path, urls = [url];
-    var i = 0;
-    function attempt() {
-      var u = urls[i++];
-      var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
-      return fetch(u, { credentials: 'omit', cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
-        .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-        .then(function (j) {
-          clearTimeout(timer);
-          if (!j || typeof j !== 'object') throw new Error('Пустой ответ сервера');
-          if (j.state === -1) throw new Error(j.msg || 'Слишком много запросов, подождите минуту');
-          if (j.state === 0 && !j.data) throw new Error(j.msg || 'Нет доступа к расписанию');
-          return j;
-        })
-        .catch(function (e) { clearTimeout(timer); if (i < urls.length) return attempt(); throw e; });
-    }
-    return attempt();
+  function getJSON(path, externalSignal) {
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var onAbort = function () { if (ctrl) ctrl.abort(); };
+    if (externalSignal) { if (externalSignal.aborted) onAbort(); else externalSignal.addEventListener('abort', onAbort, { once: true }); }
+    var timer = setTimeout(onAbort, 20000);
+    function cleanup() { clearTimeout(timer); if (externalSignal) externalSignal.removeEventListener('abort', onAbort); }
+    return fetch(CONFIG.scheduleApi + path, { credentials: 'omit', cache: 'no-store', signal: ctrl ? ctrl.signal : externalSignal })
+      .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then(function (j) {
+        if (!j || typeof j !== 'object') throw new Error('Пустой ответ сервера');
+        if (j.state === -1) throw new Error(j.msg || 'Слишком много запросов, подождите минуту');
+        if (j.state === 0 && !j.data) throw new Error(j.msg || 'Нет доступа к расписанию');
+        return j;
+      }).then(function (value) { cleanup(); return value; }, function (e) { cleanup(); throw e; });
   }
-
-  var loadingP = null;
+  var loadingP = null, loadSeq = 0, loadController = null;
   function load(manual) {
     if (loadingP) return loadingP;
+    var seq = ++loadSeq, groupID = CONFIG.groupId, cacheKey = CACHE_KEY;
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    loadController = controller;
+    var signal = controller ? controller.signal : undefined;
     S.loading = true; spin(true);
     loadingP = Promise.all([
-      getJSON('/GetRaspDates?idGroup=' + CONFIG.groupId).catch(function () { return null; }),
-      getJSON('/Rasp?idGroup=' + CONFIG.groupId)
+      getJSON('/GetRaspDates?idGroup=' + groupID, signal).catch(function () { return null; }),
+      getJSON('/Rasp?idGroup=' + groupID, signal)
     ]).then(function (res) {
+      if (seq !== loadSeq || groupID !== CONFIG.groupId) return;
       var rr = res[1];
       if (!rr || !rr.data || !Array.isArray(rr.data.rasp)) throw new Error('Неожиданный формат данных');
-      var data = buildData(res[0], rr);
+      var responseGroup = rr.data.info && rr.data.info.group;
+      if (responseGroup && responseGroup.groupID && Number(responseGroup.groupID) !== groupID) throw new Error('Сервер вернул другую группу');
+      var data = buildData(res[0], rr); data.groupId = groupID;
       var changed = !S.data || S.data.sig !== data.sig;
       var wasOffline = S.offline, hadData = !!S.data;
       S.data = data; S.error = null; S.offline = false;
-      LS.set(CACHE_KEY, data);
-      indexData();
-      if (changed || wasOffline) render(hadData ? null : 'in-f');
-      else { renderFootOnly(); }
+      CONFIG.groupName = data.group; rememberGroup();
+      LS.set(cacheKey, data); indexData();
+      if (changed || wasOffline || !hadData) render(hadData ? null : 'in-f');
+      else { renderHeader(); renderFootOnly(); }
       if (manual) toast(changed && hadData ? 'Расписание обновлено' : 'Расписание актуально', 'ok');
     }).catch(function (e) {
+      if (seq !== loadSeq || groupID !== CONFIG.groupId) return;
       S.error = e;
-      if (S.data) { S.offline = true; render(); if (manual) toast('Не удалось обновить. Сохранённая копия доступна', 'err'); }
+      if (S.data) { S.offline = true; render(); if (manual) toast('Не обновлено — показана копия', 'err'); }
       else render();
-    }).then(function () { S.loading = false; spin(false); loadingP = null; });
+    }).then(function () { if (seq === loadSeq) { S.loading = false; spin(false); loadingP = null; loadController = null; } });
     return loadingP;
   }
 
@@ -839,6 +869,7 @@ svg{display:block;flex:none}
     var w = S.data ? weekInfo(s) : null;
     $('#weekLabel').textContent = w ? (w.num + '-я неделя · ' + w.label) : (S.data ? 'Вне учебного семестра' : 'Загрузка…');
     $('#subTitle').textContent = (S.data ? S.data.group : CONFIG.groupName) + ' · КГЭУ';
+    syncGroupButton();
     $('#btnToday').classList.toggle('dim', s === today());
   }
 
@@ -1081,6 +1112,7 @@ svg{display:block;flex:none}
     var i = stack.indexOf(id); if (i < 0) return;
     stack.splice(i, 1);
     var el = $('#' + id); el.classList.remove('show'); el.style.transform = '';
+    if (id === 'groupSheet') closedGroups();
     if (!stack.length) { $('#backdrop').classList.remove('show'); document.body.classList.remove('locked'); tgBack(false); }
   }
   function sheetDrag(sheet) {
@@ -1317,12 +1349,154 @@ svg{display:block;flex:none}
     if (!document.hidden && (!S.data || Date.now() - S.data.fetchedAt > CONFIG.refreshMin * 60000)) load(false);
   }
 
+  /* ================= ВЫБОР ГРУППЫ ================= */
+  var GROUPS_KEY = 'kgeu.groups.v1', CHOICE_KEY = 'kgeu.selectedGroup';
+  var G = { items: [], at: 0, loading: null, error: false, shown: [] };
+  var groupCheck = '<span class="picked"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span>';
+  var groupArrow = '<svg class="row-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+  function validGroupID(n) { return /^[1-9][0-9]{0,8}$/.test(String(n || '')); }
+  function cleanGroups(rows) {
+    var ids = {};
+    return (Array.isArray(rows) ? rows : []).filter(function (g) {
+      if (!g || !validGroupID(g.id) || typeof g.name !== 'string' || !g.name.trim() || g.name.length > 100 || ids[g.id]) return false;
+      ids[g.id] = true; return true;
+    }).map(function (g) { return { id: Number(g.id), name: g.name.trim(), facul: String(g.facul || '').slice(0, 100), kurs: Number(g.kurs) || 0 }; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name, 'ru', { numeric: true, sensitivity: 'base' }); });
+  }
+  function groupByID(id) { return G.items.filter(function (g) { return g.id === id; })[0]; }
+  function rememberGroup() { LS.set(CHOICE_KEY, { id: CONFIG.groupId, name: CONFIG.groupName }); }
+  function syncGroupButton() {
+    var name = S.data ? S.data.group : CONFIG.groupName;
+    $('#groupName').textContent = name;
+    $('#groupPicker').setAttribute('aria-label', 'Выбрать группу, сейчас ' + name);
+    $('#groupPicker').title = name;
+    document.title = 'Расписание ' + name + ' · КГЭУ';
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.content = 'Расписание группы ' + name + ' · КГЭУ';
+  }
+  function restoreGroupChoice() {
+    var savedList = LS.get(GROUPS_KEY, null);
+    if (savedList && Array.isArray(savedList.items)) { G.items = cleanGroups(savedList.items); G.at = Number(savedList.at) || 0; }
+    var saved = LS.get(CHOICE_KEY, null), explicit = P.get('group');
+    var id = validGroupID(explicit) ? Number(explicit) : (saved && validGroupID(saved.id) ? Number(saved.id) : 14457);
+    var known = groupByID(id);
+    CONFIG.groupId = id;
+    CONFIG.groupName = known ? known.name : (saved && Number(saved.id) === id && typeof saved.name === 'string' ? saved.name.slice(0, 100) : (id === 14457 ? 'ИМС-1-25' : 'Группа ' + id));
+    CACHE_KEY = 'kgeu.rasp.v' + DATA_V + '.' + id;
+  }
+  function cachedGroupData() {
+    var c = LS.get(CACHE_KEY, null);
+    return c && c.v === DATA_V && Array.isArray(c.lessons) && (!c.groupId || c.groupId === CONFIG.groupId) ? c : null;
+  }
+  function normalizeGroup(s) {
+    var same = { A: 'А', B: 'В', C: 'С', E: 'Е', H: 'Н', K: 'К', M: 'М', O: 'О', P: 'Р', T: 'Т', X: 'Х', Y: 'У' };
+    return String(s).toUpperCase().replace(/Ё/g, 'Е').replace(/[ABCEHKMOPTXY]/g, function (x) { return same[x]; }).replace(/[\s\-–—−_]/g, '');
+  }
+  function groupRow(g) {
+    var info = [g.facul, g.kurs ? g.kurs + ' курс' : ''].filter(Boolean).join(' · ');
+    var selected = g.id === CONFIG.groupId;
+    return '<button class="group-row' + (selected ? ' selected' : '') + '" data-group-id="' + g.id + '"' + (selected ? ' aria-current="true"' : '') + '><span class="group-row-text"><span class="gn">' + esc(g.name) + '</span>' + (info ? '<span class="gm">' + esc(info) + '</span>' : '') + '</span>' + (selected ? groupCheck : groupArrow) + '</button>';
+  }
+  function renderGroups() {
+    var q = normalizeGroup($('#groupSearch').value);
+    G.shown = G.items.filter(function (g) { return normalizeGroup(g.name).indexOf(q) >= 0; });
+    $('#searchClear').hidden = !$('#groupSearch').value;
+    $('#groupCount').textContent = G.items.length ? G.items.length + ' ' + plural(G.items.length, ['группа', 'группы', 'групп']) : (G.loading ? 'Загружаем список…' : 'Выберите группу');
+    $('#groupStatus').hidden = !G.error || !G.items.length;
+    $('#groupStatus').textContent = 'Список не обновился — доступна сохранённая копия.';
+    var h = '';
+    if (!q) {
+      var current = groupByID(CONFIG.groupId) || { id: CONFIG.groupId, name: CONFIG.groupName, facul: '', kurs: 0 };
+      h += '<div class="group-section-title">Выбрана сейчас</div><div class="group-rows">' + groupRow(current) + '</div>';
+    }
+    h += '<div class="group-section-title">' + (q ? 'Найдено: ' + G.shown.length : 'Все группы') + '<span class="sort">А — Я ↓</span></div>';
+    if (G.shown.length) h += '<div class="group-rows">' + G.shown.map(groupRow).join('') + '</div>';
+    else if (!G.items.length && G.loading) h += '<div class="group-empty" role="status">Загружаем группы КГЭУ…</div>';
+    else if (!G.items.length && G.error) h += '<div class="group-empty"><b>Список пока недоступен</b>Не удалось загрузить группы КГЭУ.<button class="group-retry" id="groupRetry">Попробовать ещё раз</button></div>';
+    else h += '<div class="group-empty"><b>Группа не найдена</b>Проверьте название или сократите запрос.</div>';
+    $('#groupResults').innerHTML = h;
+  }
+  function loadGroups(force) {
+    if (G.loading) return G.loading;
+    if (!force && G.items.length && Date.now() - G.at < 3600000) return Promise.resolve();
+    G.error = false;
+    G.loading = getJSON('/raspGroupList').then(function (j) {
+      var items = cleanGroups(j.data);
+      if (!items.length) throw new Error('Пустой список групп');
+      G.items = items; G.at = Date.now(); G.error = false;
+      LS.set(GROUPS_KEY, { at: G.at, items: G.items });
+      var current = groupByID(CONFIG.groupId);
+      if (current && !S.data) { CONFIG.groupName = current.name; syncGroupButton(); rememberGroup(); }
+    }).catch(function () { G.error = true; }).then(function () { G.loading = null; if (isOpen('groupSheet')) renderGroups(); });
+    renderGroups(); return G.loading;
+  }
+  function setGroupBackgroundInert(value) {
+    document.querySelector('.app').inert = value;
+    $('#dock').inert = value;
+  }
+  function openGroups() {
+    $('#groupSearch').value = '';
+    $('#groupSheet').inert = false;
+    renderGroups(); openSheet('groupSheet');
+    $('#groupPicker').setAttribute('aria-expanded', 'true');
+    setGroupBackgroundInert(true);
+    $('#groupSheetTitle').focus({ preventScroll: true });
+    $('#groupResults').scrollTop = 0;
+    loadGroups(false);
+  }
+  function closedGroups() {
+    $('#groupSheet').inert = true;
+    $('#groupPicker').setAttribute('aria-expanded', 'false');
+    setGroupBackgroundInert(false);
+    $('#groupPicker').focus({ preventScroll: true });
+  }
+  function selectGroup(g) {
+    closeSheet('groupSheet');
+    if (g.id === CONFIG.groupId) { if (!S.data || S.error) load(true); return; }
+    ++loadSeq;
+    if (loadController) loadController.abort();
+    loadController = null; loadingP = null;
+    CONFIG.groupId = g.id; CONFIG.groupName = g.name;
+    CACHE_KEY = 'kgeu.rasp.v' + DATA_V + '.' + g.id;
+    rememberGroup();
+    S.data = cachedGroupData(); S.byDate = {}; S.error = null; S.offline = false; S.loading = true;
+    if (S.data) { CONFIG.groupName = S.data.group; indexData(); }
+    try { var url = new URL(location.href); url.searchParams.set('group', g.id); history.replaceState(null, '', url.pathname + url.search + url.hash); } catch (e) {}
+    render('in-f');
+    window.scrollTo(0, 0);
+    load(false);
+    haptic('sel');
+  }
+  function bindGroups() {
+    $('#groupPicker').addEventListener('click', openGroups);
+    $('#groupSearch').addEventListener('input', function () { renderGroups(); $('#groupResults').scrollTop = 0; });
+    $('#groupSearch').addEventListener('keydown', function (e) { if (e.key === 'Enter' && G.shown.length === 1) { e.preventDefault(); selectGroup(G.shown[0]); } });
+    $('#searchClear').addEventListener('click', function (e) { e.preventDefault(); $('#groupSearch').value = ''; renderGroups(); $('#groupSearch').focus(); });
+    $('#groupResults').addEventListener('click', function (e) {
+      if (e.target.closest('#groupRetry')) { loadGroups(true); return; }
+      var row = e.target.closest('[data-group-id]'); if (!row) return;
+      var id = Number(row.getAttribute('data-group-id'));
+      var g = groupByID(id) || (id === CONFIG.groupId ? { id: id, name: CONFIG.groupName } : null);
+      if (g) selectGroup(g);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!isOpen('groupSheet')) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeSheet('groupSheet'); return; }
+      if (e.key !== 'Tab') return;
+      var controls = Array.from($('#groupSheet').querySelectorAll('button:not([disabled]), input:not([disabled])')).filter(function (x) { return x.getClientRects().length && !x.hidden; });
+      var first = controls[0], last = controls[controls.length - 1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === $('#groupSheetTitle'))) { e.preventDefault(); if (last) last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); if (first) first.focus(); }
+    });
+  }
+
   /* ================= СТАРТ ================= */
   function init() {
+    restoreGroupChoice(); bindGroups();
     var qd = P.get('date'); if (/^\d{4}-\d{2}-\d{2}$/.test(qd || '')) S.sel = qd;
     var qm = P.get('mode'); if (qm === 'week' || qm === 'day') S.mode = qm;
-    var cached = LS.get(CACHE_KEY, null);
-    if (cached && cached.v === DATA_V && Array.isArray(cached.lessons)) { S.data = cached; indexData(); }
+    var cached = cachedGroupData();
+    if (cached) { S.data = cached; CONFIG.groupName = cached.group; indexData(); }
     if (window.Telegram && window.Telegram.WebApp) tgInit();
     applyTheme(); bind(); syncMode();
     render();
