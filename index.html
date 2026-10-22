@@ -447,46 +447,6 @@ svg{display:block;flex:none}
 .b2{width:380px;height:380px;right:-150px;top:380px}
 .b3{width:460px;height:460px;left:-60px;bottom:-200px}
 
-.brs-in{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-.fld{width:100%;height:48px;border-radius:14px;border:1px solid var(--card-line);background:var(--card);color:var(--text);font:600 16px var(--font);padding:0 14px;outline:none;-webkit-user-select:text;user-select:text}
-.bbtn{display:flex;align-items:center;justify-content:center;width:100%;height:48px;border-radius:14px;border:0;font:700 16px var(--font);background:var(--text);color:#101018;cursor:pointer}
-:root:not([data-theme=dark]) .bbtn:not(.ghost){color:#fff}
-.bbtn[disabled]{opacity:.5}.bbtn.ghost{background:var(--fill);color:var(--text)}
-.bnote{font-size:12.5px;line-height:1.4;color:var(--text3);margin:8px 2px 0}
-.berr{font-size:13.5px;font-weight:600;color:#FF453A}
-.bload{padding:30px 0;text-align:center;color:var(--text3);font-weight:600}
-.hgrid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
-.mini{padding:11px 12px;border-radius:18px;background:var(--card);border:1px solid var(--card-line);box-shadow:var(--card-shadow),var(--glass-hl)}
-.mini.wide{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}
-.mini .k{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text3)}
-.mini .v{font-size:22px;font-weight:800;margin-top:3px;font-variant-numeric:tabular-nums}
-.mini.wide .v{font-size:28px;margin:0}
-.v.g5{color:#30D158}.v.g4{color:#7EE59B}.v.g3{color:#FFD60A}
-:root:not([data-theme=dark]) .v.g5{color:#248A3D}:root:not([data-theme=dark]) .v.g4{color:#34A853}:root:not([data-theme=dark]) .v.g3{color:#C27C00}
-.bseg{margin-top:16px}
-.ktseg{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);padding:3px;border-radius:999px;background:var(--fill);margin-bottom:10px}
-.ktseg button{position:relative;z-index:1;display:grid;place-items:center;height:40px;border:0;border-radius:999px;background:transparent;color:var(--text2);font:700 15px var(--font);cursor:pointer;transition:color .25s}
-.ktseg button.on{color:var(--text)}
-.kthumb{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/var(--n));border-radius:999px;background:var(--thumb);box-shadow:0 4px 12px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.6);transform:translateX(calc(var(--k)*100%));transition:transform .45s cubic-bezier(.32,.72,0,1.12)}
-.brow{border-radius:18px;background:var(--card);border:1px solid var(--card-line);box-shadow:var(--card-shadow),var(--glass-hl);overflow:hidden}
-.brow+.brow{margin-top:8px}
-.bhead{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:10px 12px 10px 15px;border:0;background:none;color:var(--text);text-align:left;font:inherit;cursor:pointer}
-.bn{flex:1;font-size:15px;font-weight:600;line-height:1.3}
-.bpill{min-width:46px;height:34px;padding:0 11px;border-radius:999px;display:grid;place-items:center;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text);background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.07));border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 4px 12px rgba(0,0,0,.28);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-[data-theme=light] .bpill{background:linear-gradient(180deg,rgba(60,60,72,.14),rgba(60,60,72,.06));border-color:rgba(0,0,0,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 10px rgba(0,0,0,.08)}
-.mini .k.k2{text-transform:none;letter-spacing:0;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bchev{color:var(--text3);display:grid;transition:transform .3s}
-.bchev svg{width:18px;height:18px}
-.brow.open .bchev{transform:rotate(180deg)}
-.bdet{display:none;padding:0 15px 12px}
-.brow.open .bdet{display:block}
-.bk{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--card-line);font-size:14px;color:var(--text2);font-weight:600}
-.bk b{color:var(--text);font-variant-numeric:tabular-nums}
-.bn .bmk{display:block;margin-top:3px;font-size:12.5px;font-weight:700;color:var(--text2)}
-.bmk.g5,.bk b.g5{color:#30D158}.bmk.g4,.bk b.g4{color:#7EE59B}.bmk.g3,.bk b.g3{color:#FFD60A}.bmk.gbad,.bk b.gbad{color:#FF453A}
-[data-theme=light] .bmk.g5,[data-theme=light] .bk b.g5{color:#248A3D}[data-theme=light] .bmk.g4,[data-theme=light] .bk b.g4{color:#34A853}[data-theme=light] .bmk.g3,[data-theme=light] .bk b.g3{color:#C27C00}
-.bk span .bkp{display:block;font-style:normal;font-size:12px;font-weight:500;color:var(--text3,var(--text2));opacity:.8;margin-top:2px}
-.bk{align-items:center}
 .sheet.lg::before{display:none}
 .sheet,.sheet.lg{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 :root[data-theme=dark] .sheet.lg{background:linear-gradient(170deg,rgba(38,38,47,.985),rgba(21,21,28,.985))}
@@ -525,7 +485,6 @@ svg{display:block;flex:none}
   <header class="top lg" id="top">
     <div class="title-row">
       <button class="group-picker lg" id="groupPicker" aria-label="Выбрать группу" aria-haspopup="dialog" aria-expanded="false" aria-controls="groupSheet"><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
-      <button class="ibtn lg" id="btnBrs" aria-label="Личные баллы" title="Баллы вашего аккаунта КГЭУ"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.6c0 1.3 2.5 2.9 5.5 2.9s5.5-1.6 5.5-2.9V11"/><path d="M21.5 9v5"/></svg></button>
       <button class="ibtn lg" id="btnRefresh" aria-label="Обновить расписание"></button>
       <button class="ibtn lg" id="btnMore" aria-label="Настройки"></button>
     </div>
@@ -600,17 +559,14 @@ svg{display:block;flex:none}
 </section>
 
 
-<section class="sheet lg strong" id="brsSheet" role="dialog" aria-label="Баллы">
-  <div class="grab"></div>
-  <div class="sh-title"><h2>Баллы</h2><button class="close" data-close aria-label="Закрыть"></button></div>
-  <div id="brsBody"></div>
-</section>
 
 <div class="toast lg strong" id="toast"></div>
 
 <script>
 (function () {
   'use strict';
+
+  try { ['kgeu.auth', 'kgeu.brs.v2', 'kgeu.fp', 'kgeu.name', 'kgeu.hello'].forEach(function (key) { localStorage.removeItem(key); }); } catch (e) {}
 
   /* ================= НАСТРОЙКИ ================= */
   var P = new URLSearchParams(location.search);
@@ -1103,8 +1059,7 @@ svg{display:block;flex:none}
     stack.push(id);
     $('#' + id).classList.add('show'); $('#backdrop').classList.add('show');
     document.body.classList.add('locked');
-    if (id === 'setSheet') { updateSettings(); window.BRS && window.BRS.sync(); }
-    if (id === 'brsSheet' && window.BRS) window.BRS.open();
+    if (id === 'setSheet') updateSettings();
     tgBack(true); haptic('impact', 'light');
   }
   function closeSheet(id) {
@@ -1506,177 +1461,6 @@ svg{display:block;flex:none}
     setInterval(tick, 20000);
   }
   init();
-  /* ================= БАЛЛЫ БРС ================= */
-  (function () {
-    var API = CONFIG.api, PROXY = 'https://kgeu-brs.frightencd.workers.dev/';
-    var TK = 'kgeu.auth', DK = 'kgeu.brs.v2', DEMO = P.get('demo') === 'brs';
-    var B = { tok: LS.get(TK, null), data: LS.get(DK, null), busy: false, need2fa: false, sem: null, open: {} };
-    var body = $('#brsBody');
-    function fp() { var f = LS.get('kgeu.fp', null); if (!f) { f = Array.from(crypto.getRandomValues(new Uint8Array(16)), function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); LS.set('kgeu.fp', f); } return f; }
-    function kget(u) {
-      return fetch(API + u, { headers: { fp: fp(), Authorization: 'Bearer ' + B.tok.t } }).then(function (r) {
-        if (r.status === 401) { var e = new Error('auth'); e.auth = 1; throw e; } return r.json();
-      }).then(function (j) { return j && j.data; });
-    }
-    function login(user, pass, otp) {
-      B.busy = true; render();
-      fetch(API + '/tokenauth', { method: 'POST', headers: { 'Content-Type': 'application/json', fp: fp() },
-        body: JSON.stringify({ userName: user, password: pass, isParent: false, fingerprint: fp(), otpCode: otp || null, redirect: false }) })
-        .then(function (r) { return r.json(); }).then(function (j) {
-          var d = j && j.data;
-          if (d && d.data && d.data.require2FA) { B.need2fa = { user: user, pass: pass, email: d.data.email }; return; }
-          if (!(d && d.data && d.data.accessToken)) throw new Error((d && d.msg) || j.msg || 'Неверный логин или пароль');
-          B.tok = { t: d.data.accessToken }; B.need2fa = false;
-          return kget('/tokenauth').then(function (u) {
-            u = u && u.user; if (!u) throw new Error('Не удалось получить профиль');
-            B.tok.sid = Math.abs(u.userID); LS.set(TK, B.tok);
-            var nm = u.first_name || String(u.fullName || u.fio || '').split(/\s+/)[1] || ''; if (nm) LS.set('kgeu.name', nm); B.busy = false; render(); return load();
-          });
-        })
-        .catch(function (e) { B.tok = null; B.err = e.message === 'Failed to fetch' ? 'Нет связи с kabinet.kgeu.ru' : e.message; })
-        .then(function () { B.busy = false; render(); });
-    }
-    function load() {
-      if (!B.tok) return Promise.resolve();
-      B.loading = true;
-      var p1 = fetch(PROXY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: B.tok.t, pro: B.tok.pro || null }) })
-        .then(function (r) { if (r.status === 401) { var e = new Error('auth'); e.auth = 1; throw e; } if (!r.ok) throw new Error('proxy'); return r.json(); })
-        .then(function (j) { if (j.pro) { B.tok.pro = j.pro; LS.set(TK, B.tok); } return j && j.ratings; });
-      var p2 = kget('/EducationalActivity/ZachBook?studentID=' + B.tok.sid).catch(function (e) { if (e.auth) throw e; return null; });
-      return Promise.all([p1, p2]).then(function (r) {
-        var z = r[1] || {}, st = z.markCountStatistic || [], avg = (z.avgCourseStatistic || []).slice(-1)[0];
-        var pj = r[0] || {}, rl = Array.isArray(pj) ? pj : (pj.ratings || []), zb = z.zachBook || [];
-        var yr = function (y) { var m = String(y || '').match(/(20\d\d)/); return m ? +m[1] : 0; }, base = 0;
-        rl.forEach(function (x) { var y = yr((x.universityStatements || {}).academicYear); if (y && (!base || y < base)) base = y; });
-        zb.forEach(function (g) { var y = yr(g.year) - ((+g.course || 1) - 1); if (y > 2000 && (!base || y < base)) base = y; });
-        var abs = function (y, s) { s = +s || 0; if (s > 2 || !y || !base) return s; return (y - base) * 2 + s; };
-        rl.forEach(function (x) { var u = x.universityStatements || {}; x._sem = abs(yr(u.academicYear), u.semester); });
-        var book = zb.map(function (g) { return { id: g.key, discipline: g.dis, semester: g.course && +g.sem <= 2 ? (+g.course - 1) * 2 + +g.sem : abs(yr(g.year), g.sem), mark: g.mark, typeOfExam: g.controlForm, teacher: g.teacherName }; });
-        B.data = { at: Date.now(), list: rl, book: book, avg: avg ? avg.avg : null, stat: st };
-        LS.set(DK, B.data);
-      }).catch(function (e) { if (e.auth) logout('Сессия истекла — войдите снова'); else toast('Не удалось обновить баллы', 'err'); })
-        .then(function () { B.loading = false; render(); });
-    }
-    function logout(msg) { B.tok = null; B.data = null; B.err = msg || ''; try { localStorage.removeItem(TK); localStorage.removeItem(DK); localStorage.removeItem('kgeu.name'); } catch (e) {} render(); }
-
-    function semOf(x) { return x._sem || +((x.universityStatements || {}).semester) || 0; }
-    function sems(d) {
-      var m = {}; (d.list || []).forEach(function (x) { if (semOf(x)) m[semOf(x)] = 1; });
-      (d.book || []).forEach(function (x) { if (+x.semester) m[+x.semester] = 1; });
-      return Object.keys(m).map(Number).sort(function (a, b) { return a - b; });
-    }
-    function norm(t) { return String(t || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]+/g, ''); }
-    function semRows(d, sem) {
-      var rows = [], seen = {}, book = (d.book || []).filter(function (x) { return +x.semester === sem; });
-      (d.list || []).filter(function (x) { return semOf(x) === sem; }).forEach(function (x) {
-        var u = x.universityStatements, k = norm(u.discipline), bk = null;
-        book.forEach(function (g) { if (!bk && norm(g.discipline) === k) bk = g; });
-        if (bk) seen[norm(bk.discipline) + '|' + (bk.typeOfExam || '')] = 1;
-        rows.push({ id: 'r' + u.id, name: u.discipline, teacher: u.teacher || (bk && bk.teacher), extra: u.extra, cps: u.controlPoints || [], total: x.totalRating, bk: bk });
-      });
-      book.forEach(function (g, i) {
-        if (seen[norm(g.discipline) + '|' + (g.typeOfExam || '')]) return;
-        var dup = rows.filter(function (r) { return norm(r.name) === norm(g.discipline); })[0];
-        if (dup && !dup.bk) { dup.bk = g; return; }
-        rows.push({ id: 'b' + sem + '_' + (g.id || i), name: g.discipline, teacher: g.teacher, cps: [], total: g.finalPercentage, bk: g });
-      });
-      return rows.sort(function (a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); });
-    }
-    function pct(name) { var s = (B.data.stat || []).filter(function (x) { return x.mark === name; })[0]; return s ? Math.round(s.percent) : 0; }
-    function loginHTML() {
-      var f = B.need2fa;
-      return '<form class="brs-in" id="brsForm" autocomplete="on">' +
-        (f ? '<input class="fld" name="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="Код из письма' + (f.email ? ' (' + esc(f.email) + ')' : '') + '" required>' :
-          '<input class="fld" name="login" autocomplete="username" placeholder="Логин от kabinet.kgeu.ru" required>' +
-          '<input class="fld" name="password" type="password" autocomplete="current-password" placeholder="Пароль" required>') +
-        (B.err ? '<div class="berr">' + esc(B.err) + '</div>' : '') +
-        '<button class="bbtn" type="submit"' + (B.busy ? ' disabled' : '') + '>' + (B.busy ? 'Входим…' : 'Войти') + '</button></form>' +
-        '<p class="bnote">🔒 Пароль отправляется напрямую в личный кабинет КГЭУ и не сохраняется.</p>';
-    }
-    function dataHTML() {
-      var d = B.data;
-      if (!d) return '<div class="bload">Загружаем баллы…</div>';
-      var ss = sems(d), n = ss.length, sem = B.sem && ss.indexOf(B.sem) >= 0 ? B.sem : ss[n - 1];
-      var h = '<div class="hgrid3"><div class="mini wide"><div class="k">Средний балл зачётки</div><div class="v">' + esc(d.avg != null ? d.avg : '—') + '</div></div>' +
-        '<div class="mini"><div class="k k2">Отлично</div><div class="v g5">' + pct('Отлично') + '%</div></div>' +
-        '<div class="mini"><div class="k k2">Хорошо</div><div class="v g4">' + pct('Хорошо') + '%</div></div>' +
-        '<div class="mini"><div class="k k2">Удовлетворительно</div><div class="v g3">' + pct('Удовлетворительно') + '%</div></div></div>';
-      h += '<div class="slabel bseg">Баллы БРС · семестр</div>';
-      if (n > 1) {
-        h += '<div class="ktseg" id="ktSeg" style="--n:' + n + ';--k:' + ss.indexOf(sem) + '"><span class="kthumb"></span>';
-        ss.forEach(function (v) { h += '<button data-sem="' + v + '"' + (v === sem ? ' class="on"' : '') + '>' + v + '</button>'; });
-        h += '</div>';
-      }
-      h += '<div id="brsList">' + listHTML(d, sem) + '</div>';
-      return h + footHTML(d);
-    }
-    function markCls(m) { m = String(m || ''); return /отл/i.test(m) ? ' g5' : /хор/i.test(m) ? ' g4' : /удов/i.test(m) && !/неуд/i.test(m) ? ' g3' : /незач|неуд|неяв/i.test(m) ? ' gbad' : /зач/i.test(m) ? ' g5' : ''; }
-    function listHTML(d, sem) {
-      var rows = sem ? semRows(d, sem) : [], h = '';
-      if (!rows.length) h += '<div class="bload">Баллов пока нет</div>';
-      rows.forEach(function (x) {
-        var op = B.open[x.id], v = x.total;
-        if (v == null) { x.cps.forEach(function (c) { if (c && c.finalRating != null) v = c.finalRating; }); }
-        var row = function (k, val, cls) { return val == null || val === '' ? '' : '<div class="bk"><span>' + k + '</span><b' + (cls ? ' class="' + cls + '"' : '') + '>' + esc(val) + '</b></div>'; };
-        var sub = x.bk && x.bk.mark ? '<span class="bmk' + markCls(x.bk.mark) + '">' + esc(x.bk.mark) + '</span>' : '';
-        h += '<div class="brow' + (op ? ' open' : '') + '" data-id="' + x.id + '"><button class="bhead"><span class="bn">' + esc(x.name) + sub + '</span><span class="bpill">' + esc(v != null ? v : '—') + '</span><span class="bchev">' + ICON.chevD + '</span></button><div class="bdet">';
-        x.cps.forEach(function (c, i) {
-          if (!c) return;
-          var parts = [['Лекции', c.lectureRating], ['Практики', c.practiceRating], ['Лаб.', c.labRating], ['Другое', c.otherRating]].filter(function (p) { return p[1]; }).map(function (p) { return p[0] + ' ' + p[1]; });
-          h += '<div class="bk"><span>' + (i + 1) + '-я КТ' + (parts.length ? '<i class="bkp">' + esc(parts.join(' · ')) + '</i>' : '') + '</span><b>' + esc(c.finalRating != null ? c.finalRating : 0) + '</b></div>';
-        });
-        h += (x.extra ? row('Доп. баллы', x.extra) : '') + row('Итого за семестр', x.total);
-        if (x.bk) h += row(x.bk.typeOfExam || 'Оценка', x.bk.mark, markCls(x.bk.mark).trim()) + (x.bk.finalPercentage != null && x.bk.finalPercentage !== x.total ? row('Баллы в зачётке', x.bk.finalPercentage) : '');
-        h += (x.teacher ? '<div class="bt">' + esc(x.teacher) + '</div>' : '') + '</div></div>';
-      });
-      return h;
-    }
-    function footHTML(d) {
-      var h = '<div class="brs-in" style="margin-top:16px"><button class="bbtn ghost" id="brsOut" style="color:#FF453A">Выйти из кабинета</button></div>';
-      h += '<p class="about">' + (B.loading ? 'Обновляем…' : 'Обновлено ' + esc(new Date(d.at).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }))) + '</p>';
-      return h;
-    }
-    function render() { body.innerHTML = B.tok ? dataHTML() : loginHTML(); }
-
-    body.addEventListener('submit', function (e) {
-      e.preventDefault(); var f = e.target; B.err = '';
-      if (B.need2fa) login(B.need2fa.user, B.need2fa.pass, f.otp.value.trim()); else login(f.login.value.trim(), f.password.value);
-    });
-    body.addEventListener('click', function (e) {
-      var t;
-      if ((t = e.target.closest('[data-sem]'))) {
-        var k = +t.getAttribute('data-sem'), ss = sems(B.data); if (k === B.sem) return; B.sem = k; haptic('selection');
-        $('#ktSeg').style.setProperty('--k', ss.indexOf(k));
-        $$('#ktSeg button').forEach(function (b) { b.classList.toggle('on', +b.getAttribute('data-sem') === k); });
-        $('#brsList').innerHTML = listHTML(B.data, k); return;
-      }
-      if ((t = e.target.closest('.bhead'))) { var r = t.parentNode, id = r.getAttribute('data-id'); B.open[id] = !B.open[id]; r.classList.toggle('open', B.open[id]); haptic('impact', 'light'); return; }
-      if (e.target.closest('#brsOut')) { haptic('impact', 'medium'); logout(); }
-    });
-
-    if (DEMO) {
-      var mk = function (d, a, b, c, t, sm) { return { universityStatements: { id: (sm || 3) * 1000 + d.length * 7 + a, discipline: d, academicYear: '2026-2027', semester: sm || 3, teacher: 'Преподаватель', extra: 0, controlPoints: [{ lectureRating: a, practiceRating: 0, labRating: 0, finalRating: a }, { lectureRating: b - 5 > 0 ? b - 5 : b, practiceRating: b > 5 ? 5 : 0, labRating: 0, finalRating: b }, { lectureRating: c, practiceRating: 0, labRating: 0, finalRating: c }] }, totalRating: t }; };
-      B.tok = P.get('login') ? null : { t: 'demo', sid: 1 };
-      B.data = { at: Date.now(), avg: 4.62, stat: [{ mark: 'Отлично', percent: 26.32 }, { mark: 'Хорошо', percent: 15.79 }, { mark: 'Зачтено', percent: 57.89 }],
-        list: [mk('Алгоритмизация и программирование', 0, 0, 0, 0), mk('Математика', 6, 12, 18, 36), mk('Метрология, стандартизация и сертификация', 4, 8, 12, 24), mk('Начертательная геометрия и инженерная графика', 7, 14, 20, 41), mk('Общая физическая подготовка', 5, 10, 15, 30), mk('Правоведение и предпринимательское право', 0, 0, 0, 0), mk('Теория цепей и сигналов', 6, 11, 17, 34), mk('Физические основы электроники', 5, 10, 15, 30)] };
-      [['Математика', 20, 40, 58, 91, 1], ['Информатика', 18, 36, 52, 84, 1], ['История России', 15, 30, 45, 72, 1], ['Физическая культура и спорт', 20, 40, 60, 100, 1],
-        ['Математика', 19, 38, 55, 88, 2], ['Физика', 14, 30, 44, 76, 2], ['Инженерная графика', 17, 35, 50, 81, 2], ['Философия', 12, 28, 40, 65, 2]].forEach(function (r) { B.data.list.push(mk(r[0], r[1], r[2], r[3], r[4], r[5])); });
-      B.data.book = [{ discipline: 'Математика', semester: 1, mark: 'Отлично', typeOfExam: 'Экзамен', finalPercentage: 91, teacher: 'Иванов И.И.' }, { discipline: 'Информатика', semester: 1, mark: 'Хорошо', typeOfExam: 'Экзамен', finalPercentage: 84 },
-        { discipline: 'История России', semester: 1, mark: 'Хорошо', typeOfExam: 'Экзамен', finalPercentage: 72 }, { discipline: 'Физическая культура и спорт', semester: 1, mark: 'Зачтено', typeOfExam: 'Зачёт', finalPercentage: 100 },
-        { discipline: 'Математика', semester: 2, mark: 'Отлично', typeOfExam: 'Экзамен', finalPercentage: 88 }, { discipline: 'Физика', semester: 2, mark: 'Хорошо', typeOfExam: 'Экзамен', finalPercentage: 76 },
-        { discipline: 'Инженерная графика', semester: 2, mark: 'Зачтено', typeOfExam: 'Зачёт', finalPercentage: 81 }, { discipline: 'Философия', semester: 2, mark: 'Удовлетворительно', typeOfExam: 'Экзамен', finalPercentage: 65 }];
-      if (P.get('open')) setTimeout(function () { openSheet('brsSheet'); }, 300);
-    }
-    function syncHello() {
-      var it = $('#helloItem'); if (!it) return;
-      it.hidden = !LS.get('kgeu.name', null);
-      $('#helloVal').textContent = LS.get('kgeu.hello', true) ? 'Вкл' : 'Выкл';
-    }
-    $('#helloItem') && $('#helloItem').addEventListener('click', function () { LS.set('kgeu.hello', !LS.get('kgeu.hello', true)); haptic('selection'); syncHello(); });
-    window.BRS = { sync: syncHello, open: function () { render(); if (B.tok && !DEMO && (!B.data || !B.data.book || Date.now() - B.data.at > 3e5)) load(); } };
-    $('#btnBrs').addEventListener('click', function () { openSheet('brsSheet'); });
-    sheetDrag($('#brsSheet'));
-  })();
 
 })();
 </script>
