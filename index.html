@@ -477,7 +477,54 @@ svg{display:block;flex:none}
 .group-row-text{min-width:0}.group-row .gn,.group-row .gm{overflow-wrap:anywhere}.group-status{font-size:14px;line-height:1.4;color:var(--text2);padding:10px 8px 0;margin:0}.group-retry{display:block;min-height:44px;margin:16px auto 0;padding:10px 18px;border-radius:999px;background:var(--fill2);font-weight:700;color:var(--text)}#groupSheetTitle:focus{outline:0}.group-search input::-webkit-search-cancel-button,.group-search input::-webkit-search-decoration{display:none;-webkit-appearance:none}:root:not([data-theme=dark]) #groupSheet .group-empty{color:#606070}:root:not([data-theme=dark]) #groupSheet .group-empty b{color:#15151f}:root:not([data-theme=dark]) #groupSheet .group-section-title .sort{color:#626270}:root:not([data-theme=dark]) #groupSheet .group-search input::placeholder{color:#626270}:root:not([data-theme=dark]) #groupSheet .group-row.selected{background:#ffffffcc}:root:not([data-theme=dark]) #groupSheet .group-row .picked{background:#33333d;color:#fff}
 
 </style>
-</head>
+<style>.edit-top{height:44px;min-width:52px;padding:0 10px;font-size:17px;font-weight:700;letter-spacing:-.03em;color:var(--text);background:var(--fill2);border:1px solid var(--sep);border-radius:16px}.title-row{gap:7px}.title-row .group-picker{padding-right:10px;gap:6px}.group-name{font-size:16px}.group-symbol{width:28px;height:30px}.title-row>.ibtn{width:44px}.edit-gradient{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:14px;background:linear-gradient(120deg,#9cc8ef,#c3b0e7);color:#172132;font-size:17px;font-weight:750;letter-spacing:-.04em;box-shadow:inset 0 1px 0 #ffffff66,0 4px 16px #0002}.day-edit-wrap{position:relative}.day-edit-wrap .day-head{cursor:pointer}.day-edit-wrap .dh-wd{padding-right:58px}.day-edit-wrap>.edit-gradient{position:absolute;left:148px;top:8px;z-index:3;padding:0 10px;min-width:48px;font-size:16px}.edited-by{display:block;color:var(--text2);font-size:12px;font-weight:500;margin-top:6px;overflow-wrap:anywhere}.day-head{gap:8px}.dh-r{min-width:84px}.day-edit-wrap .dh-sub{font-size:12px}.editor-sheet{background:#f3f4f6;color:#20242b;border:1px solid #fff9;max-height:90dvh;overflow:auto;overscroll-behavior:contain;padding:0 20px 24px;border-radius:28px 28px 0 0;box-shadow:0 -14px 48px #0005;z-index:45}.editor-sheet .grab{margin:10px auto 6px;background:#9ca0a8}.editor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}.editor-heading h2{font-size:24px;line-height:1.2;font-weight:650;margin:0;letter-spacing:-.03em}.editor-heading h2:focus{outline:none}.editor-close{width:44px;height:44px;border-radius:50%;background:#00000008;font-size:28px;flex:none}.editor-caption{font-size:14px;line-height:1.5;color:#616975;margin:0 0 20px}.editor-field{display:block;font-size:14px;font-weight:600;margin:18px 0 8px}.editor-input{width:100%;min-height:50px;padding:12px 14px;border-radius:15px;background:#fff9;color:#20242b;border:1px solid #b9bdc5;font:400 16px var(--font);user-select:text;-webkit-user-select:text}.editor-step{border:0;padding:0;margin:0;min-width:0}.editor-step legend{font-size:14px;font-weight:600;padding:0;margin:20px 0 10px}.editor-slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}.slot-choice{display:flex;align-items:center;justify-content:center;gap:6px;min-height:48px;border:1px solid #adb3be;border-radius:14px;font-size:14px;font-variant-numeric:tabular-nums;background:#ffffff55}.slot-choice input,.type-choice input{accent-color:#7e6da7;width:16px;height:16px;flex:none}.slot-choice:has(input:checked){border-color:#79629e;background:#b4a3d42e;box-shadow:inset 0 0 0 1px #79629e}.slot-choice:has(input:disabled){opacity:.45;background:transparent}.editor-types{display:grid;gap:8px}.type-choice{display:flex;align-items:center;gap:10px;border:1px solid #b9bdc5;padding:12px;border-radius:14px;min-height:46px;font-size:14px;background:#fff4}.type-choice i{height:8px;width:8px;border-radius:50%;background:var(--c);flex:none}.type-choice:has(input:checked){border-color:var(--t);background:var(--bgc);box-shadow:inset 0 0 0 1px var(--t)}.editor-save{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;border-radius:16px;background:linear-gradient(120deg,#9cc8ef,#c3b0e7);color:#172132;font-size:16px;font-weight:700;margin-top:22px}.editor-save:disabled{opacity:.4;cursor:not-allowed}.editor-error{font-size:14px;line-height:1.5;color:#a63b35;margin:14px 0 0}.editor-note{font-size:14px;color:#616975;line-height:1.5}.editor-account{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;color:#616975;margin:16px 0}.editor-account button{min-height:44px;text-decoration:underline}.editor-added{border-top:1px solid #b9bdc566;padding-top:16px;margin-top:24px}.editor-added h3{font-size:16px;margin:0 0 12px}.editor-added-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-size:14px;line-height:1.45}.editor-added-row>span{min-width:0;overflow-wrap:anywhere}.editor-added-row small{display:block;color:#616975;margin-top:3px}.editor-delete{min-height:44px;flex:none;padding:8px;color:#a63b35;font-size:14px}.editor-cancel{min-height:46px;width:100%;text-align:center;color:inherit;font-size:15px;margin-top:8px}.editor-confirm{padding:16px;border:1px solid #d97b7466;border-radius:18px;background:#d97b740a;overflow-wrap:anywhere}.editor-confirm p{font-size:15px;line-height:1.5}.editor-confirm .editor-save{background:#a13e3a;color:white}.edit-setting{display:flex;align-items:center;gap:14px;margin:14px 0;padding:14px;border:1px solid var(--sep);border-radius:18px}.edit-setting>span{flex:1;font-size:15px;font-weight:600;line-height:1.4}.edit-setting small{display:block;font-size:13px;font-weight:400;color:var(--text2);margin-top:4px}.edit-setting input{appearance:none;-webkit-appearance:none;position:relative;width:48px;height:30px;border-radius:999px;background:#787d85;border:0;flex:none;cursor:pointer}.edit-setting input:before{content:'';position:absolute;width:24px;height:24px;border-radius:50%;background:white;top:3px;left:3px;transition:transform .18s}.edit-setting input:checked{background:#7a6e98}.edit-setting input:checked:before{transform:translateX(18px)}.editor-sync{font-size:13px;color:var(--text2);margin:5px 0 10px;padding:0 3px;line-height:1.4}.user-addition{font-size:12px;font-weight:500;color:var(--text2);margin-top:10px}.dot-study{background:#dc963f}.dot-industry{background:#a67b59}.t-study{--c:#dc963f;--t:#955613;--bgc:#dc963f1c}.t-industry{--c:#a67b59;--t:#79512f;--bgc:#a67b591c}[data-theme=dark] .t-study{--t:#e5b26f}[data-theme=dark] .t-industry{--t:#cfa785}
+[data-theme=dark] .editor-sheet{background:linear-gradient(160deg,#20242b,#111317);color:#e6e8ec;border-color:#343842}[data-theme=dark] .editor-input{background:#111317;color:#e6e8ec;border-color:#4f5663}[data-theme=dark] .editor-caption,[data-theme=dark] .editor-note,[data-theme=dark] .editor-account,[data-theme=dark] .editor-added-row small{color:#a1a6b0}[data-theme=dark] .editor-close{background:#ffffff08}[data-theme=dark] .slot-choice,[data-theme=dark] .type-choice{background:#ffffff04;border-color:#505866}[data-theme=dark] .slot-choice:has(input:checked){background:#b4a3d41a;border-color:#c3b0e7;box-shadow:inset 0 0 0 1px #c3b0e7}[data-theme=dark] .type-choice:has(input:checked){background:var(--bgc);border-color:var(--t)}[data-theme=dark] .editor-error,[data-theme=dark] .editor-delete{color:#ecaaa3}[data-theme=dark] .editor-added{border-color:#343842}
+@media(min-width:600px){.editor-sheet{max-width:500px;left:50%;right:auto;width:calc(100% - 32px);transform:translate(-50%,110%)}.editor-sheet.show{transform:translate(-50%,0)}}
+@media(max-width:355px){.title-row{gap:4px}.title-row>.ibtn{width:40px}.edit-top{min-width:46px;padding:0 6px}.group-name{font-size:14px}.group-symbol{display:none}.day-edit-wrap>.edit-gradient{left:132px}.dh-date{font-size:14px}.editor-sheet{padding-left:16px;padding-right:16px}}
+@media(prefers-reduced-motion:reduce){.editor-sheet,.edit-setting input:before{transition:none!important}}
+
+/* Day title and edit are independent controls; long weekday names never overlap. */
+.day-edit-wrap .dh-wd{padding-right:0}.day-edit-wrap .edit-gradient{position:static;min-width:48px;min-height:44px;padding:0 10px;font-size:16px;flex:none}.day-title-row{display:flex;align-items:center;gap:8px;min-height:28px}.dh-left{min-width:0;flex:1}.day-open{min-height:44px;display:inline-flex;align-items:center;min-width:0}.day-edit-wrap .dh-sub{margin-top:2px}.edited-by,.user-addition,.editor-sync{font-size:14px}.day-head .dh-r{align-self:center}.day-title-row .dh-wd{white-space:nowrap}
+@media(max-width:355px){.day-title-row{gap:6px}.day-title-row .dh-wd{font-size:16px}.day-edit-wrap .edit-gradient{min-width:44px;padding:0 8px}.day-head{padding-left:12px;padding-right:12px}.dh-r{min-width:80px}}
+
+.editor-step{margin-top:20px}.editor-step legend{margin:0 0 10px}.editor-save-bar{position:sticky;bottom:-24px;z-index:4;padding:12px 0 24px;background:#f3f4f6;box-shadow:0 -8px 16px #f3f4f6}.editor-save-bar .editor-save{margin-top:0}[data-theme=dark] .editor-save-bar{background:#14171c;box-shadow:0 -8px 16px #14171c}
+/* Keep the title and close control visible while scrolling a long form. */
+.editor-sheet{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}.editor-sheet>.grab,.editor-heading{flex:none}#editorBody{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding-bottom:24px;scrollbar-width:none}.editor-save-bar{bottom:0;padding-bottom:12px}.editor-heading{margin-bottom:12px}.editor-sheet .editor-caption{margin-top:0}
+
+#editorFooter{flex:none}#editorFooter .editor-save-bar{position:static;bottom:auto;padding:12px 0 20px;box-shadow:none;background:transparent}#editorFooter:not(:empty){border-top:1px solid #a1a6b022}#editorBody{padding-bottom:12px}
+
+#calSheet .sh-title:has(h2[hidden]){justify-content:flex-end;margin-bottom:0}
+
+
+:root[data-theme=dark],:root[data-theme=dark][data-glass]{--bg1:#08090b;--bg2:#111317;--bg3:#08090b;--text:#e6e8ec;--text2:#a1a6b0;--text3:#a1a6b0;--primary:#b7bbc4;--card-solid:#191c22;--rim:linear-gradient(165deg,#343842,#30343c66 55%,#30343c99);--sep:#30343c;--font:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Arial,sans-serif}
+[data-theme=dark] html,[data-theme=dark] body{background:#08090b}
+[data-theme=dark] .bg{background:linear-gradient(150deg,#111317 0%,#08090b 70%)!important}
+[data-theme=dark] .top.lg{background:linear-gradient(155deg,#20242bd9,#111317ed);box-shadow:inset 0 -1px 0 #30343c,0 8px 28px #0005}
+[data-theme=dark] .group-picker{background:linear-gradient(155deg,#2a2f38d9,#242830b8);box-shadow:inset 0 1px 0 #b7bbc41c,0 5px 20px #0005}
+[data-theme=dark] .group-symbol{color:#b7bbc4;background:#ffffff05}
+[data-theme=dark] .group-name{font-weight:600}
+[data-theme=dark] .title-row>.ibtn{background:linear-gradient(145deg,#242830,#191c22);color:#b7bbc4;box-shadow:inset 0 1px 0 #343842,0 4px 16px #0005}
+[data-theme=dark] .chev{color:#b7bbc4;background:#191c22;box-shadow:inset 0 1px 0 #30343c66}
+[data-theme=dark] .dcell.sel{background:linear-gradient(145deg,#e6e8ec,#b7bbc4);box-shadow:inset 0 1px 0 #fff8,0 6px 22px #0006}
+[data-theme=dark] .dcell.sel .dn{color:#111317}
+[data-theme=dark] .dcell.sel .wd{color:#30343c}
+[data-theme=dark] .day-head{background:linear-gradient(155deg,#242830aa,#191c2299);box-shadow:inset 0 1px 0 #343842,0 6px 24px #0005}
+[data-theme=dark] .dh-wd{font-weight:600;color:#f0f1f3}
+[data-theme=dark] .dh-sub{color:#a1a6b0}
+[data-theme=dark] .dh-badge{color:#b7bbc4;background:#ffffff04;box-shadow:inset 0 0 0 1px #3a3e47}
+[data-theme=dark] .card,[data-theme=dark] .lesson.now .card{background:linear-gradient(160deg,#191c22e0,#15181ecc)!important;border:1px solid #30343c;border-top-color:#343842;border-radius:22px;box-shadow:inset 0 1px 0 #b7bbc40c,0 8px 28px #0006!important}
+[data-theme=dark] .lesson.now .card{background:linear-gradient(160deg,#242830e0,#191c22d9)!important;border-color:#3a3e47;border-top-color:#4b515e;box-shadow:inset 0 1px 0 #b7bbc415,0 10px 32px #0007!important}
+[data-theme=dark] .name{font-weight:600;color:#e6e8ec}
+[data-theme=dark] .tm{font-weight:500;font-variant-numeric:tabular-nums;color:#f0f1f3}
+[data-theme=dark] .tm svg{color:#b7bbc4}
+[data-theme=dark] .meta,[data-theme=dark] .meta .pos{color:#a1a6b0}
+[data-theme=dark] .nchip{background:#ffffff05;color:#b7bbc4;box-shadow:inset 0 1px 0 #ffffff05}
+[data-theme=dark] .bar{background:#3a3e4766}
+[data-theme=dark] .dock.lg.strong{background:linear-gradient(155deg,#242830ed,#191c22f0);box-shadow:inset 0 1px 0 #464c58,0 10px 32px #0007}
+[data-theme=dark] .seg{background:#111317b3;box-shadow:inset 0 1px 3px #0005}
+[data-theme=dark] .seg .thumb{background:linear-gradient(150deg,#3a3e47,#30343c);box-shadow:inset 0 1px 0 #b7bbc42a,0 3px 12px #0006}
+[data-theme=dark] .g-band{background:linear-gradient(90deg,transparent,#78b8c366,#9b86b277,#78b8c333,transparent);filter:none}
+[data-theme=dark] .g-band::after{background:#9b86b222;inset:2px 25% -3px 30%}</style></head>
 <body>
 <div class="bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 
@@ -485,6 +532,7 @@ svg{display:block;flex:none}
   <header class="top lg" id="top">
     <div class="title-row">
       <button class="group-picker lg" id="groupPicker" aria-label="Выбрать группу" aria-haspopup="dialog" aria-expanded="false" aria-controls="groupSheet"><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
+      <button class="edit-top" id="btnEdit" aria-label="Редактировать расписание">edit.</button>
       <button class="ibtn lg" id="btnRefresh" aria-label="Обновить расписание"></button>
       <button class="ibtn lg" id="btnMore" aria-label="Настройки"></button>
     </div>
@@ -561,6 +609,8 @@ svg{display:block;flex:none}
 
 
 <div class="toast lg strong" id="toast"></div>
+<section class="sheet editor-sheet" id="editorSheet" role="dialog" aria-modal="true" aria-labelledby="editorTitle" inert>
+<div class="grab" aria-hidden="true"></div><div class="editor-heading"><h2 id="editorTitle" tabindex="-1">Добавить пару</h2><button id="editorClose" class="editor-close" aria-label="Закрыть редактор">×</button></div><div id="editorBody"></div><div id="editorFooter"></div></section>
 
 <script>
 (function () {
@@ -575,6 +625,7 @@ svg{display:block;flex:none}
     groupName: 'ИМС-1-25',
     api: 'https://kabinet.kgeu.ru/api',
     site: 'https://kabinet.kgeu.ru/WebApp/#/Rasp/Group/',
+    editorApi: 'https://kgeu-brs.frightencd.workers.dev/edits',
     scheduleApi: 'https://kgeu-brs.frightencd.workers.dev/schedule', // публичное расписание через наш Worker
     tz: 180,             // часовой пояс Казани: UTC+3 (в минутах)
     refreshMin: 15       // как часто обновлять данные в фоне (минуты)
@@ -652,7 +703,8 @@ svg{display:block;flex:none}
 
   /* ================= РАЗБОР ДАННЫХ ================= */
   var TYPES = { lec: 'Лекция', pr: 'Практика', lab: 'Лабораторная работа', exam: 'Экзамен', credit: 'Зачёт', cons: 'Консультация', other: 'Занятие' };
-  var TYPE_ORDER = ['lec', 'pr', 'lab', 'exam', 'credit', 'cons', 'other'];
+  TYPES.study = 'Учебная практика'; TYPES.industry = 'Производственная практика';
+  var TYPE_ORDER = ['lec', 'pr', 'lab', 'study', 'industry', 'exam', 'credit', 'cons', 'other'];
   var TOKENS = {
     'лек': 'lec', 'лекц': 'lec', 'лекция': 'lec',
     'пр': 'pr', 'практ': 'pr', 'практика': 'pr', 'сем': 'pr', 'семинар': 'pr',
@@ -735,7 +787,7 @@ svg{display:block;flex:none}
     var par = D.curPar ? ((((D.curPar - 1 + k) % 2) + 2) % 2) + 1 : (num % 2 ? 1 : 2);
     return { num: num, parity: par, label: par === 2 ? 'чётная' : 'нечётная' };
   }
-  function lessonsFor(date) {
+  function originalLessonsFor(date) {
     var D = S.data; if (!D) return [];
     if (!D.cyclical) return S.byDate[date] || [];
     if ((D.minDate && date < D.minDate) || (D.maxDate && date > D.maxDate)) return [];
@@ -982,7 +1034,7 @@ svg{display:block;flex:none}
       var m = monday(S.sel);
       for (var i = 0; i < 7; i++) {
         var d = addDays(m, i), l2 = lessonsFor(d);
-        if (i === 6 && !l2.length) continue;
+        // Show empty Sunday too: every day supports long-press editing.
         h += '<section class="wk' + (d === S.sel ? ' is-sel' : '') + '" id="d-' + d + '">' + dayHeadHTML(d, l2, true) +
           (l2.length ? '<div class="lessons">' + lessonsHTML(d, l2) + '</div>' : '<div class="noclass">' + (dow(d) === 0 ? 'Выходной' : 'Пар нет') + '</div>') + '</section>';
       }
@@ -1249,7 +1301,8 @@ svg{display:block;flex:none}
     $('#calGrid').addEventListener('click', function (e) {
       var b = e.target.closest('.cday'); if (!b) return;
       var d = b.getAttribute('data-date');
-      setSel(d); renderCal();
+      if (E.calendar) { E.calendar = false; E.editDay = d; S.mode = 'day'; LS.set('kgeu.mode', 'day'); syncMode(); }
+      setSel(d, {force:true}); renderCal();
       setTimeout(function () { closeSheet('calSheet'); }, 170);
     });
     $('#calPrev').addEventListener('click', function () { shiftMonth(-1); });
@@ -1259,7 +1312,8 @@ svg{display:block;flex:none}
         var q = b.getAttribute('data-q'), t = today(), d = t;
         if (q === 'tomorrow') d = addDays(t, 1);
         if (q === 'nextweek') d = addDays(monday(t), 7);
-        setSel(d); closeSheet('calSheet');
+        if (E.calendar) { E.calendar = false; E.editDay = d; S.mode = 'day'; syncMode(); }
+        setSel(d, {force:true}); closeSheet('calSheet');
       });
     });
 
@@ -1460,7 +1514,60 @@ svg{display:block;flex:none}
     if (!S.data || Date.now() - S.data.fetchedAt > 60000) load(false);
     setInterval(tick, 20000);
   }
-  init();
+  /* ================= ОБЩИЕ ДОПОЛНЕНИЯ / EDIT. ================= */
+  var E = {token: LS.get('kgeu.editor.session',null),user:null,hidden:LS.get('kgeu.hideEdits',false),map:{},authors:{},loaded:{},calendar:false,editDay:null,pending:null,busy:false,fetching:{},error:'',formGroup:null,date:null,name:'',slot:null,type:null,deleteId:null,focus:null};
+  var EDIT_SLOTS=[['08:00','09:30'],['09:40','11:10'],['11:20','12:50'],['13:20','14:50'],['15:00','16:30'],['16:40','18:10']];
+  function ekey(date,group){return (group||CONFIG.groupId)+':'+date;}
+  function additionsFor(date){return E.map[ekey(date)]||[];}
+  function lessonsFor(date){var list=originalLessonsFor(date).slice();if(!E.hidden)list=list.concat(additionsFor(date));return list.sort(function(a,b){return hm(a.start)-hm(b.start)||cmpLesson(a,b);});}
+  async function editAPI(path,options){options=options||{};var headers={'Content-Type':'application/json'};if(E.token)headers.Authorization='Bearer '+E.token.token;var ctrl=new AbortController(),timer=setTimeout(function(){ctrl.abort();},20000);try{var r=await fetch(CONFIG.editorApi+path,Object.assign({},options,{headers:headers,credentials:'omit',cache:'no-store',signal:ctrl.signal}));var j=await r.json();if(!r.ok){if(r.status===401){E.token=null;E.user=null;LS.set('kgeu.editor.session',null);}var er=new Error(j.error||'Не удалось загрузить дополнения');er.status=r.status;throw er;}return j;}catch(err){if(err instanceof SyntaxError)throw new Error('Сервис редактирования ещё не подключён');if(err.name==='AbortError')throw new Error('Нет ответа от сервиса редактирования');if(err.message==='Failed to fetch')throw new Error('Нет связи с сервисом редактирования');throw err;}finally{clearTimeout(timer);}}
+  async function syncEdits(date,force){var group=CONFIG.groupId,from=monday(date||S.sel),to=addDays(from,41),key=group+':'+from;if(E.fetching[key])return E.fetching[key];if(!force&&E.loaded[key]&&Date.now()-E.loaded[key]<30000)return;E.fetching[key]=(async function(){try{var j=await editAPI('/days?group='+group+'&from='+from+'&to='+to);for(var d=from;d<=to;d=addDays(d,1)){E.map[ekey(d,group)]=[];delete E.authors[ekey(d,group)];}j.lessons.forEach(function(l){l.custom=true;(E.map[ekey(l.date,group)]||(E.map[ekey(l.date,group)]=[])).push(l);});Object.keys(j.days).forEach(function(d){E.authors[ekey(d,group)]=j.days[d];});E.loaded[key]=Date.now();E.error='';if(group===CONFIG.groupId)render();return true;}catch(err){E.error=err.message;if(group===CONFIG.groupId)renderMain();return false;}finally{delete E.fetching[key];}})();return E.fetching[key];}
+  var originalRenderHeader=renderHeader;renderHeader=function(){originalRenderHeader();if(typeof E!=='undefined')syncEdits(S.sel,false);};
+  var originalRenderCal=renderCal;renderCal=function(anim){originalRenderCal(anim);syncEdits(S.calMonth,false);};
+  dayHeadHTML=function(date,list,compact){var author=E.authors[ekey(date)],mark=!E.hidden&&author?'<span class="edited-by">edited by '+esc(author)+'</span>':'';
+    // Generate explicitly to keep the day-navigation button and edit button siblings.
+    var cnt=pairsCount(list),end=list.length?list.reduce(function(a,l){return hm(l.end)>hm(a)?l.end:a;},list[0].end):'',sub=list.length?cnt+' '+plural(cnt,PAIRS)+' · '+list[0].start+'–'+end:(dow(date)===0?'Выходной':'Пар нет'),badge=relLabel(date);
+    return '<div class="day-edit-wrap"><div class="day-head'+(compact?' compact':'')+'" data-date="'+date+'" role="group" aria-label="'+WD[dow(date)]+', '+dmy(date)+'"><span class="dh-left"><span class="day-title-row"><button class="day-open" aria-label="Открыть '+dmy(date)+'"><span class="dh-wd">'+WD[dow(date)]+'</span></button>'+(E.editDay===date?'<button class="edit-gradient" data-edit-day="'+date+'" aria-label="Добавить пару на '+dmy(date)+'">edit.</button>':'')+'</span><span class="dh-sub" style="display:block">'+sub+'</span>'+mark+'</span><span class="dh-r">'+(badge?'<span class="dh-badge">'+badge+'</span>':'')+'<span class="dh-date">'+dmy(date)+'</span></span></div></div>' ;};
+  var originalLesson=lessonHTML;lessonHTML=function(l,st,n){var html=originalLesson(l,st,n);if(l.custom)html=html.replace('</div></article>','<div class="user-addition">Добавлено · '+esc(l.author)+'</div></div></article>');return html;};
+  var originalMain=renderMain;renderMain=function(anim){originalMain(anim);if(!E.hidden&&E.error&&$('#view'))$('#view').insertAdjacentHTML('afterbegin','<p class="editor-sync" role="status">Дополнения недоступны или могли устареть. '+esc(E.error)+'</p>');};
+  var originalOpenCal=openCal;openCal=function(){E.calendar=false;$('#calSheet').setAttribute('aria-label','Выбор даты');$('#calSheet h2').textContent='Выбор даты';$('#calSheet h2').hidden=false;originalOpenCal();};
+  function editorPanel(title,html){E.focus=document.activeElement;$('#editorTitle').textContent=title;$('#editorBody').innerHTML=html;$('#editorFooter').replaceChildren();var bar=$('#editorBody .editor-save-bar');if(bar)$('#editorFooter').appendChild(bar);$('#editorSheet').inert=false;openSheet('editorSheet');$('.app').inert=true;$('#dock').inert=true;$('#editorTitle').focus({preventScroll:true});}
+  var originalCloseSheet=closeSheet;closeSheet=function(id){var closing=id||stack[stack.length-1];if(closing==='calSheet')E.calendar=false;originalCloseSheet(id);if(closing==='editorSheet'){$('#editorSheet').inert=true;$('.app').inert=false;$('#dock').inert=false;if(E.focus&&E.focus.isConnected)E.focus.focus({preventScroll:true});}};
+  function loginPanel(err){editorPanel('Вход для редактирования','<p class="editor-caption">Отдельный аккаунт, выданный администратором. Не пароль от кабинета КГЭУ.</p><form id="editLogin"><label class="editor-field" for="editLoginName">Логин</label><input class="editor-input" id="editLoginName" name="login" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="64"><label class="editor-field" for="editPassword">Пароль</label><input class="editor-input" id="editPassword" name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="256"><p class="editor-error" id="loginError" role="alert">'+esc(err||'')+'</p><button class="editor-save" id="loginSubmit">Войти</button></form><p class="editor-note">Вход сохраняется на этом устройстве на 30 дней. Дополнения видны всей группе.</p>');}
+  async function requireEditor(action){if(E.busy)return;E.pending=action;if(E.token&&E.token.expiresAt>Date.now()){try{var j=await editAPI('/session');E.user=j.user;action();return;}catch(err){if(err.status!==401){loginPanel(err.message);return;}}}loginPanel();}
+  function startEditCalendar(){requireEditor(function(){closeSheet('editorSheet');openCal();E.calendar=true;$('#calSheet h2').hidden=true;$('#calSheet').setAttribute('aria-label','Выбор дня для редактирования');});}
+  function editDay(date){requireEditor(async function(){S.mode='day';LS.set('kgeu.mode','day');syncMode();E.editDay=date;setSel(date,{force:true});E.formGroup=CONFIG.groupId;E.date=date;E.name='';E.slot=null;E.type=null;E.deleteId=null;await syncEdits(date,true);showAddPanel();});}
+  function slotBusy(i){var slot=EDIT_SLOTS[i],list=originalLessonsFor(E.date).concat(additionsFor(E.date));return list.some(function(l){return hm(slot[0])<hm(l.end)&&hm(slot[1])>hm(l.start);});}
+  function showAddPanel(){var known=!!S.data&&!S.offline&&!E.error,slots=EDIT_SLOTS.map(function(s,i){var busy=slotBusy(i);if(busy)return '';return '<label class="slot-choice"><input type="radio" name="slot" value="'+(i+1)+'" '+(busy||!known?'disabled':'')+' '+(E.slot===i+1?'checked':'')+'>'+s[0]+'–'+s[1]+'</label>';}).join(''),types=['lec','pr','lab','study','industry'].map(function(t){return '<label class="type-choice t-'+t+'"><input type="radio" name="kind" value="'+t+'" '+(E.type===t?'checked':'')+'><i></i>'+esc(TYPES[t])+'</label>';}).join('');
+   var additions=additionsFor(E.date).map(function(l){return '<div class="editor-added-row"><span>'+esc(l.name)+'<small>'+l.start+'–'+l.end+' · '+esc(l.author)+'</small></span><button type="button" class="editor-delete" data-remove-added="'+l.id+'">Удалить</button></div>';}).join('');
+   editorPanel('Добавить пару','<p class="editor-caption">'+WD[dow(E.date)]+', '+human(E.date)+' · '+esc(CONFIG.groupName)+'<br>Дополнение увидят все участники группы.</p><form id="addLesson"><label class="editor-field" for="newLessonName">Название пары</label><input class="editor-input" id="newLessonName" name="name" maxlength="160" minlength="2" value="'+esc(E.name)+'" placeholder="Например, Учебная практика" required><fieldset class="editor-step" id="slotStep" '+(E.name.trim().length>=2?'':'hidden')+'><legend>Свободное время</legend><div class="editor-slots">'+slots+'</div><p class="editor-note">'+(known?(EDIT_SLOTS.every(function(_,i){return slotBusy(i);})?'В этот день нет свободных интервалов с 08:00 до 18:10.':'Показано только свободное время. Пара длится 90 минут.'):'Сначала нужно обновить исходное расписание и дополнения. Сохранение пока недоступно.')+'</p></fieldset><fieldset class="editor-step" id="typeStep" '+(E.slot?'':'hidden')+'><legend>Тип занятия</legend><div class="editor-types">'+types+'</div></fieldset><p id="addError" class="editor-error" role="alert"></p><div class="editor-save-bar"><button class="editor-save" id="saveLesson" form="addLesson" disabled>Сохранить</button></div></form>'+(additions?'<section class="editor-added"><h3>Добавленные пары</h3>'+additions+'<p class="editor-note">Удалять дополнения может любой редактор. Пары КГЭУ защищены.</p></section>':'')+'<div class="editor-account"><span>'+esc(E.user?.name||'Редактор')+'</span><button id="editLogout">Выйти</button></div>');syncSave();}
+  function syncSave(){var b=$('#saveLesson');if(b)b.disabled=E.busy||E.name.trim().length<2||!E.slot||!E.type||!S.data||S.offline||!!E.error||E.formGroup!==CONFIG.groupId||slotBusy(E.slot-1);}
+  function deletePanel(id){var l=additionsFor(E.date).find(function(x){return x.id===id;});if(!l)return;E.deleteId=id;editorPanel('Удалить добавленную пару?','<div class="editor-confirm"><p><b>'+esc(l.name)+'</b><br>'+dmy(E.date)+' · '+l.start+'–'+l.end+'</p><p>Пара исчезнет у всех участников группы. Исходное расписание КГЭУ не изменится.</p><p id="deleteError" class="editor-error" role="alert"></p><button class="editor-save" id="confirmDelete">Удалить у всех</button><button class="editor-cancel" id="cancelDelete">Отмена</button></div>');}
+  function editorInit(){
+   var settings=document.createElement('label');settings.className='edit-setting';settings.innerHTML='<span>Отключить просмотр редактирования<small>Показывать только исходное расписание КГЭУ</small></span><input type="checkbox" id="hideEdits" role="switch" aria-label="Отключить просмотр редактирования">';$('#setSheet').insertBefore(settings,$('#setSheet .slabel'));$('#hideEdits').checked=E.hidden;
+   $('#hideEdits').addEventListener('change',function(){E.hidden=this.checked;LS.set('kgeu.hideEdits',E.hidden);render();});
+   $('#btnEdit').addEventListener('click',startEditCalendar);$('#btnRefresh').addEventListener('click',function(){syncEdits(S.sel,true);});$('#editorClose').addEventListener('click',function(){closeSheet('editorSheet');});
+   $('#editorBody').addEventListener('input',function(e){if(e.target.id==='newLessonName'){E.name=e.target.value;$('#slotStep').hidden=E.name.trim().length<2;$('#typeStep').hidden=!E.slot||E.name.trim().length<2;syncSave();}});
+   $('#editorBody').addEventListener('change',function(e){if(e.target.name==='slot'){E.slot=Number(e.target.value);$('#typeStep').hidden=false;}if(e.target.name==='kind')E.type=e.target.value;syncSave();});
+   $('#editorBody').addEventListener('submit',async function(e){e.preventDefault();if(E.busy)return;
+    if(e.target.id==='editLogin'){E.busy=true;$('#loginSubmit').disabled=true;try{var j=await editAPI('/login',{method:'POST',body:JSON.stringify({login:$('#editLoginName').value.trim(),password:$('#editPassword').value})});E.token={token:j.token,expiresAt:j.expiresAt};E.user=j.user;LS.set('kgeu.editor.session',E.token);$('#editPassword').value='';closeSheet('editorSheet');E.busy=false;if(E.pending)E.pending();}catch(err){$('#loginError').textContent=err.message;$('#loginSubmit').disabled=false;}finally{E.busy=false;}return;}
+    if(e.target.id==='addLesson'){syncSave();if($('#saveLesson').disabled)return;E.busy=true;syncSave();try{await editAPI('/lessons',{method:'POST',body:JSON.stringify({group:E.formGroup,date:E.date,name:E.name.trim(),slot:E.slot,type:E.type})});var ok=await syncEdits(E.date,true);if(!ok){$('#addError').textContent='Пара сохранена, но список не обновился. Не отправляйте её повторно — закройте окно и обновите расписание.';return;}closeSheet('editorSheet');toast('Пара добавлена для всей группы','ok');}catch(err){if(err.status===401){E.busy=false;loginPanel('Сессия истекла. Войдите снова');return;}$('#addError').textContent=err.message;if(err.status===409){E.slot=null;await syncEdits(E.date,true);showAddPanel();$('#addError').textContent=err.message;}}finally{E.busy=false;syncSave();}}
+   });
+   $('#editorBody').addEventListener('click',async function(e){var del=e.target.closest('[data-remove-added]');if(del){deletePanel(del.dataset.removeAdded);return;}if(e.target.closest('#cancelDelete')){E.deleteId=null;showAddPanel();return;}if(e.target.closest('#editLogout')){try{await editAPI('/logout',{method:'POST'});}catch(err){toast('Не удалось завершить сессию на сервере','err');return;}E.token=null;E.user=null;LS.set('kgeu.editor.session',null);closeSheet('editorSheet');return;}
+    if(e.target.closest('#confirmDelete')){if(E.busy)return;E.busy=true;$('#confirmDelete').disabled=true;try{await editAPI('/lessons/'+E.deleteId,{method:'DELETE'});await syncEdits(E.date,true);closeSheet('editorSheet');toast('Добавленная пара удалена у всех','ok');}catch(err){if(err.status===404){await syncEdits(E.date,true);showAddPanel();}else if(err.status===401){E.busy=false;loginPanel('Сессия истекла. Войдите снова');}else{$('#deleteError').textContent=err.message;$('#confirmDelete').disabled=false;}}finally{E.busy=false;}}
+   });
+   var hold=null,point=null,suppressUntil=0;
+   function cancelHold(){clearTimeout(hold);hold=null;}
+   $('#view').addEventListener('pointerdown',function(e){var b=e.target.closest('.day-head');if(!b||e.button!==0||e.target.closest('[data-edit-day]'))return;point={x:e.clientX,y:e.clientY};hold=setTimeout(function(){hold=null;suppressUntil=Date.now()+1200;haptic('impact','medium');editDay(b.dataset.date);},550);});
+   $('#view').addEventListener('pointermove',function(e){if(point&&Math.hypot(e.clientX-point.x,e.clientY-point.y)>10)cancelHold();});['pointerup','pointercancel','pointerleave'].forEach(function(t){$('#view').addEventListener(t,cancelHold);});window.addEventListener('scroll',cancelHold,{passive:true});
+   $('#view').addEventListener('contextmenu',function(e){if(e.target.closest('.day-head'))e.preventDefault();});
+   $('#view').addEventListener('click',function(e){var b=e.target.closest('[data-edit-day]');if(b){e.stopImmediatePropagation();editDay(b.dataset.editDay);}else if(Date.now()<suppressUntil&&e.target.closest('.day-head')){e.preventDefault();e.stopImmediatePropagation();}},true);
+   $('#view').addEventListener('keydown',function(e){if(e.key==='F2'&&e.target.closest('.day-head')){e.preventDefault();editDay(e.target.closest('.day-head').dataset.date);}});
+   document.addEventListener('keydown',function(e){if(!isOpen('editorSheet')||e.key!=='Tab')return;var els=$$('#editorSheet button:not([disabled]),#editorSheet input:not([disabled])').filter(function(x){return x.getClientRects().length;});var first=els[0],last=els[els.length-1];if(e.shiftKey&&(document.activeElement===first||document.activeElement===$('#editorTitle'))){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}});
+   document.addEventListener('visibilitychange',function(){if(!document.hidden)syncEdits(S.sel,true);});setInterval(function(){if(!document.hidden)syncEdits(S.sel,true);},30000);syncEdits(S.sel,true);
+  }
+
+  init(); editorInit();
 
 })();
 </script>
