@@ -524,7 +524,82 @@ svg{display:block;flex:none}
 [data-theme=dark] .seg{background:#111317b3;box-shadow:inset 0 1px 3px #0005}
 [data-theme=dark] .seg .thumb{background:linear-gradient(150deg,#3a3e47,#30343c);box-shadow:inset 0 1px 0 #b7bbc42a,0 3px 12px #0006}
 [data-theme=dark] .g-band{background:linear-gradient(90deg,transparent,#78b8c366,#9b86b277,#78b8c333,transparent);filter:none}
-[data-theme=dark] .g-band::after{background:#9b86b222;inset:2px 25% -3px 30%}</style></head>
+[data-theme=dark] .g-band::after{background:#9b86b222;inset:2px 25% -3px 30%}
+/* One material system: translucent neutral glass, no coloured focus rings. */
+:root{--glass-alpha:.32;--glass-rgb:255,255,255;--glass-edge:rgba(255,255,255,.76);--glass-shadow:0 10px 30px #20242b14;--neutral-focus:rgba(38,43,50,.25);--neutral-glow:rgba(30,35,45,.06);--control-bg:rgba(255,255,255,.42);--control-line:rgba(40,45,55,.23);--selection-bg:rgba(30,35,45,.09);--selection-line:rgba(30,35,45,.45);--material-blur:24px}
+:root[data-theme=dark]{--glass-rgb:32,36,43;--glass-edge:rgba(225,230,240,.20);--glass-shadow:0 12px 32px #0004;--neutral-focus:rgba(230,235,242,.42);--neutral-glow:rgba(230,235,242,.08);--control-bg:rgba(12,15,19,.36);--control-line:rgba(220,226,236,.26);--selection-bg:rgba(230,235,242,.10);--selection-line:rgba(230,235,242,.55)}
+/* Tinted and Clear are presets; the slider is the single source of opacity. */
+:root .lg,:root .lg.strong,:root .top.lg,:root .dock.lg.strong,:root .group-picker,:root .day-head,:root .empty,:root .sheet,:root .sheet.lg,:root #groupSheet,:root .editor-sheet,:root .card,:root .lesson.now .card{
+ background:linear-gradient(145deg,rgba(var(--glass-rgb),var(--glass-alpha)),rgba(var(--glass-rgb),calc(var(--glass-alpha) * .84)))!important;
+ -webkit-backdrop-filter:blur(var(--material-blur)) saturate(135%)!important;backdrop-filter:blur(var(--material-blur)) saturate(135%)!important;
+ box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 .5px var(--glass-edge),var(--glass-shadow)!important;
+ border-color:var(--glass-edge);color:var(--text)
+}
+:root .day-head .dh-sub,:root .day-head .dh-badge{color:var(--text2)}
+:root .day-head .dh-date,:root .day-head .dh-wd{color:var(--text)}
+:root .day-head::before{background:linear-gradient(140deg,#ffffff0a,transparent 55%)}
+:root .wk.is-sel .day-head{box-shadow:inset 0 0 0 1px var(--selection-line),var(--glass-shadow)!important}
+:root .next-btn{background:var(--selection-bg);color:var(--text);box-shadow:inset 0 0 0 1px var(--control-line)}
+:root .next-btn .nt,:root .next-btn .ns{color:var(--text2)}
+/* No detached light strip on the dock. Keep the moving thumb inside its segment. */
+#dock{isolation:isolate;overflow:hidden}
+#dock.shine::after{display:none;content:none}
+#dock::before{inset:0;border-radius:inherit}
+#modeSeg{position:relative;isolation:isolate;overflow:hidden;flex:none}
+#modeSeg .thumb{position:absolute;top:3px;bottom:3px;left:3px;height:auto;width:calc(50% - 3px);margin:0;pointer-events:none}
+/* A geometric SVG, not the baseline-dependent multiplication character. */
+.editor-heading{min-height:48px;align-items:center;gap:16px}
+.editor-close{display:grid;place-items:center;width:44px;height:44px;padding:0;line-height:1;align-self:center;color:var(--text);background:var(--fill)}
+.editor-close svg{width:20px;height:20px;display:block}
+/* Neutral selection and visible keyboard focus in both appearances. */
+:root input,:root button{accent-color:var(--text2)}
+:root .editor-input{background:var(--control-bg);color:var(--text);border:1px solid var(--control-line);outline:none!important;box-shadow:none;-webkit-tap-highlight-color:transparent}
+:root .editor-input:focus{border-color:var(--neutral-focus);box-shadow:0 0 0 3px var(--neutral-glow);outline:none!important}
+:root button:focus-visible,:root input:not(.editor-input):focus-visible{outline:2px solid var(--neutral-focus);outline-offset:3px}
+:root .slot-choice,:root .type-choice{background:var(--control-bg);border:1px solid var(--control-line);box-shadow:none}
+:root .slot-choice:has(input:checked),:root .type-choice:has(input:checked){background:var(--selection-bg);border-color:var(--selection-line);box-shadow:inset 0 0 0 .5px var(--selection-line),0 2px 8px var(--neutral-glow)}
+:root .slot-choice input,:root .type-choice input{appearance:none;-webkit-appearance:none;width:16px;height:16px;margin:0;display:grid;place-items:center;border:1px solid var(--control-line);border-radius:50%;background:transparent;accent-color:var(--text2)}
+:root .slot-choice input:checked,:root .type-choice input:checked{border-color:var(--text2)}
+:root .slot-choice input:checked::after,:root .type-choice input:checked::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--text)}
+:root .edit-setting input:checked{background:var(--text2)}
+:root .edit-gradient,:root .editor-save{background:linear-gradient(145deg,#f3f4f6,#c8ccd3);color:#20242b;box-shadow:inset 0 1px 0 #fff8,0 3px 12px #0001}
+:root[data-theme=light] .edit-gradient,:root[data-theme=light] .editor-save{background:linear-gradient(145deg,#454a53,#272c34);color:#fff}
+:root .editor-confirm .editor-save{background:#9e403c;color:#fff}
+:root .editor-save-bar{background:transparent;box-shadow:none}
+#editorFooter{padding-bottom:var(--safe-b)}
+:root .editor-note,:root .editor-caption,:root .editor-account,:root .editor-added-row small{color:var(--text2)}
+/* A real live preview above the opacity control, not two unrelated mockups. */
+.glass-opts{padding:12px;gap:12px;background:var(--fill);border-color:var(--sep)}
+.gprev{max-width:none;aspect-ratio:auto;height:112px;border-radius:16px;background:radial-gradient(ellipse at 10% 20%,#bac3ce 0%,transparent 60%),radial-gradient(ellipse at 90% 85%,#5d6775,transparent 65%),linear-gradient(145deg,#414750,#12161c)}
+.gprev .gp-time{top:12%;font-size:21px}
+.gprev .gp-card{top:44%;height:24%}
+.gprev .gp-dock{height:11%;bottom:8%}
+.gopt.on .gprev{box-shadow:0 0 0 1.5px var(--selection-line),0 5px 14px #0002}
+.gprev.clear .gp-card,.gprev.clear .gp-dock{background:rgba(240,244,250,.12)}
+.gprev.tinted .gp-card,.gprev.tinted .gp-dock{background:rgba(40,45,55,.85)}
+.glass-controls{margin-top:14px;padding:16px;border:1px solid var(--sep);border-radius:18px;background:var(--fill)}
+.glass-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;font-weight:650}
+#glassValue{font-variant-numeric:tabular-nums;color:var(--text2)}
+#glassTransparency{appearance:none;-webkit-appearance:none;width:100%;height:44px;margin:8px 0 0;background:transparent;cursor:pointer;touch-action:pan-y}
+#glassTransparency::-webkit-slider-runnable-track{height:6px;border-radius:8px;background:var(--control-line)}
+#glassTransparency::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;height:26px;width:26px;margin-top:-10px;border-radius:50%;background:var(--text);border:1px solid var(--glass-edge);box-shadow:0 2px 7px #0003}
+#glassTransparency::-moz-range-track{height:6px;border-radius:8px;background:var(--control-line)}
+#glassTransparency::-moz-range-thumb{height:26px;width:26px;border-radius:50%;background:var(--text);border:0}
+.glass-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--text2)}
+.glass-controls p{font-size:13px;line-height:1.45;color:var(--text2);margin:12px 0 0}
+.glass-demo{position:relative;height:92px;margin-top:14px;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 20% 20%,#adb5c2 0%,transparent 60%),linear-gradient(135deg,#454d59,#15191e)}
+.glass-demo-card{position:absolute;inset:15px 28px;display:flex;flex-direction:column;justify-content:center;padding:0 16px;border-radius:16px;font-size:14px;background:rgba(var(--glass-rgb),var(--glass-alpha));color:var(--text);border:.5px solid var(--glass-edge);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 var(--glass-edge),0 5px 15px #0002}
+.glass-demo-card span{font-size:12px;color:var(--text2);margin-top:3px}
+:root .sheet{clip-path:none}
+:root .sheet:not(.show){pointer-events:none}
+:root .backdrop{background:rgba(0,0,0,.22)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--glass-alpha:.96!important}}
+@media(prefers-reduced-transparency:reduce){:root{--glass-alpha:.96!important}}
+/* Muted labels remain readable on highly transparent glass. */
+:root[data-theme=light]{--text2:#434850;--text3:#4b5058}
+:root[data-theme=dark]{--text2:#b7bbc4;--text3:#a1a6b0}
+.glass-demo-card span{color:inherit}
+</style></head>
 <body>
 <div class="bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 
@@ -610,7 +685,7 @@ svg{display:block;flex:none}
 
 <div class="toast lg strong" id="toast"></div>
 <section class="sheet editor-sheet" id="editorSheet" role="dialog" aria-modal="true" aria-labelledby="editorTitle" inert>
-<div class="grab" aria-hidden="true"></div><div class="editor-heading"><h2 id="editorTitle" tabindex="-1">Добавить пару</h2><button id="editorClose" class="editor-close" aria-label="Закрыть редактор">×</button></div><div id="editorBody"></div><div id="editorFooter"></div></section>
+<div class="grab" aria-hidden="true"></div><div class="editor-heading"><h2 id="editorTitle" tabindex="-1">Добавить пару</h2><button id="editorClose" class="editor-close" aria-label="Закрыть редактор"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><div id="editorBody"></div><div id="editorFooter"></div></section>
 
 <script>
 (function () {
@@ -1524,13 +1599,14 @@ svg{display:block;flex:none}
   async function syncEdits(date,force){var group=CONFIG.groupId,from=monday(date||S.sel),to=addDays(from,41),key=group+':'+from;if(E.fetching[key])return E.fetching[key];if(!force&&E.loaded[key]&&Date.now()-E.loaded[key]<30000)return;E.fetching[key]=(async function(){try{var j=await editAPI('/days?group='+group+'&from='+from+'&to='+to);for(var d=from;d<=to;d=addDays(d,1)){E.map[ekey(d,group)]=[];delete E.authors[ekey(d,group)];}j.lessons.forEach(function(l){l.custom=true;(E.map[ekey(l.date,group)]||(E.map[ekey(l.date,group)]=[])).push(l);});Object.keys(j.days).forEach(function(d){E.authors[ekey(d,group)]=j.days[d];});E.loaded[key]=Date.now();E.error='';if(group===CONFIG.groupId)render();return true;}catch(err){E.error=err.message;if(group===CONFIG.groupId)renderMain();return false;}finally{delete E.fetching[key];}})();return E.fetching[key];}
   var originalRenderHeader=renderHeader;renderHeader=function(){originalRenderHeader();if(typeof E!=='undefined')syncEdits(S.sel,false);};
   var originalRenderCal=renderCal;renderCal=function(anim){originalRenderCal(anim);syncEdits(S.calMonth,false);};
-  dayHeadHTML=function(date,list,compact){var author=E.authors[ekey(date)],mark=!E.hidden&&author?'<span class="edited-by">edited by '+esc(author)+'</span>':'';
+  dayHeadHTML=function(date,list,compact){var author=E.authors[ekey(date)],mark=!E.hidden&&author&&additionsFor(date).length?'<span class="edited-by">edited by '+esc(author)+'</span>':'';
     // Generate explicitly to keep the day-navigation button and edit button siblings.
     var cnt=pairsCount(list),end=list.length?list.reduce(function(a,l){return hm(l.end)>hm(a)?l.end:a;},list[0].end):'',sub=list.length?cnt+' '+plural(cnt,PAIRS)+' · '+list[0].start+'–'+end:(dow(date)===0?'Выходной':'Пар нет'),badge=relLabel(date);
     return '<div class="day-edit-wrap"><div class="day-head'+(compact?' compact':'')+'" data-date="'+date+'" role="group" aria-label="'+WD[dow(date)]+', '+dmy(date)+'"><span class="dh-left"><span class="day-title-row"><button class="day-open" aria-label="Открыть '+dmy(date)+'"><span class="dh-wd">'+WD[dow(date)]+'</span></button>'+(E.editDay===date?'<button class="edit-gradient" data-edit-day="'+date+'" aria-label="Добавить пару на '+dmy(date)+'">edit.</button>':'')+'</span><span class="dh-sub" style="display:block">'+sub+'</span>'+mark+'</span><span class="dh-r">'+(badge?'<span class="dh-badge">'+badge+'</span>':'')+'<span class="dh-date">'+dmy(date)+'</span></span></div></div>' ;};
   var originalLesson=lessonHTML;lessonHTML=function(l,st,n){var html=originalLesson(l,st,n);if(l.custom)html=html.replace('</div></article>','<div class="user-addition">Добавлено · '+esc(l.author)+'</div></div></article>');return html;};
   var originalMain=renderMain;renderMain=function(anim){originalMain(anim);if(!E.hidden&&E.error&&$('#view'))$('#view').insertAdjacentHTML('afterbegin','<p class="editor-sync" role="status">Дополнения недоступны или могли устареть. '+esc(E.error)+'</p>');};
   var originalOpenCal=openCal;openCal=function(){E.calendar=false;$('#calSheet').setAttribute('aria-label','Выбор даты');$('#calSheet h2').textContent='Выбор даты';$('#calSheet h2').hidden=false;originalOpenCal();};
+  var originalSetSel=setSel;setSel=function(d,opts){if(E.editDay&&E.editDay!==d){E.editDay=null;E.pending=null;E.calendar=false;if(isOpen('editorSheet'))closeSheet('editorSheet');}return originalSetSel(d,opts);};
   function editorPanel(title,html){E.focus=document.activeElement;$('#editorTitle').textContent=title;$('#editorBody').innerHTML=html;$('#editorFooter').replaceChildren();var bar=$('#editorBody .editor-save-bar');if(bar)$('#editorFooter').appendChild(bar);$('#editorSheet').inert=false;openSheet('editorSheet');$('.app').inert=true;$('#dock').inert=true;$('#editorTitle').focus({preventScroll:true});}
   var originalCloseSheet=closeSheet;closeSheet=function(id){var closing=id||stack[stack.length-1];if(closing==='calSheet')E.calendar=false;originalCloseSheet(id);if(closing==='editorSheet'){$('#editorSheet').inert=true;$('.app').inert=false;$('#dock').inert=false;if(E.focus&&E.focus.isConnected)E.focus.focus({preventScroll:true});}};
   function loginPanel(err){editorPanel('Вход для редактирования','<p class="editor-caption">Отдельный аккаунт, выданный администратором. Не пароль от кабинета КГЭУ.</p><form id="editLogin"><label class="editor-field" for="editLoginName">Логин</label><input class="editor-input" id="editLoginName" name="login" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="64"><label class="editor-field" for="editPassword">Пароль</label><input class="editor-input" id="editPassword" name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="256"><p class="editor-error" id="loginError" role="alert">'+esc(err||'')+'</p><button class="editor-save" id="loginSubmit">Войти</button></form><p class="editor-note">Вход сохраняется на этом устройстве на 30 дней. Дополнения видны всей группе.</p>');}
@@ -1543,7 +1619,16 @@ svg{display:block;flex:none}
    editorPanel('Добавить пару','<p class="editor-caption">'+WD[dow(E.date)]+', '+human(E.date)+' · '+esc(CONFIG.groupName)+'<br>Дополнение увидят все участники группы.</p><form id="addLesson"><label class="editor-field" for="newLessonName">Название пары</label><input class="editor-input" id="newLessonName" name="name" maxlength="160" minlength="2" value="'+esc(E.name)+'" placeholder="Например, Учебная практика" required><fieldset class="editor-step" id="slotStep" '+(E.name.trim().length>=2?'':'hidden')+'><legend>Свободное время</legend><div class="editor-slots">'+slots+'</div><p class="editor-note">'+(known?(EDIT_SLOTS.every(function(_,i){return slotBusy(i);})?'В этот день нет свободных интервалов с 08:00 до 18:10.':'Показано только свободное время. Пара длится 90 минут.'):'Сначала нужно обновить исходное расписание и дополнения. Сохранение пока недоступно.')+'</p></fieldset><fieldset class="editor-step" id="typeStep" '+(E.slot?'':'hidden')+'><legend>Тип занятия</legend><div class="editor-types">'+types+'</div></fieldset><p id="addError" class="editor-error" role="alert"></p><div class="editor-save-bar"><button class="editor-save" id="saveLesson" form="addLesson" disabled>Сохранить</button></div></form>'+(additions?'<section class="editor-added"><h3>Добавленные пары</h3>'+additions+'<p class="editor-note">Удалять дополнения может любой редактор. Пары КГЭУ защищены.</p></section>':'')+'<div class="editor-account"><span>'+esc(E.user?.name||'Редактор')+'</span><button id="editLogout">Выйти</button></div>');syncSave();}
   function syncSave(){var b=$('#saveLesson');if(b)b.disabled=E.busy||E.name.trim().length<2||!E.slot||!E.type||!S.data||S.offline||!!E.error||E.formGroup!==CONFIG.groupId||slotBusy(E.slot-1);}
   function deletePanel(id){var l=additionsFor(E.date).find(function(x){return x.id===id;});if(!l)return;E.deleteId=id;editorPanel('Удалить добавленную пару?','<div class="editor-confirm"><p><b>'+esc(l.name)+'</b><br>'+dmy(E.date)+' · '+l.start+'–'+l.end+'</p><p>Пара исчезнет у всех участников группы. Исходное расписание КГЭУ не изменится.</p><p id="deleteError" class="editor-error" role="alert"></p><button class="editor-save" id="confirmDelete">Удалить у всех</button><button class="editor-cancel" id="cancelDelete">Отмена</button></div>');}
+  var glassTransparency=Number(LS.get('kgeu.glassTransparency',S.glass==='tinted'?20:70));
+  if(!Number.isFinite(glassTransparency))glassTransparency=70;
+  glassTransparency=Math.max(0,Math.min(100,glassTransparency));
+  function applyGlassMaterial(){document.documentElement.style.setProperty('--glass-alpha',String((.96-.86*glassTransparency/100).toFixed(3)));var slider=$('#glassTransparency'),value=$('#glassValue');if(slider)slider.value=glassTransparency;if(value)value.textContent=glassTransparency+'%';if(slider)slider.setAttribute('aria-valuetext',glassTransparency+' процентов прозрачности');}
+  var originalApplyTheme=applyTheme;applyTheme=function(){originalApplyTheme();applyGlassMaterial();};
   function editorInit(){
+   var glassControls=document.createElement('div');glassControls.className='glass-controls';glassControls.innerHTML='<label class="glass-label" for="glassTransparency">Прозрачность<output id="glassValue" for="glassTransparency"></output></label><input id="glassTransparency" type="range" min="0" max="100" step="5" aria-label="Прозрачность окон"><div class="glass-scale"><span>Плотнее</span><span>Прозрачнее</span></div><div class="glass-demo" aria-hidden="true"><div class="glass-demo-card"><b>Liquid Glass</b><span>Предпросмотр материала</span></div></div><p>Меняется сразу: карточки, шапка, нижний бар и окна. Текст остаётся непрозрачным. Настройка сохраняется на этом устройстве.</p>';$('#glassSeg').after(glassControls);
+   $('#glassTransparency').addEventListener('input',function(){glassTransparency=Number(this.value);LS.set('kgeu.glassTransparency',glassTransparency);applyGlassMaterial();});
+   $$('#glassSeg .gopt').forEach(function(b){b.addEventListener('click',function(){glassTransparency=b.dataset.gl==='tinted'?20:70;LS.set('kgeu.glassTransparency',glassTransparency);applyGlassMaterial();});});
+   applyGlassMaterial();
    var settings=document.createElement('label');settings.className='edit-setting';settings.innerHTML='<span>Отключить просмотр редактирования<small>Показывать только исходное расписание КГЭУ</small></span><input type="checkbox" id="hideEdits" role="switch" aria-label="Отключить просмотр редактирования">';$('#setSheet').insertBefore(settings,$('#setSheet .slabel'));$('#hideEdits').checked=E.hidden;
    $('#hideEdits').addEventListener('change',function(){E.hidden=this.checked;LS.set('kgeu.hideEdits',E.hidden);render();});
    $('#btnEdit').addEventListener('click',startEditCalendar);$('#btnRefresh').addEventListener('click',function(){syncEdits(S.sel,true);});$('#editorClose').addEventListener('click',function(){closeSheet('editorSheet');});
