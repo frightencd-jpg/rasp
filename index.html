@@ -494,6 +494,7 @@ svg{display:block;flex:none}
 #editorFooter{flex:none}#editorFooter .editor-save-bar{position:static;bottom:auto;padding:12px 0 20px;box-shadow:none;background:transparent}#editorFooter:not(:empty){border-top:1px solid #a1a6b022}#editorBody{padding-bottom:12px}
 
 #calSheet .sh-title:has(h2[hidden]){justify-content:flex-end;margin-bottom:0}
+.slot-range{margin-top:16px;padding:14px 14px 2px;border-radius:16px;background:var(--fill);border:1px solid var(--sep)}#slotRangeValue{display:block;font-size:15px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--text);margin:0 0 2px}#slotEnd{--p:0%;appearance:none;-webkit-appearance:none;width:100%;height:44px;margin:0;background:transparent;cursor:pointer;touch-action:pan-y}#slotEnd::-webkit-slider-runnable-track{height:6px;border-radius:9999px;background:var(--range-fill,linear-gradient(90deg,#8E8E93,#3A3A3C)) 0/var(--p) 100% no-repeat,var(--track,rgba(127,127,127,.25))}#slotEnd::-moz-range-track{height:6px;border-radius:9999px;background:var(--track,rgba(127,127,127,.25))}#slotEnd::-moz-range-progress{height:6px;border-radius:9999px;background:var(--range-fill,linear-gradient(90deg,#8E8E93,#3A3A3C))}#slotEnd::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:28px;height:28px;margin-top:-11px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.28),0 0 0 .5px rgba(0,0,0,.1)}#slotEnd::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.28)}#slotEnd:focus-visible{outline:2px solid var(--accent,#3A3A3C);outline-offset:2px;border-radius:12px}.slot-ticks{display:flex;justify-content:space-between;margin:-4px 0 0;padding:0 2px;font-size:12px;color:var(--text2);font-variant-numeric:tabular-nums}.slot-ticks span{min-width:0}.slot-ticks{margin-bottom:10px}.slot-range-single{margin-top:10px}
 
 
 :root[data-theme=dark],:root[data-theme=dark][data-glass]{--bg1:#08090b;--bg2:#111317;--bg3:#08090b;--text:#e6e8ec;--text2:#a1a6b0;--text3:#a1a6b0;--primary:#b7bbc4;--card-solid:#191c22;--rim:linear-gradient(165deg,#343842,#30343c66 55%,#30343c99);--sep:#30343c;--font:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Arial,sans-serif}
@@ -602,6 +603,324 @@ svg{display:block;flex:none}
 /* Keep desktop scrollbars from cutting through the rounded glass edge. */
 .sheet{scrollbar-width:none}
 .sheet::-webkit-scrollbar{display:none}
+
+/* ==========================================================================
+   Liquid Glass · Graphite — дизайн-система (dark/light).
+   Подключается build.py ПОСЛЕДНИМ слоем. Префикс :root:not(#_) даёт вес ID
+   и перекрывает старые слои без изменения DOM, id, data-* и JS.
+   Цвета типов пар (лекция/практика/лаб./учебная/производственная) сохранены.
+   Ползунок «Прозрачность» (--glass-alpha) управляет плотностью стекла:
+   70% = эталонные значения палитры.
+   ========================================================================== */
+
+/* ---------- 1. Токены ---------- */
+:root:not(#_){
+  --lg-k:calc(var(--glass-alpha,.358) / .358);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;
+  --r-card:22px; --r-inner:14px; --r-cell:12px; --r-pill:9999px;
+  --spring:cubic-bezier(.22,1,.36,1);
+  --lg-filter:blur(24px) saturate(190%) brightness(1.06);
+}
+:root:not(#_)[data-theme=dark]{
+  color-scheme:dark;
+  --bg-primary:#111113; --bg-secondary:#1A1A1E;
+  --blob-1:radial-gradient(circle,rgba(176,176,186,.26) 0%,rgba(176,176,186,0) 70%);   /* холодное серебро */
+  --blob-2:radial-gradient(circle,rgba(184,156,128,.20) 0%,rgba(184,156,128,0) 70%);   /* тёплый дымчатый */
+  --blob-3:radial-gradient(circle,rgba(150,138,150,.18) 0%,rgba(150,138,150,0) 70%);   /* пепельно-лиловый, приглушённый */
+  --glass-layer:rgba(35,35,42,var(--lg-a-dark,.55));
+  --glass-sheen:linear-gradient(135deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,0) 48%,rgba(255,255,255,.035) 100%);
+  --glass-surface:var(--glass-sheen),var(--glass-layer);
+  --glass-inner:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  --glass-hover:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+  --glass-border:rgba(255,255,255,.10);
+  --glass-border-subtle:rgba(255,255,255,.07);
+  --glass-rim:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.14) 28%,rgba(255,255,255,0) 50%,rgba(255,255,255,.06) 74%,rgba(255,255,255,.22) 100%);
+  --glass-depth:inset 0 1px 1px rgba(255,255,255,.45),inset 0 -1px 2px rgba(255,255,255,.07),inset 0 -10px 24px rgba(255,255,255,.025),0 12px 32px rgba(0,0,0,.45);
+  --glass-depth-sm:inset 0 1px 1px rgba(255,255,255,.30),inset 0 -1px 1px rgba(255,255,255,.05),0 4px 14px rgba(0,0,0,.30);
+  --sheet-surface:var(--glass-sheen),rgba(28,28,33,calc(.80*var(--lg-k)));
+  --tab-bar:rgba(26,26,30,.72);
+  --text-primary:#F5F5F7; --text-secondary:#98989F; --text-muted:#636366;
+  --accent:#D1D1D6; --accent-solid:#5A5A60; --accent-grad:linear-gradient(180deg,#707077 0%,#48484E 100%);
+  --accent-shadow:0 6px 18px rgba(0,0,0,.45),inset 0 1px 1px rgba(255,255,255,.38);
+  --accent-ring:rgba(209,209,214,.22); --range-fill:linear-gradient(90deg,#8E8E93 0%,#D1D1D6 100%); --range-glow:0 0 10px rgba(209,209,214,.28);
+  --color-info:#AEAEB2; --color-success:#30D158; --color-warning:#FF9F0A; --color-danger:#FF453A;
+  --track:rgba(255,255,255,.12);
+}
+:root:not(#_)[data-theme=light]{
+  color-scheme:light;
+  --bg-primary:#F2F2F7; --bg-secondary:#E5E5EA;
+  --blob-1:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 70%);    /* жемчужный блик */
+  --blob-2:radial-gradient(circle,rgba(206,194,178,.55) 0%,rgba(206,194,178,0) 70%);    /* тёплый камень */
+  --blob-3:radial-gradient(circle,rgba(176,176,184,.45) 0%,rgba(176,176,184,0) 70%);    /* графитовая дымка */
+  --glass-layer:rgba(255,255,255,var(--lg-a-light,.65));
+  --glass-sheen:linear-gradient(135deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 50%,rgba(255,255,255,.25) 100%);
+  --glass-surface:var(--glass-sheen),var(--glass-layer);
+  --glass-inner:linear-gradient(135deg,rgba(255,255,255,.70),rgba(255,255,255,.45));
+  --glass-hover:linear-gradient(135deg,rgba(255,255,255,.96),rgba(255,255,255,.74));
+  --glass-border:rgba(255,255,255,.85);
+  --glass-border-subtle:rgba(0,0,0,.06);
+  --glass-rim:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.55) 28%,rgba(255,255,255,0) 50%,rgba(255,255,255,.35) 74%,rgba(255,255,255,.8) 100%);
+  --glass-depth:inset 0 1px 1px rgba(255,255,255,.95),inset 0 -1px 2px rgba(0,0,0,.035),inset 0 -10px 24px rgba(255,255,255,.18),0 10px 28px rgba(28,28,40,.08);
+  --glass-depth-sm:inset 0 1px 1px rgba(255,255,255,.95),0 3px 10px rgba(28,28,40,.06);
+  --sheet-surface:var(--glass-sheen),rgba(248,248,250,calc(.82*var(--lg-k)));
+  --tab-bar:rgba(255,255,255,.72);
+  --text-primary:#1C1C1E; --text-secondary:#6E6E73; --text-muted:#AEAEB2;
+  --accent:#2C2C2E; --accent-solid:#2C2C2E; --accent-grad:linear-gradient(180deg,#4A4A4E 0%,#1C1C1E 100%);
+  --accent-shadow:0 6px 16px rgba(28,28,30,.28),inset 0 1px 1px rgba(255,255,255,.28);
+  --accent-ring:rgba(44,44,46,.16); --range-fill:linear-gradient(90deg,#8E8E93 0%,#2C2C2E 100%); --range-glow:0 0 8px rgba(28,28,30,.18);
+  --color-info:#48484A; --color-success:#34C759; --color-warning:#FF9500; --color-danger:#FF3B30;
+  --track:rgba(0,0,0,.08);
+}
+/* старые переменные приложения → новые токены */
+:root:not(#_)[data-theme]{
+  --text:var(--text-primary); --text2:var(--text-secondary); --text3:var(--text-muted);
+  --primary:var(--accent); --grad-primary:var(--accent-grad); --on-primary:#fff; --sel-sh:var(--accent-shadow);
+  --sep:var(--glass-border-subtle); --sep2:var(--accent);
+  --fill:var(--glass-inner); --fill2:var(--glass-inner);
+  --glass:var(--glass-surface); --glass-strong:var(--glass-surface);
+  --sheet-bg:var(--sheet-surface); --card:var(--glass-surface); --card-line:var(--glass-border);
+  --rim:var(--glass-rim); --sheen:none; --glass-shadow:var(--glass-depth);
+}
+
+/* ---------- 2. Фон и сферы ---------- */
+:root:not(#_)[data-theme],:root:not(#_)[data-theme] body{background:var(--bg-primary)!important;color:var(--text-primary);font-family:var(--font);-webkit-font-smoothing:antialiased}
+:root:not(#_)[data-theme] body{min-height:100vh;overflow-x:hidden}
+:root:not(#_)[data-theme] .bg{background:linear-gradient(180deg,var(--bg-primary) 0%,var(--bg-secondary) 100%)!important;z-index:0;pointer-events:none}
+:root:not(#_)[data-theme] .bg::before,:root:not(#_)[data-theme] .bg::after{display:none}
+:root:not(#_)[data-theme] .bg i{filter:blur(85px);animation:none;border-radius:50%;pointer-events:none;transform:translateZ(0)}
+:root:not(#_)[data-theme] .bg .b1{width:320px;height:320px;top:8%;right:-60px;left:auto;bottom:auto;background:var(--blob-1)}
+:root:not(#_)[data-theme] .bg .b2{width:300px;height:300px;top:42%;right:-40px;left:auto;bottom:auto;background:var(--blob-2)}
+:root:not(#_)[data-theme] .bg .b3{width:280px;height:280px;bottom:10%;left:-60px;top:auto;right:auto;background:var(--blob-3)}
+:root:not(#_)[data-theme] .app{position:relative;z-index:1}
+
+/* ---------- 3. Материал Liquid Glass: карточки, шапка ---------- */
+:root:not(#_)[data-theme] :is(.top.lg,.day-head,.card,.lesson.now .card,.empty,.ea-card,.sgroup,.glass-controls,.edit-setting,.toast){
+  background:var(--glass-sheen)!important;background-color:var(--glass-layer)!important;
+  -webkit-backdrop-filter:var(--lg-filter)!important;backdrop-filter:var(--lg-filter)!important;
+  border:1px solid var(--glass-border)!important;
+  box-shadow:var(--glass-depth)!important;
+}
+:root:not(#_)[data-theme] :is(.day-head,.card,.empty,.sgroup,.glass-controls,.edit-setting){
+  position:relative;border-radius:var(--r-card)!important;overflow:hidden;
+  transform:translateZ(0);will-change:backdrop-filter,transform;
+  transition:transform .35s var(--spring),box-shadow .25s ease;
+}
+:root:not(#_)[data-theme] .top.lg{border-top:0!important;border-radius:0 0 28px 28px;will-change:backdrop-filter}
+:root:not(#_)[data-theme] .lesson.now .card{background:var(--glass-hover)!important;background-color:var(--glass-layer)!important}
+:root:not(#_)[data-theme] .card:active{transform:translateZ(0) scale(.985)}
+
+/* Specular Rim — преломляющая грань 1px */
+:root:not(#_)[data-theme] :is(.card,.day-head,.empty,.sgroup,.glass-controls,.top.lg,.group-picker,.title-row>.ibtn,.edit-top,.chev,.qbtn,.close,.editor-close,.theme-seg,#dock)::before{
+  content:"";display:block;position:absolute;inset:0;left:0;top:0;right:0;bottom:0;width:auto;height:auto;border-radius:inherit;pointer-events:none;z-index:2;
+  padding:1px;background:var(--glass-rim)!important;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+}
+
+/* модальные окна */
+:root:not(#_)[data-theme] :is(.sheet,.sheet.lg,.editor-sheet,#groupSheet){
+  background:var(--sheet-surface)!important;color:var(--text-primary)!important;
+  -webkit-backdrop-filter:var(--lg-filter)!important;backdrop-filter:var(--lg-filter)!important;
+  border:1px solid var(--glass-border)!important;border-bottom:0!important;
+  box-shadow:var(--glass-depth)!important;will-change:transform,backdrop-filter;
+}
+:root:not(#_)[data-theme] .grab{background:var(--text-muted)!important}
+:root:not(#_)[data-theme] .editor-save-bar{background:transparent!important;box-shadow:none!important}
+:root:not(#_)[data-theme] .backdrop{background:rgba(8,8,10,.36)}
+
+/* вложенные плашки */
+:root:not(#_)[data-theme] :is(.nchip,.dh-badge,.group-search,.group-rows,.slot-choice,.type-choice,.gprev){
+  background:var(--glass-inner)!important;border:1px solid var(--glass-border-subtle)!important;box-shadow:var(--glass-depth-sm)!important;color:var(--text-secondary)!important;
+}
+:root:not(#_)[data-theme] :is(.group-search,.group-rows,.slot-choice,.type-choice){border-radius:var(--r-inner)!important}
+:root:not(#_)[data-theme] :is(.nchip,.dh-badge){border-radius:var(--r-pill)!important;padding:4px 10px}
+
+/* ---------- 4. Кнопки ---------- */
+/* пружинистое нажатие для всех интерактивных элементов */
+:root:not(#_)[data-theme] :is(button,.slot-choice,.type-choice,.sitem){transition:transform .35s var(--spring),background .2s ease,color .2s ease,box-shadow .2s ease}
+:root:not(#_)[data-theme] :is(button:not(:disabled),.slot-choice,.type-choice):active{transform:scale(.96)}
+:root:not(#_)[data-theme] #dock .seg button:active,:root:not(#_)[data-theme] .sitem:active{transform:scale(.98)}
+
+/* главные */
+:root:not(#_)[data-theme] :is(.qbtn.primary,.editor-save,.edit-gradient,.next-btn,.join,.group-retry,.retry,.empty button){
+  background:var(--accent-grad)!important;color:#fff!important;font-weight:600!important;
+  border:1px solid rgba(255,255,255,.32)!important;box-shadow:var(--accent-shadow)!important
+}
+:root:not(#_)[data-theme] .edit-gradient{border-radius:var(--r-pill)!important;letter-spacing:-.02em}
+:root:not(#_)[data-theme] .editor-save{border-radius:var(--r-inner)!important}
+:root:not(#_)[data-theme] .editor-save:disabled{opacity:.42;box-shadow:none!important}
+
+/* стеклянные вторичные */
+:root:not(#_)[data-theme] :is(.group-picker,.title-row>.ibtn,.edit-top,.chev,.qbtn:not(.primary),.close,.editor-close){
+  position:relative;
+  background:var(--glass-inner)!important;border:1px solid var(--glass-border)!important;box-shadow:var(--glass-depth-sm)!important;color:var(--text-primary)!important;
+  -webkit-backdrop-filter:var(--lg-filter);backdrop-filter:var(--lg-filter);
+}
+:root:not(#_)[data-theme] :is(.group-picker,.title-row>.ibtn,.edit-top,.chev,.close,.editor-close){border-radius:var(--r-pill)!important}
+:root:not(#_)[data-theme] .qbtn{border-radius:var(--r-inner)!important;font-weight:600}
+:root:not(#_)[data-theme] :is(.group-picker,.title-row>.ibtn,.edit-top,.chev,.qbtn:not(.primary),.close,.editor-close):active{background:var(--glass-hover)!important}
+:root:not(#_)[data-theme] .edit-top{font-weight:650;letter-spacing:-.02em}
+:root:not(#_)[data-theme] .group-symbol{background:transparent!important;color:var(--text-secondary)!important}
+:root:not(#_)[data-theme] .group-name{color:var(--text-primary);font-weight:600}
+
+/* сегмент темы */
+:root:not(#_)[data-theme] .theme-seg{position:relative;background:var(--glass-inner)!important;border:1px solid var(--glass-border-subtle);box-shadow:var(--glass-depth-sm);border-radius:var(--r-pill)!important;padding:3px}
+:root:not(#_)[data-theme] .theme-seg button{position:relative;z-index:3;border-radius:var(--r-pill)!important;color:var(--text-secondary);font-weight:600;background:transparent}
+:root:not(#_)[data-theme] .theme-seg button.on{background:var(--glass-hover)!important;color:var(--text-primary)!important;box-shadow:var(--glass-depth-sm)!important}
+
+/* опасные */
+:root:not(#_)[data-theme] .editor-delete{color:var(--color-danger)!important;background:transparent;font-weight:600}
+:root:not(#_)[data-theme] .editor-confirm{background:rgba(255,69,58,.09)!important;border:1px solid rgba(255,69,58,.26)!important;border-radius:18px}
+:root:not(#_)[data-theme] .editor-confirm .editor-save{background:rgba(255,69,58,.15)!important;color:var(--color-danger)!important;border:1px solid rgba(255,69,58,.34)!important;box-shadow:none!important}
+:root:not(#_)[data-theme] .editor-error{color:var(--color-danger)!important}
+
+/* ---------- 5. Календарь ---------- */
+:root:not(#_)[data-theme] .strip{gap:5px}
+:root:not(#_)[data-theme] .dcell{border-radius:var(--r-cell)!important;background:var(--glass-inner)!important;border:1px solid var(--glass-border-subtle)!important;box-shadow:none!important}
+:root:not(#_)[data-theme] .dcell .wd{color:var(--text-secondary)!important;font-size:12px;font-weight:500;text-transform:none}
+:root:not(#_)[data-theme] .dcell .dn{color:var(--text-primary)!important;font-weight:600}
+:root:not(#_)[data-theme] .dcell.off .dn{color:var(--text-muted)!important}
+:root:not(#_)[data-theme] .dcell.today:not(.sel)::after{box-shadow:inset 0 0 0 1.5px var(--accent)!important;border-radius:20px!important;inset:-1px}
+:root:not(#_)[data-theme] .dcell.sel{border-radius:20px!important;background:var(--accent-grad)!important;border:1px solid rgba(255,255,255,.4)!important;box-shadow:var(--accent-shadow)!important}
+:root:not(#_)[data-theme] .dcell.sel :is(.dn,.wd){color:#fff!important}
+:root:not(#_)[data-theme] .dcell.sel .dn{font-weight:700}
+:root:not(#_)[data-theme] .dcell.sel .dots i{box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+:root:not(#_)[data-theme] .cal-wd span{color:var(--text-secondary)!important;font-size:13px;font-weight:500}
+:root:not(#_)[data-theme] .cal-grid>*:not(:empty){border-radius:var(--r-cell)!important}
+:root:not(#_)[data-theme] .cal-grid .cday{background:var(--glass-inner);border:1px solid var(--glass-border-subtle);color:var(--text-primary)}
+:root:not(#_)[data-theme] .cal-grid .cday.sel{border-radius:18px!important;background:var(--accent-grad)!important;color:#fff!important;font-weight:700;box-shadow:var(--accent-shadow)!important;border:1px solid rgba(255,255,255,.4)}
+:root:not(#_)[data-theme] :is(.ttl,.month-btn .m){color:var(--text-primary)!important;font-weight:650;letter-spacing:-.015em}
+:root:not(#_)[data-theme] :is(.month-btn .w,#weekLabel){color:var(--text-secondary)!important;font-weight:500}
+
+/* ---------- 6. Поля ввода и выбор ---------- */
+:root:not(#_)[data-theme] :is(.editor-input,.group-search input){color:var(--text-primary)!important}
+:root:not(#_)[data-theme] .editor-input{background:var(--glass-inner)!important;border:1px solid var(--glass-border)!important;border-radius:var(--r-inner)!important;box-shadow:var(--glass-depth-sm)}
+:root:not(#_)[data-theme] :is(.editor-input,.group-search input)::placeholder{color:var(--text-muted)!important}
+:root:not(#_)[data-theme] :is(.editor-input:focus,.group-search:focus-within){outline:none!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px var(--accent-ring)!important}
+:root:not(#_)[data-theme] :is(.slot-choice,.type-choice) input{accent-color:var(--accent)}
+:root:not(#_)[data-theme] :is(.slot-choice,.type-choice){color:var(--text-primary)!important}
+:root:not(#_)[data-theme] .slot-choice:has(input:checked){background:var(--glass-hover)!important;border-color:var(--text-secondary)!important;box-shadow:inset 0 0 0 1px var(--text-secondary),var(--glass-depth-sm)!important}
+:root:not(#_)[data-theme] .type-choice:has(input:checked){background:var(--glass-hover)!important;border-color:var(--text-secondary)!important;box-shadow:inset 0 0 0 1px var(--text-secondary),var(--glass-depth-sm)!important}
+:root:not(#_)[data-theme] .edit-setting input{background:rgba(120,120,128,.32)!important;box-shadow:inset 0 0 0 1px var(--glass-border-subtle)}
+:root:not(#_)[data-theme] .edit-setting input:checked{background:var(--color-success)!important}
+:root:not(#_)[data-theme] .gopt.on .gradio{background:var(--accent-solid)!important;color:#fff}
+:root:not(#_)[data-theme] .gopt.on .gprev{box-shadow:0 0 0 2px var(--accent),var(--glass-depth-sm)!important}
+:root:not(#_)[data-theme] .gname{color:var(--text-primary)}
+
+/* прогресс */
+:root:not(#_)[data-theme] .bar{height:6px;border-radius:var(--r-pill)!important;background:var(--track)!important;overflow:visible}
+:root:not(#_)[data-theme] .bar i{border-radius:var(--r-pill)!important;background:var(--range-fill)!important;box-shadow:var(--range-glow)}
+:root:not(#_)[data-theme] #glassTransparency::-webkit-slider-runnable-track{background:var(--range-fill)!important;height:6px;border-radius:9999px}
+:root:not(#_)[data-theme] #glassTransparency::-webkit-slider-thumb{background:#fff!important;box-shadow:0 2px 8px rgba(0,0,0,.25),0 0 0 .5px rgba(0,0,0,.08)!important}
+:root:not(#_)[data-theme] #glassTransparency::-moz-range-track{background:var(--range-fill)!important}
+
+/* ---------- 7. Типографика ---------- */
+:root:not(#_)[data-theme] :is(.sh-title h2,.editor-heading h2,#groupSheetTitle){font-size:clamp(19px,4vw,22px)!important;font-weight:600!important;letter-spacing:-.015em!important;color:var(--text-primary)!important}
+:root:not(#_)[data-theme] .dh-wd{font-size:clamp(19px,4vw,22px)!important;font-weight:700!important;letter-spacing:-.02em!important;line-height:1.15;color:var(--text-primary)!important}
+:root:not(#_)[data-theme] .day-head.compact .dh-wd{font-size:16.5px!important}
+:root:not(#_)[data-theme] .dh-date{color:var(--text-primary)!important;font-weight:650;letter-spacing:-.02em}
+:root:not(#_)[data-theme] :is(.dh-sub,.edited-by,.user-addition,.foot,.about,.ghint,.group-caption,.group-status,.editor-caption,.editor-note,.editor-account,.editor-sync,.edit-setting small,.glass-controls p,.sv,.sitem small,.gm){color:var(--text-secondary)!important;font-weight:400}
+:root:not(#_)[data-theme] :is(.slabel,.group-section-title,.dh-badge){font-size:11.5px!important;font-weight:600!important;text-transform:uppercase;letter-spacing:.08em!important;color:var(--text-secondary)!important}
+:root:not(#_)[data-theme] .name{font-size:17px;font-weight:600!important;letter-spacing:-.015em;color:var(--text-primary)!important}
+:root:not(#_)[data-theme] .tm{color:var(--text-primary)!important;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+:root:not(#_)[data-theme] :is(.tm svg,.meta svg){color:var(--text-muted)!important}
+:root:not(#_)[data-theme] .meta{color:var(--text-secondary)!important;font-size:14px}
+:root:not(#_)[data-theme] .nchip{font-size:12px!important;font-weight:600!important}
+:root:not(#_)[data-theme] .live-l{color:var(--text-secondary)!important;font-weight:500}
+:root:not(#_)[data-theme] .live-l .lv{color:var(--color-success)!important;font-weight:600}
+:root:not(#_)[data-theme] .live-l .pulse{background:var(--color-success)!important}
+:root:not(#_)[data-theme] .soon{color:var(--color-info)!important;font-weight:500}
+:root:not(#_)[data-theme] .sitem{color:var(--text-primary)}
+:root:not(#_)[data-theme] .sitem+.sitem{border-color:var(--glass-border-subtle)!important}
+:root:not(#_)[data-theme] .banner{color:var(--color-warning)!important}
+
+/* ---------- 8. Нижний таб-бар ---------- */
+:root:not(#_)[data-theme] #dock{
+  background:var(--glass-sheen),var(--tab-bar)!important;
+  -webkit-backdrop-filter:var(--lg-filter)!important;backdrop-filter:var(--lg-filter)!important;
+  border:1px solid var(--glass-border-subtle)!important;box-shadow:var(--glass-depth)!important;
+  transform:translateX(-50%) translateZ(0);will-change:backdrop-filter,transform;
+}
+:root:not(#_)[data-theme] #dock .seg{background:transparent!important;box-shadow:none!important}
+:root:not(#_)[data-theme] #dock .seg .thumb{background:var(--glass-inner)!important;border:1px solid var(--glass-border-subtle);box-shadow:none!important}
+:root:not(#_)[data-theme] #dock .seg button{color:var(--text-secondary)!important;font-weight:600}
+:root:not(#_)[data-theme] #dock .seg button.on{color:var(--accent)!important;font-weight:700!important;filter:none}
+:root:not(#_)[data-theme] #dock .dbtn{color:var(--text-secondary)!important;background:transparent!important;box-shadow:none!important;font-weight:600}
+:root:not(#_)[data-theme] #dock .dbtn:not(.dim){color:var(--text-primary)!important}
+
+@media (prefers-reduced-motion:reduce){:root:not(#_)[data-theme] *{transition-duration:.001s!important}}
+
+/* ---------- 9. Глитч на главном экране ----------
+   Короткий цифровой сбой раз в несколько секунд: заголовок месяца, название дня,
+   полоса развёртки и сдвиг бликов фона. Монохромный графит + тёплый дым, без синего.
+   Только главный экран (шапка, #view, фон); в окнах не работает. */
+:root:not(#_)[data-theme=dark]{--glitch-a:rgba(235,235,240,.55);--glitch-b:rgba(196,150,118,.55);--scan:rgba(255,255,255,.07)}
+:root:not(#_)[data-theme=light]{--glitch-a:rgba(28,28,30,.30);--glitch-b:rgba(176,132,100,.45);--scan:rgba(28,28,30,.05)}
+@keyframes lg-glitch{
+  0%,86%,100%{transform:none;text-shadow:none;clip-path:none}
+  87%{transform:translate(-2px,0) skewX(-8deg);text-shadow:2px 0 var(--glitch-a),-2px 0 var(--glitch-b);clip-path:inset(8% 0 52% 0)}
+  88%{transform:translate(3px,1px);text-shadow:-3px 0 var(--glitch-a),3px 0 var(--glitch-b);clip-path:inset(52% 0 6% 0)}
+  89%{transform:translate(-1px,-1px) skewX(6deg);text-shadow:1px 0 var(--glitch-a),-2px 0 var(--glitch-b);clip-path:inset(28% 0 28% 0)}
+  90%{transform:translate(1px,0);text-shadow:-1px 0 var(--glitch-b);clip-path:none}
+  92%{transform:translate(-3px,0);text-shadow:3px 0 var(--glitch-a);clip-path:inset(0 0 66% 0)}
+  93%{transform:none;text-shadow:none;clip-path:none}
+}
+@keyframes lg-scan{
+  0%,86%,100%{opacity:0;transform:translateY(0)}
+  87%{opacity:1;transform:translateY(18vh)}
+  88%{opacity:.7;transform:translateY(46vh)}
+  90%{opacity:1;transform:translateY(31vh)}
+  92%{opacity:.6;transform:translateY(64vh)}
+  93%{opacity:0;transform:translateY(64vh)}
+}
+@keyframes lg-blob-jitter{
+  0%,86%,100%{transform:translateZ(0)}
+  87%{transform:translate(-14px,4px)}
+  89%{transform:translate(10px,-6px)}
+  92%{transform:translate(-6px,0)}
+  93%{transform:translateZ(0)}
+}
+:root:not(#_)[data-theme] #monthLabel,:root:not(#_)[data-theme] #view .dh-wd{display:inline-block;animation:lg-glitch 7s steps(1,end) infinite;will-change:transform}
+:root:not(#_)[data-theme] #monthLabel{animation-delay:-1.4s}
+:root:not(#_)[data-theme] #view .wk:nth-child(2n) .dh-wd{animation-delay:-3.1s}
+:root:not(#_)[data-theme] #view .wk:nth-child(3n) .dh-wd{animation-delay:-5.2s}
+:root:not(#_)[data-theme] .bg::after{
+  display:block;content:"";position:absolute;left:0;right:0;top:0;width:auto;height:46px;border-radius:0;filter:none;transform:none;
+  background:repeating-linear-gradient(180deg,var(--scan) 0 1px,transparent 1px 3px),linear-gradient(180deg,transparent,var(--scan),transparent);
+  mix-blend-mode:normal;opacity:0;animation:lg-scan 7s steps(1,end) infinite;animation-delay:-1.4s;pointer-events:none
+}
+:root:not(#_)[data-theme] .bg .b2{animation:lg-blob-jitter 7s steps(1,end) infinite;animation-delay:-1.4s}
+@media (prefers-reduced-motion:reduce){
+  :root:not(#_)[data-theme] #monthLabel,:root:not(#_)[data-theme] #view .dh-wd,:root:not(#_)[data-theme] .bg::after,:root:not(#_)[data-theme] .bg .b2{animation:none!important}
+  :root:not(#_)[data-theme] .bg::after{display:none}
+}
+
+/* ---------- 10. Без выбора группы ----------
+   Группа закреплена (ИМС-1-25). Кнопка #groupPicker остаётся в DOM (id и обработчики
+   не трогаем), но выключена и выглядит как обычный заголовок. */
+:root:not(#_)[data-theme] #groupPicker.is-fixed{
+  background:none!important;border:0!important;box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  padding:0 4px 0 6px!important;cursor:default;opacity:1!important;transform:none!important
+}
+:root:not(#_)[data-theme] #groupPicker.is-fixed::before,
+:root:not(#_)[data-theme] #groupPicker.is-fixed .group-arrow,
+:root:not(#_)[data-theme] #groupPicker.is-fixed .group-symbol{display:none!important}
+:root:not(#_)[data-theme] #groupPicker.is-fixed .group-name{font-size:22px;font-weight:700;letter-spacing:-.025em;color:var(--text-primary)!important;opacity:1}
+
+/* ---------- 11. Скругления: даты и раздел своих пар ---------- */
+/* все кнопки дат — как выбранная */
+:root:not(#_)[data-theme] .dcell{border-radius:20px!important}
+:root:not(#_)[data-theme] .dcell.today:not(.sel)::after{border-radius:20px!important}
+:root:not(#_)[data-theme] .cal-grid>*:not(:empty),:root:not(#_)[data-theme] .cal-grid .cday{border-radius:18px!important}
+:root:not(#_)[data-theme] .cal-grid>*::after{border-radius:18px!important}
+:root:not(#_)[data-theme] :is(.chev,.qbtn){border-radius:9999px!important}
+/* редактор: поля, слоты, типы, кнопки — капсулы; контейнеры — 24px */
+:root:not(#_)[data-theme] :is(.editor-input,.slot-choice,.type-choice,.editor-save,.editor-cancel,.edit-gradient,.edit-top){border-radius:9999px!important}
+:root:not(#_)[data-theme] :is(.slot-choice,.type-choice){padding-left:18px;padding-right:18px}
+:root:not(#_)[data-theme] .editor-input{padding-left:20px!important;padding-right:20px!important}
+:root:not(#_)[data-theme] :is(.slot-range,.editor-confirm,.edit-setting,.editor-added-row){border-radius:24px!important}
+:root:not(#_)[data-theme] .editor-sheet{border-radius:32px 32px 0 0!important}
+:root:not(#_)[data-theme] #slotEnd:focus-visible{border-radius:9999px}
 </style></head>
 <body>
 <div class="bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
@@ -609,7 +928,7 @@ svg{display:block;flex:none}
 <div class="app">
   <header class="top lg" id="top">
     <div class="title-row">
-      <button class="group-picker lg" id="groupPicker" aria-label="Выбрать группу" aria-haspopup="dialog" aria-expanded="false" aria-controls="groupSheet"><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
+      <button class="group-picker lg is-fixed" id="groupPicker" aria-label="Группа ИМС-1-25" aria-expanded="false" aria-controls="groupSheet" disabled><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
       <button class="edit-top" id="btnEdit" aria-label="Редактировать расписание">edit.</button>
       <button class="ibtn lg" id="btnRefresh" aria-label="Обновить расписание"></button>
       <button class="ibtn lg" id="btnMore" aria-label="Настройки"></button>
@@ -1455,17 +1774,19 @@ svg{display:block;flex:none}
   function syncGroupButton() {
     var name = S.data ? S.data.group : CONFIG.groupName;
     $('#groupName').textContent = name;
-    $('#groupPicker').setAttribute('aria-label', 'Выбрать группу, сейчас ' + name);
+    $('#groupPicker').setAttribute('aria-label', 'Группа ' + name);
     $('#groupPicker').title = name;
     document.title = 'Расписание ' + name + ' · КГЭУ';
     var meta = document.querySelector('meta[name="description"]');
     if (meta) meta.content = 'Расписание группы ' + name + ' · КГЭУ';
   }
+  var FIXED_GROUP_ID = 14457;
   function restoreGroupChoice() {
     var savedList = LS.get(GROUPS_KEY, null);
     if (savedList && Array.isArray(savedList.items)) { G.items = cleanGroups(savedList.items); G.at = Number(savedList.at) || 0; }
     var saved = LS.get(CHOICE_KEY, null), explicit = P.get('group');
-    var id = validGroupID(explicit) ? Number(explicit) : (saved && validGroupID(saved.id) ? Number(saved.id) : 14457);
+    // Group choice is turned off: the app always shows ИМС-1-25. Saved choices and ?group= are ignored.
+    var id = FIXED_GROUP_ID;
     var known = groupByID(id);
     CONFIG.groupId = id;
     CONFIG.groupName = known ? known.name : (saved && Number(saved.id) === id && typeof saved.name === 'string' ? saved.name.slice(0, 100) : (id === 14457 ? 'ИМС-1-25' : 'Группа ' + id));
@@ -1593,7 +1914,7 @@ svg{display:block;flex:none}
     setInterval(tick, 20000);
   }
   /* ================= ОБЩИЕ ДОПОЛНЕНИЯ / EDIT. ================= */
-  var E = {token: LS.get('kgeu.editor.session',null),user:null,hidden:LS.get('kgeu.hideEdits',false),map:{},authors:{},loaded:{},calendar:false,editDay:null,pending:null,busy:false,fetching:{},error:'',formGroup:null,date:null,name:'',slot:null,type:null,deleteId:null,focus:null};
+  var E = {token: LS.get('kgeu.editor.session',null),user:null,hidden:LS.get('kgeu.hideEdits',false),map:{},authors:{},loaded:{},calendar:false,editDay:null,pending:null,busy:false,fetching:{},error:'',formGroup:null,date:null,name:'',slot:null,slotEnd:null,type:null,deleteId:null,focus:null};
   var EDIT_SLOTS=[['08:00','09:30'],['09:40','11:10'],['11:20','12:50'],['13:20','14:50'],['15:00','16:30'],['16:40','18:10']];
   function ekey(date,group){return (group||CONFIG.groupId)+':'+date;}
   function additionsFor(date){return E.map[ekey(date)]||[];}
@@ -1615,12 +1936,21 @@ svg{display:block;flex:none}
   function loginPanel(err){editorPanel('Вход для редактирования','<p class="editor-caption">Отдельный аккаунт, выданный администратором. Не пароль от кабинета КГЭУ.</p><form id="editLogin"><label class="editor-field" for="editLoginName">Логин</label><input class="editor-input" id="editLoginName" name="login" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="64"><label class="editor-field" for="editPassword">Пароль</label><input class="editor-input" id="editPassword" name="password" type="password" autocomplete="current-password" required minlength="8" maxlength="256"><p class="editor-error" id="loginError" role="alert">'+esc(err||'')+'</p><button class="editor-save" id="loginSubmit">Войти</button></form><p class="editor-note">Вход сохраняется на этом устройстве на 30 дней. Дополнения видны всей группе.</p>');}
   async function requireEditor(action){if(E.busy)return;E.pending=action;if(E.token&&E.token.expiresAt>Date.now()){try{var j=await editAPI('/session');E.user=j.user;action();return;}catch(err){if(err.status!==401){loginPanel(err.message);return;}}}loginPanel();}
   function startEditCalendar(){requireEditor(function(){closeSheet('editorSheet');openCal();E.calendar=true;$('#calSheet h2').hidden=true;$('#calSheet').setAttribute('aria-label','Выбор дня для редактирования');});}
-  function editDay(date){requireEditor(async function(){S.mode='day';LS.set('kgeu.mode','day');syncMode();E.editDay=date;setSel(date,{force:true});E.formGroup=CONFIG.groupId;E.date=date;E.name='';E.slot=null;E.type=null;E.deleteId=null;await syncEdits(date,true);showAddPanel();});}
+  function editDay(date){requireEditor(async function(){S.mode='day';LS.set('kgeu.mode','day');syncMode();E.editDay=date;setSel(date,{force:true});E.formGroup=CONFIG.groupId;E.date=date;E.name='';E.slot=null;E.slotEnd=null;E.type=null;E.deleteId=null;await syncEdits(date,true);showAddPanel();});}
   function slotBusy(i){var slot=EDIT_SLOTS[i],list=originalLessonsFor(E.date).concat(additionsFor(E.date));return list.some(function(l){return hm(slot[0])<hm(l.end)&&hm(slot[1])>hm(l.start);});}
+  // Several pairs in a row: the slider picks the last pair of a continuous free run.
+  // Times come from EDIT_SLOTS, so 10-minute breaks and the 12:50–13:20 long break are built in.
+  function rangeMax(start){var i=start;while(i<EDIT_SLOTS.length&&!slotBusy(i))i++;return i;}
+  function pairWord(n){return n===1?'пара':n<5?'пары':'пар';}
+  function rangeCount(){return E.slot?Math.max(1,(E.slotEnd||E.slot)-E.slot+1):0;}
+  function rangeBusy(){for(var i=E.slot;i<=(E.slotEnd||E.slot);i++)if(slotBusy(i-1))return true;return false;}
+  function rangeText(end){var n=end-E.slot+1,from=EDIT_SLOTS[E.slot-1][0],to=EDIT_SLOTS[end-1][1];return {value:from+'–'+to+' · '+n+' '+pairWord(n),aria:'С '+from+' до '+to+', '+n+' '+pairWord(n)};}
+  function rangeHTML(){if(!E.slot)return '';var max=rangeMax(E.slot);E.slotEnd=Math.min(Math.max(E.slotEnd||E.slot,E.slot),max);if(max===E.slot)return '<p class="editor-note slot-range-single">Следующее время занято — можно добавить одну пару.</p>';var t=rangeText(E.slotEnd),ticks='';for(var i=E.slot;i<=max;i++)ticks+='<span>'+EDIT_SLOTS[i-1][1]+'</span>';return '<div class="slot-range"><output id="slotRangeValue" for="slotEnd">'+t.value+'</output><input type="range" id="slotEnd" min="'+E.slot+'" max="'+max+'" step="1" value="'+E.slotEnd+'" aria-label="Конец интервала" aria-valuetext="'+t.aria+'" style="--p:'+((E.slotEnd-E.slot)/(max-E.slot)*100)+'%"><div class="slot-ticks" aria-hidden="true">'+ticks+'</div></div>';}
+  function syncRange(){var r=$('#slotEnd');if(!r)return;E.slotEnd=Number(r.value);var t=rangeText(E.slotEnd);$('#slotRangeValue').textContent=t.value;r.setAttribute('aria-valuetext',t.aria);r.style.setProperty('--p',((E.slotEnd-E.slot)/(r.max-E.slot)*100)+'%');syncSave();}
   function showAddPanel(){var known=!!S.data&&!S.offline&&!E.error,slots=EDIT_SLOTS.map(function(s,i){var busy=slotBusy(i);if(busy)return '';return '<label class="slot-choice"><input type="radio" name="slot" value="'+(i+1)+'" '+(busy||!known?'disabled':'')+' '+(E.slot===i+1?'checked':'')+'>'+s[0]+'–'+s[1]+'</label>';}).join(''),types=['lec','pr','lab','study','industry'].map(function(t){return '<label class="type-choice t-'+t+'"><input type="radio" name="kind" value="'+t+'" '+(E.type===t?'checked':'')+'><i></i>'+esc(TYPES[t])+'</label>';}).join('');
    var additions=additionsFor(E.date).map(function(l){return '<div class="editor-added-row"><span>'+esc(l.name)+'<small>'+l.start+'–'+l.end+' · '+esc(l.author)+'</small></span><button type="button" class="editor-delete" data-remove-added="'+l.id+'">Удалить</button></div>';}).join('');
-   editorPanel('Добавить пару','<p class="editor-caption">'+WD[dow(E.date)]+', '+human(E.date)+' · '+esc(CONFIG.groupName)+'<br>Дополнение увидят все участники группы.</p><form id="addLesson"><label class="editor-field" for="newLessonName">Название пары</label><input class="editor-input" id="newLessonName" name="name" maxlength="160" minlength="2" value="'+esc(E.name)+'" placeholder="Например, Учебная практика" required><fieldset class="editor-step" id="slotStep" '+(E.name.trim().length>=2?'':'hidden')+'><legend>Свободное время</legend><div class="editor-slots">'+slots+'</div><p class="editor-note">'+(known?(EDIT_SLOTS.every(function(_,i){return slotBusy(i);})?'В этот день нет свободных интервалов с 08:00 до 18:10.':'Показано только свободное время. Пара длится 90 минут.'):'Сначала нужно обновить исходное расписание и дополнения. Сохранение пока недоступно.')+'</p></fieldset><fieldset class="editor-step" id="typeStep" '+(E.slot?'':'hidden')+'><legend>Тип занятия</legend><div class="editor-types">'+types+'</div></fieldset><p id="addError" class="editor-error" role="alert"></p><div class="editor-save-bar"><button class="editor-save" id="saveLesson" form="addLesson" disabled>Сохранить</button></div></form>'+(additions?'<section class="editor-added"><h3>Добавленные пары</h3>'+additions+'<p class="editor-note">Удалять дополнения может любой редактор. Пары КГЭУ защищены.</p></section>':'')+'<div class="editor-account"><span>'+esc(E.user?.name||'Редактор')+'</span><button id="editLogout">Выйти</button></div>');syncSave();}
-  function syncSave(){var b=$('#saveLesson');if(b)b.disabled=E.busy||E.name.trim().length<2||!E.slot||!E.type||!S.data||S.offline||!!E.error||E.formGroup!==CONFIG.groupId||slotBusy(E.slot-1);}
+   editorPanel('Добавить пару','<p class="editor-caption">'+WD[dow(E.date)]+', '+human(E.date)+' · '+esc(CONFIG.groupName)+'<br>Дополнение увидят все участники группы.</p><form id="addLesson"><label class="editor-field" for="newLessonName">Название пары</label><input class="editor-input" id="newLessonName" name="name" maxlength="160" minlength="2" value="'+esc(E.name)+'" placeholder="Например, Учебная практика" required><fieldset class="editor-step" id="slotStep" '+(E.name.trim().length>=2?'':'hidden')+'><legend>Свободное время</legend><div class="editor-slots">'+slots+'</div><p class="editor-note">'+(known?(EDIT_SLOTS.every(function(_,i){return slotBusy(i);})?'В этот день нет свободных интервалов с 08:00 до 18:10.':'Показано только свободное время. Пара длится 90 минут.'):'Сначала нужно обновить исходное расписание и дополнения. Сохранение пока недоступно.')+'</p><div id="slotRange">'+rangeHTML()+'</div></fieldset><fieldset class="editor-step" id="typeStep" '+(E.slot?'':'hidden')+'><legend>Тип занятия</legend><div class="editor-types">'+types+'</div></fieldset><p id="addError" class="editor-error" role="alert"></p><div class="editor-save-bar"><button class="editor-save" id="saveLesson" form="addLesson" disabled>Сохранить</button></div></form>'+(additions?'<section class="editor-added"><h3>Добавленные пары</h3>'+additions+'<p class="editor-note">Удалять дополнения может любой редактор. Пары КГЭУ защищены.</p></section>':'')+'<div class="editor-account"><span>'+esc(E.user?.name||'Редактор')+'</span><button id="editLogout">Выйти</button></div>');syncSave();}
+  function syncSave(){var b=$('#saveLesson');if(b)b.disabled=E.busy||E.name.trim().length<2||!E.slot||!E.type||!S.data||S.offline||!!E.error||E.formGroup!==CONFIG.groupId||rangeBusy();if(b&&!E.busy){var n=rangeCount();b.textContent=n>1?'Сохранить '+n+' '+pairWord(n):'Сохранить';};}
   function deletePanel(id){var l=additionsFor(E.date).find(function(x){return x.id===id;});if(!l)return;E.deleteId=id;editorPanel('Удалить добавленную пару?','<div class="editor-confirm"><p><b>'+esc(l.name)+'</b><br>'+dmy(E.date)+' · '+l.start+'–'+l.end+'</p><p>Пара исчезнет у всех участников группы. Исходное расписание КГЭУ не изменится.</p><p id="deleteError" class="editor-error" role="alert"></p><button class="editor-save" id="confirmDelete">Удалить у всех</button><button class="editor-cancel" id="cancelDelete">Отмена</button></div>');}
   var glassTransparency=Number(LS.get('kgeu.glassTransparency',S.glass==='tinted'?20:70));
   if(!Number.isFinite(glassTransparency))glassTransparency=70;
@@ -1635,11 +1965,11 @@ svg{display:block;flex:none}
    var settings=document.createElement('label');settings.className='edit-setting';settings.innerHTML='<span>Отключить просмотр редактирования<small>Показывать только исходное расписание КГЭУ</small></span><input type="checkbox" id="hideEdits" role="switch" aria-label="Отключить просмотр редактирования">';$('#setSheet').insertBefore(settings,$('#setSheet .slabel'));$('#hideEdits').checked=E.hidden;
    $('#hideEdits').addEventListener('change',function(){E.hidden=this.checked;LS.set('kgeu.hideEdits',E.hidden);render();});
    $('#btnEdit').addEventListener('click',startEditCalendar);$('#btnRefresh').addEventListener('click',function(){syncEdits(S.sel,true);});$('#editorClose').addEventListener('click',function(){closeSheet('editorSheet');});
-   $('#editorBody').addEventListener('input',function(e){if(e.target.id==='newLessonName'){E.name=e.target.value;$('#slotStep').hidden=E.name.trim().length<2;$('#typeStep').hidden=!E.slot||E.name.trim().length<2;syncSave();}});
-   $('#editorBody').addEventListener('change',function(e){if(e.target.name==='slot'){E.slot=Number(e.target.value);$('#typeStep').hidden=false;}if(e.target.name==='kind')E.type=e.target.value;syncSave();});
+   $('#editorBody').addEventListener('input',function(e){if(e.target.id==='slotEnd'){syncRange();return;}if(e.target.id==='newLessonName'){E.name=e.target.value;$('#slotStep').hidden=E.name.trim().length<2;$('#typeStep').hidden=!E.slot||E.name.trim().length<2;syncSave();}});
+   $('#editorBody').addEventListener('change',function(e){if(e.target.name==='slot'){E.slot=Number(e.target.value);E.slotEnd=E.slot;$('#slotRange').innerHTML=rangeHTML();$('#typeStep').hidden=false;}if(e.target.name==='kind')E.type=e.target.value;syncSave();});
    $('#editorBody').addEventListener('submit',async function(e){e.preventDefault();if(E.busy)return;
     if(e.target.id==='editLogin'){E.busy=true;$('#loginSubmit').disabled=true;try{var j=await editAPI('/login',{method:'POST',body:JSON.stringify({login:$('#editLoginName').value.trim(),password:$('#editPassword').value})});E.token={token:j.token,expiresAt:j.expiresAt};E.user=j.user;LS.set('kgeu.editor.session',E.token);$('#editPassword').value='';closeSheet('editorSheet');E.busy=false;if(E.pending)E.pending();}catch(err){$('#loginError').textContent=err.message;$('#loginSubmit').disabled=false;}finally{E.busy=false;}return;}
-    if(e.target.id==='addLesson'){syncSave();if($('#saveLesson').disabled)return;E.busy=true;syncSave();try{await editAPI('/lessons',{method:'POST',body:JSON.stringify({group:E.formGroup,date:E.date,name:E.name.trim(),slot:E.slot,type:E.type})});var ok=await syncEdits(E.date,true);if(!ok){$('#addError').textContent='Пара сохранена, но список не обновился. Не отправляйте её повторно — закройте окно и обновите расписание.';return;}closeSheet('editorSheet');toast('Пара добавлена для всей группы','ok');}catch(err){if(err.status===401){E.busy=false;loginPanel('Сессия истекла. Войдите снова');return;}$('#addError').textContent=err.message;if(err.status===409){E.slot=null;await syncEdits(E.date,true);showAddPanel();$('#addError').textContent=err.message;}}finally{E.busy=false;syncSave();}}
+    if(e.target.id==='addLesson'){syncSave();if($('#saveLesson').disabled)return;E.busy=true;syncSave();var total=rangeCount(),made=0,first=E.slot;try{for(var sl=first;sl<first+total;sl++){if(total>1)$('#saveLesson').textContent='Сохраняем '+(made+1)+' из '+total+'…';await editAPI('/lessons',{method:'POST',body:JSON.stringify({group:E.formGroup,date:E.date,name:E.name.trim(),slot:sl,type:E.type})});made++;}var ok=await syncEdits(E.date,true);if(!ok){$('#addError').textContent='Пара сохранена, но список не обновился. Не отправляйте её повторно — закройте окно и обновите расписание.';return;}closeSheet('editorSheet');toast(total>1?'Добавлено '+total+' '+pairWord(total)+' для всей группы':'Пара добавлена для всей группы','ok');}catch(err){var part=made?'Сохранено '+made+' из '+total+' (до '+EDIT_SLOTS[first+made-2][1]+'). Остальные не добавлены: ':'';if(err.status===401){E.busy=false;loginPanel(part?part+'сессия истекла. Войдите снова':'Сессия истекла. Войдите снова');return;}$('#addError').textContent=part+err.message;if(err.status===409||made){E.slot=null;E.slotEnd=null;await syncEdits(E.date,true);showAddPanel();$('#addError').textContent=part+err.message;}}finally{E.busy=false;syncSave();}}
    });
    $('#editorBody').addEventListener('click',async function(e){var del=e.target.closest('[data-remove-added]');if(del){deletePanel(del.dataset.removeAdded);return;}if(e.target.closest('#cancelDelete')){E.deleteId=null;showAddPanel();return;}if(e.target.closest('#editLogout')){try{await editAPI('/logout',{method:'POST'});}catch(err){toast('Не удалось завершить сессию на сервере','err');return;}E.token=null;E.user=null;LS.set('kgeu.editor.session',null);closeSheet('editorSheet');return;}
     if(e.target.closest('#confirmDelete')){if(E.busy)return;E.busy=true;$('#confirmDelete').disabled=true;try{await editAPI('/lessons/'+E.deleteId,{method:'DELETE'});await syncEdits(E.date,true);closeSheet('editorSheet');toast('Добавленная пара удалена у всех','ok');}catch(err){if(err.status===404){await syncEdits(E.date,true);showAddPanel();}else if(err.status===401){E.busy=false;loginPanel('Сессия истекла. Войдите снова');}else{$('#deleteError').textContent=err.message;$('#confirmDelete').disabled=false;}}finally{E.busy=false;}}
@@ -1655,7 +1985,46 @@ svg{display:block;flex:none}
    document.addEventListener('visibilitychange',function(){if(!document.hidden)syncEdits(S.sel,true);});setInterval(function(){if(!document.hidden)syncEdits(S.sel,true);},30000);syncEdits(S.sel,true);
   }
 
-  init(); editorInit();
+  /* ================= LIQUID GLASS · GRAPHITE =================
+     Вставляется build.py в общий IIFE после editor.js, до init().
+     Ничего не удаляет: только оборачивает applyTheme и добавляет
+     делегированную хаптику для элементов, где её ещё не было. */
+  var LG_COLORS = {
+    dark:  { head: '#111113', bg: '#111113', bar: '#1A1A1E' },
+    light: { head: '#F2F2F7', bg: '#F2F2F7', bar: '#E5E5EA' }
+  };
+  var lgApplyTheme = applyTheme;
+  applyTheme = function () {
+    lgApplyTheme();
+    var t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light', c = LG_COLORS[t];
+    var meta = $('meta[name=theme-color]'); if (meta) meta.setAttribute('content', c.head);
+    if (!inTG) return;
+    try { if (tg.isVersionAtLeast('6.9')) tg.setHeaderColor(c.head); } catch (e) {}
+    try { if (tg.isVersionAtLeast('6.1')) tg.setBackgroundColor(c.bg); } catch (e) {}
+    try { if (tg.isVersionAtLeast('7.10')) tg.setBottomBarColor(c.bar); } catch (e) {}
+  };
+  // Slider → material alpha. 70% gives the palette's reference alpha (.55 dark / .65 light);
+  // 0% stays dense (.96), 100% stays clear. Computed in JS so old iOS WebViews need no CSS min().
+  function lgAlpha(a, base) { return Math.min(a * base / .358, base + (a - .358) * (.96 - base) / .602); }
+  var lgApplyGlass = applyGlassMaterial;
+  applyGlassMaterial = function () {
+    lgApplyGlass();
+    var a = parseFloat(document.documentElement.style.getPropertyValue('--glass-alpha'));
+    if (!isFinite(a)) a = .358;
+    document.documentElement.style.setProperty('--lg-a-dark', lgAlpha(a, .55).toFixed(3));
+    document.documentElement.style.setProperty('--lg-a-light', lgAlpha(a, .65).toFixed(3));
+  };
+  // Elements whose handlers already call haptic() are skipped to avoid double taps.
+  var LG_TAP = '.close,[data-close],.editor-close,.slot-choice,.type-choice,.editor-save,.editor-cancel,.editor-delete,[data-edit-day],.edit-gradient,.retry,.group-retry,.sitem,.edit-setting,#editorBody button,#editorFooter button';
+  function lgInit() {
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest || !e.target.closest(LG_TAP)) return;
+      if (inTG) { haptic('impact', 'light'); return; }
+      try { window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback && window.Telegram.WebApp.HapticFeedback.impactOccurred('light'); } catch (err) {}
+    }, true);
+  }
+
+  init(); editorInit(); lgInit();
 
 })();
 </script>
