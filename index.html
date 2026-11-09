@@ -207,12 +207,12 @@ svg{display:block;flex:none}
 
 /* ---------- 7. Контент ---------- */
 .content{padding:10px 14px 0}
-.in-l{animation:inL .45s var(--spring)}
-.in-r{animation:inR .45s var(--spring)}
-.in-f{animation:inF .35s ease}
-@keyframes inL{from{opacity:0;transform:translate3d(34px,0,0)}to{opacity:1;transform:none}}
-@keyframes inR{from{opacity:0;transform:translate3d(-34px,0,0)}to{opacity:1;transform:none}}
-@keyframes inF{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:none}}
+.in-l{animation:inL .32s var(--spring)}
+.in-r{animation:inR .32s var(--spring)}
+.in-f{animation:inF .28s ease}
+@keyframes inL{from{transform:translate3d(28px,0,0)}to{transform:none}}
+@keyframes inR{from{transform:translate3d(-28px,0,0)}to{transform:none}}
+@keyframes inF{from{transform:translate3d(0,8px,0)}to{transform:none}}
 .pills{display:flex;gap:7px;margin:6px 0 12px;overflow-x:auto;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{flex:none;padding:8px 13px;border-radius:999px;font-size:13.5px;font-weight:700;white-space:nowrap}
@@ -1546,7 +1546,7 @@ svg{display:block;flex:none}
   function additionsFor(date){return E.map[ekey(date)]||[];}
   function lessonsFor(date){var list=originalLessonsFor(date).slice();if(!E.hidden)list=list.concat(additionsFor(date));return list.sort(function(a,b){return hm(a.start)-hm(b.start)||cmpLesson(a,b);});}
   async function editAPI(path,options){options=options||{};var headers={'Content-Type':'application/json'};if(E.token)headers.Authorization='Bearer '+E.token.token;var ctrl=new AbortController(),timer=setTimeout(function(){ctrl.abort();},20000);try{var r=await fetch(CONFIG.editorApi+path,Object.assign({},options,{headers:headers,credentials:'omit',cache:'no-store',signal:ctrl.signal}));var j=await r.json();if(!r.ok){if(r.status===401){E.token=null;E.user=null;LS.set('kgeu.editor.session',null);}var er=new Error(j.error||'Не удалось загрузить дополнения');er.status=r.status;throw er;}return j;}catch(err){if(err instanceof SyntaxError)throw new Error('Сервис редактирования ещё не подключён');if(err.name==='AbortError')throw new Error('Нет ответа от сервиса редактирования');if(err.message==='Failed to fetch')throw new Error('Нет связи с сервисом редактирования');throw err;}finally{clearTimeout(timer);}}
-  async function syncEdits(date,force){var group=CONFIG.groupId,from=monday(date||S.sel),to=addDays(from,41),key=group+':'+from;if(E.fetching[key])return E.fetching[key];if(!force&&E.loaded[key]&&Date.now()-E.loaded[key]<30000)return;E.fetching[key]=(async function(){try{var j=await editAPI('/days?group='+group+'&from='+from+'&to='+to);for(var d=from;d<=to;d=addDays(d,1)){E.map[ekey(d,group)]=[];delete E.authors[ekey(d,group)];}j.lessons.forEach(function(l){l.custom=true;(E.map[ekey(l.date,group)]||(E.map[ekey(l.date,group)]=[])).push(l);});Object.keys(j.days).forEach(function(d){E.authors[ekey(d,group)]=j.days[d];});E.loaded[key]=Date.now();E.error='';if(group===CONFIG.groupId)render();return true;}catch(err){E.error=err.message;if(group===CONFIG.groupId)renderMain();return false;}finally{delete E.fetching[key];}})();return E.fetching[key];}
+  async function syncEdits(date,force){var group=CONFIG.groupId,from=monday(date||S.sel),to=addDays(from,41),key=group+':'+from;if(E.fetching[key])return E.fetching[key];if(!force&&E.loaded[key]&&Date.now()-E.loaded[key]<30000)return;E.fetching[key]=(async function(){try{var j=await editAPI('/days?group='+group+'&from='+from+'&to='+to);for(var d=from;d<=to;d=addDays(d,1)){E.map[ekey(d,group)]=[];delete E.authors[ekey(d,group)];}j.lessons.forEach(function(l){l.custom=true;(E.map[ekey(l.date,group)]||(E.map[ekey(l.date,group)]=[])).push(l);});Object.keys(j.days).forEach(function(d){E.authors[ekey(d,group)]=j.days[d];});E.loaded[key]=Date.now();var sig=JSON.stringify(j),hadErr=!!E.error;E.sigs=E.sigs||{};var same=E.sigs[key]===sig&&!hadErr;E.sigs[key]=sig;E.error='';if(group===CONFIG.groupId&&!same)render();return true;}catch(err){E.error=err.message;if(group===CONFIG.groupId)renderMain();return false;}finally{delete E.fetching[key];}})();return E.fetching[key];}
   var originalRenderHeader=renderHeader;renderHeader=function(){originalRenderHeader();if(typeof E!=='undefined')syncEdits(S.sel,false);};
   var originalRenderCal=renderCal;renderCal=function(anim){originalRenderCal(anim);syncEdits(S.calMonth,false);};
   dayHeadHTML=function(date,list,compact){var author=E.authors[ekey(date)],mark=!E.hidden&&author&&additionsFor(date).length?'<span class="edited-by">edited by '+esc(author)+'</span>':'';
@@ -1664,9 +1664,10 @@ svg{display:block;flex:none}
     clearTimeout(lgIdle); lgIdle = setTimeout(function () { lgPX = lgPY = null; lgQueue(); }, 1400);
   }
   function lgInit() {
-    document.addEventListener('pointermove', function (e) { lgPoint(e.clientX, e.clientY); }, { passive: true });
+    document.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') lgPoint(e.clientX, e.clientY); }, { passive: true });
     document.addEventListener('pointerdown', function (e) { lgPoint(e.clientX, e.clientY); }, { passive: true });
-    document.addEventListener('touchmove', function (e) { var t = e.touches && e.touches[0]; if (t) lgPoint(t.clientX, t.clientY); }, { passive: true });
+    // после анимации смены дня снимаем её класс, чтобы контейнер со стеклом не оставался анимированным слоем
+    ['#view', '#strip', '#calGrid'].forEach(function (s) { var el = $(s); if (el) el.addEventListener('animationend', function (e) { if (e.target === el) el.classList.remove('in-l', 'in-r', 'in-f'); }); });
     window.addEventListener('resize', lgQueue);
     try { new MutationObserver(lgQueue).observe($('#view'), { childList: true }); } catch (err) {}
     lgQueue();
