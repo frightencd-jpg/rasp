@@ -12,7 +12,11 @@
 <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.__onTg&&window.__onTg()"></script>
 <style>
 /* ==========================================================================
-   Расписание ИМС-1-25 · Liquid Glass Graphite + аврора Gemini (единая таблица стилей)
+   Расписание ИМС-1-25 · Liquid Glass Graphite + аврора (v2)
+   Правило слоёв: стекло с backdrop-filter — только у парящего слоя управления
+   (шапка, нижняя капсула, шторки, тост). Контент — карточки пар, шапка дня,
+   пустые состояния, блоки настроек — полупрозрачная заливка БЕЗ размытия:
+   под контентом лежит только мягкая аврора, размывать там нечего.
    Материал управляется из JS: --glass-alpha (ползунок «Прозрачность»),
    --lg-a-dark / --lg-a-light (плотность слоя для тёмной и светлой темы).
    ========================================================================== */
@@ -22,19 +26,16 @@
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --safe-b:max(env(safe-area-inset-bottom,0px),var(--tg-safe-area-inset-bottom,0px));
   --safe-t:var(--tg-content-safe-area-inset-top,0px);
-  --head-h:190px;
+  --head-h:182px;      /* полная высота шапки — уточняется из JS */
+  --head-stick:104px;  /* на сколько шапка уезжает вверх при прокрутке — уточняется из JS */
   --spring:cubic-bezier(.22,1,.36,1);
   --sheet-ease:cubic-bezier(.32,.72,0,1);
-  --lg-k:clamp(.4,calc(var(--glass-alpha,.358) / .358),1.6);
-  --glass-filter:blur(24px) saturate(180%);
-  --sheet-filter:blur(28px) saturate(180%);
-  --r-card:24px;
+  /* шкала радиусов: 12 / 20 / 28 + капсула */
+  --r-s:12px; --r-m:20px; --r-l:28px; --r-full:999px;
 
   /* типы занятий */
   --lec:#30D158; --pr:#FF453A; --lab:#BF5AF2; --study:#DC963F; --industry:#A67B59;
   --exam:#FF9F0A; --cred:#12B8C6; --cons:#3E8BFF; --oth:#8E8E93;
-  --lec-bg:rgba(48,209,88,.14); --pr-bg:rgba(255,69,58,.13); --lab-bg:rgba(191,90,242,.14); --study-bg:rgba(220,150,63,.15);
-  --industry-bg:rgba(166,123,89,.16); --exam-bg:rgba(255,159,10,.14); --cred-bg:rgba(18,184,198,.14); --cons-bg:rgba(62,139,255,.14); --oth-bg:rgba(142,142,147,.16);
   --lec-s:rgba(48,209,88,.38); --pr-s:rgba(255,69,58,.36); --lab-s:rgba(191,90,242,.38); --study-s:rgba(220,150,63,.36);
   --industry-s:rgba(166,123,89,.36); --exam-s:rgba(255,159,10,.36); --cred-s:rgba(18,184,198,.36); --cons-s:rgba(62,139,255,.36); --oth-s:rgba(142,142,147,.3);
 
@@ -45,30 +46,28 @@
   --aur2:radial-gradient(circle,rgba(155,114,203,.20) 0%,rgba(123,97,255,.08) 45%,transparent 70%);
   --aur3:radial-gradient(circle,rgba(217,101,112,.16) 0%,rgba(155,114,203,.12) 48%,transparent 75%);
   --aur4:radial-gradient(circle,rgba(56,182,255,.16) 0%,rgba(66,133,244,.06) 50%,transparent 72%);
+  --edge:rgba(240,241,246,.62); --edge-0:rgba(240,241,246,0); --solid:#F8F9FC;
   --text:#1C1C1E; --text2:#4A4A52; --text3:#6E6E76;
-  --glass-bg:linear-gradient(135deg,rgba(255,255,255,calc(.55 * var(--lg-k))) 0%,rgba(255,255,255,calc(.12 * var(--lg-k))) 48%,rgba(255,255,255,calc(.32 * var(--lg-k))) 100%),rgba(255,255,255,var(--lg-a-light,.62));
-  --glass-shadow:0 12px 30px -10px rgba(20,20,30,.09),0 0 0 .5px rgba(20,20,30,.06),inset 0 1.5px 1px rgba(255,255,255,.98),inset 0 -1px 1.5px rgba(20,20,30,.035),inset 1px 0 1px rgba(255,255,255,.6),inset 0 0 24px rgba(255,255,255,.22);
+  /* стекло парящего слоя */
+  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.14) 48%,rgba(255,255,255,.34) 100%),rgba(255,255,255,clamp(.7,calc(var(--lg-a-light,.62) + .16),.96));
+  --glass-shadow:0 12px 30px -10px rgba(20,20,30,.09),0 0 0 .5px rgba(20,20,30,.06),inset 0 1.5px 1px rgba(255,255,255,.98),inset 0 -1px 1.5px rgba(20,20,30,.035);
   --rim:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.45) 32%,rgba(20,20,30,.06) 62%,rgba(255,255,255,.85) 100%);
-  --glare:rgba(255,255,255,.6);
   --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.28) 55%),rgba(246,246,249,clamp(.72,calc(var(--lg-a-light,.62) + .2),.97));
   --sheet-shadow:0 -18px 50px -14px rgba(20,20,30,.18),inset 0 1.5px 1px rgba(255,255,255,1),inset 0 0 0 .5px rgba(20,20,30,.07);
   --sheet-lip:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,.4) 30%,rgba(255,255,255,0) 60%);
-  --inner:rgba(20,20,30,.045); --inner-2:rgba(20,20,30,.07); --line:rgba(20,20,30,.08); --line-2:rgba(20,20,30,.16);
-  --track:rgba(20,20,30,.08); --dash:rgba(20,20,30,.16); --gap-bg:rgba(255,255,255,.4);
-  --ctrl-bg:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.62));
-  --ctrl-shadow:inset 0 1px .5px #fff,0 0 0 .5px rgba(20,20,30,.07),0 5px 14px -6px rgba(20,20,30,.2);
-  --pill-bg:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.42));
-  --pill-shadow:inset 0 1px .5px rgba(255,255,255,1),0 0 0 .5px rgba(20,20,30,.06),0 3px 8px -4px rgba(20,20,30,.16);
-  --drop-bg:radial-gradient(120% 70% at 50% 0%,#76767F 0%,rgba(118,118,127,0) 60%),linear-gradient(180deg,#4E4E56 0%,#2B2B31 55%,#18181C 100%);
-  --drop-fg:#FFFFFF;
-  --drop-shadow:0 10px 22px -6px rgba(10,10,14,.45),0 2px 4px rgba(10,10,14,.18),inset 0 1.5px 1px rgba(255,255,255,.55),inset 0 -3px 6px rgba(0,0,0,.35),inset 0 0 0 .5px rgba(255,255,255,.18);
-  --drop-hl:rgba(255,255,255,.42);
-  --lens-bg:linear-gradient(180deg,#FFFFFF,rgba(255,255,255,.82));
-  --lens-shadow:0 4px 12px -2px rgba(20,20,30,.2),0 0 0 .5px rgba(20,20,30,.08),inset 0 1px 0 #fff,inset 0 -1px 2px rgba(20,20,30,.06);
-  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.14) 48%,rgba(255,255,255,.34) 100%),rgba(255,255,255,clamp(.7,calc(var(--lg-a-light,.62) + .16),.96));
+  /* поверхности контента: без blur, одна тонкая линия вместо шести теней */
   --card-bg:linear-gradient(135deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.15) 48%,rgba(255,255,255,.35) 100%),rgba(255,255,255,clamp(.35,calc(var(--lg-a-light,.62) + .1),.97));
-  --card-shadow:var(--glass-shadow);
-  --today-ring:rgba(28,28,30,.55); --sel-ring:rgba(28,28,30,.4); --focus:rgba(28,28,30,.5); --focus-glow:rgba(28,28,30,.12);
+  --card-shadow:0 0 0 .5px rgba(20,20,30,.07),0 1px 3px -1px rgba(20,20,30,.08);
+  --inner:rgba(20,20,30,.045); --inner-2:rgba(20,20,30,.07); --line:rgba(20,20,30,.08); --line-2:rgba(20,20,30,.16);
+  --track:rgba(20,20,30,.08); --dash:rgba(20,20,30,.16);
+  --ctrl-bg:rgba(255,255,255,.72);
+  --ctrl-shadow:0 0 0 .5px rgba(20,20,30,.08),0 1px 3px -1px rgba(20,20,30,.12);
+  /* главное действие и выбранный день: ровная заливка, без глянца */
+  --drop-bg:#1C1C1E; --drop-fg:#FFFFFF;
+  --drop-shadow:0 6px 14px -8px rgba(10,10,14,.55),inset 0 1px 0 rgba(255,255,255,.14);
+  --lens-bg:#FFFFFF;
+  --lens-shadow:0 2px 8px -2px rgba(20,20,30,.2),0 0 0 .5px rgba(20,20,30,.08);
+  --today-ring:rgba(28,28,30,.55); --focus:rgba(28,28,30,.5); --focus-glow:rgba(28,28,30,.12);
   --backdrop:rgba(20,20,30,.22);
   --warn-t:#B86A00; --danger:#D7261C; --success:#30D158;
   --lec-t:#1E9E3E; --pr-t:#D7261C; --lab-t:#9A34D1; --study-t:#955613; --industry-t:#79512F;
@@ -81,35 +80,29 @@
   --aur2:radial-gradient(circle,rgba(155,114,203,.28) 0%,rgba(123,97,255,.10) 45%,transparent 70%);
   --aur3:radial-gradient(circle,rgba(217,101,112,.24) 0%,rgba(155,114,203,.18) 48%,transparent 75%);
   --aur4:radial-gradient(circle,rgba(56,182,255,.20) 0%,rgba(66,133,244,.08) 50%,transparent 72%);
+  --edge:rgba(12,13,18,.6); --edge-0:rgba(12,13,18,0); --solid:#1B1D25;
   --text:#F5F5F7; --text2:#A9A9B2; --text3:#80808A;
-  --glass-bg:linear-gradient(135deg,rgba(255,255,255,calc(.15 * var(--lg-k))) 0%,rgba(255,255,255,calc(.04 * var(--lg-k))) 48%,rgba(255,255,255,calc(.09 * var(--lg-k))) 100%),rgba(26,28,36,var(--lg-a-dark,.42));
-  --glass-shadow:0 18px 38px -12px rgba(0,0,0,.6),0 0 1px 0 rgba(255,255,255,.28),inset 0 1.5px 1px 0 rgba(255,255,255,.52),inset 0 -1px 1.5px 0 rgba(255,255,255,.12),inset 1px 0 1px 0 rgba(255,255,255,.14),inset 0 0 24px 0 rgba(255,255,255,.035);
+  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.04) 48%,rgba(255,255,255,.09) 100%),rgba(24,26,34,clamp(.62,calc(var(--lg-a-dark,.42) + .26),.95));
+  --glass-shadow:0 18px 38px -12px rgba(0,0,0,.6),0 0 1px 0 rgba(255,255,255,.28),inset 0 1.5px 1px 0 rgba(255,255,255,.52),inset 0 -1px 1.5px 0 rgba(255,255,255,.12);
   --rim:linear-gradient(135deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.14) 32%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.38) 100%);
-  --glare:rgba(255,255,255,.14);
   --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.05) 100%),rgba(24,26,34,clamp(.72,calc(var(--lg-a-dark,.42) + .32),.96));
   --sheet-shadow:0 -20px 60px -10px rgba(0,0,0,.6),inset 0 1.5px 1px rgba(255,255,255,.42),inset 0 0 0 .5px rgba(255,255,255,.12);
   --sheet-lip:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.1) 30%,rgba(255,255,255,0) 60%);
-  --inner:rgba(255,255,255,.06); --inner-2:rgba(255,255,255,.1); --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.2);
-  --track:rgba(255,255,255,.1); --dash:rgba(255,255,255,.16); --gap-bg:rgba(255,255,255,.025);
-  --ctrl-bg:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.045));
-  --ctrl-shadow:inset 0 1px .5px rgba(255,255,255,.38),inset 0 0 0 .5px rgba(255,255,255,.08),0 5px 14px -4px rgba(0,0,0,.55);
-  --pill-bg:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
-  --pill-shadow:inset 0 1px .5px rgba(255,255,255,.26),inset 0 0 0 .5px rgba(255,255,255,.06),0 4px 10px -6px rgba(0,0,0,.6);
-  --drop-bg:radial-gradient(120% 70% at 50% 0%,#FFFFFF 0%,rgba(255,255,255,0) 62%),linear-gradient(180deg,#E9E9EE 0%,#B9B9C1 48%,#7E7E87 100%);
-  --drop-fg:#111114;
-  --drop-shadow:0 10px 24px -6px rgba(0,0,0,.7),0 0 18px -4px rgba(220,220,235,.28),inset 0 1.5px 1px rgba(255,255,255,1),inset 0 -3px 7px rgba(40,40,50,.35),inset 0 0 0 .5px rgba(255,255,255,.5);
-  --drop-hl:rgba(255,255,255,.85);
-  --lens-bg:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,.1));
-  --lens-shadow:0 4px 12px -2px rgba(0,0,0,.55),inset 0 1px .5px rgba(255,255,255,.55),inset 0 -1px 1px rgba(255,255,255,.08),inset 0 0 0 .5px rgba(255,255,255,.14);
-  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.04) 48%,rgba(255,255,255,.09) 100%),rgba(24,26,34,clamp(.62,calc(var(--lg-a-dark,.42) + .26),.95));
   --card-bg:linear-gradient(135deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.025) 48%,rgba(255,255,255,.06) 100%),rgba(28,30,38,clamp(.3,calc(var(--lg-a-dark,.42) + .16),.96));
-  --card-shadow:0 18px 38px -12px rgba(0,0,0,.6),0 0 1px 0 rgba(255,255,255,.24),inset 0 1px 1px rgba(255,255,255,.45),inset 0 -1px 1.5px rgba(255,255,255,.1),inset 1px 0 1px rgba(255,255,255,.12),inset 0 0 24px rgba(255,255,255,.03);
-  --today-ring:rgba(245,245,247,.6); --sel-ring:rgba(245,245,247,.5); --focus:rgba(245,245,247,.55); --focus-glow:rgba(245,245,247,.12);
+  --card-shadow:inset 0 0 0 .5px rgba(255,255,255,.10),inset 0 1px 0 rgba(255,255,255,.07);
+  --inner:rgba(255,255,255,.06); --inner-2:rgba(255,255,255,.1); --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.2);
+  --track:rgba(255,255,255,.1); --dash:rgba(255,255,255,.16);
+  --ctrl-bg:rgba(255,255,255,.09);
+  --ctrl-shadow:inset 0 0 0 .5px rgba(255,255,255,.11);
+  --drop-bg:#F2F2F5; --drop-fg:#111114;
+  --drop-shadow:0 6px 16px -8px rgba(0,0,0,.7);
+  --lens-bg:rgba(255,255,255,.18);
+  --lens-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 2px 8px -2px rgba(0,0,0,.5);
+  --today-ring:rgba(245,245,247,.6); --focus:rgba(245,245,247,.55); --focus-glow:rgba(245,245,247,.12);
   --backdrop:rgba(0,0,0,.42);
   --warn-t:#FFB54A; --danger:#FF6961;
   --lec-t:#30D158; --pr-t:#FF6961; --lab-t:#D08CF7; --study-t:#E5B26F; --industry-t:#CFA785;
   --exam-t:#FFB54A; --cred-t:#4FD8E3; --cons-t:#7FB2FF; --oth-t:#AEAEB2;
-  --lec-bg:rgba(48,209,88,.16); --pr-bg:rgba(255,69,58,.17); --lab-bg:rgba(191,90,242,.19); --study-bg:rgba(220,150,63,.18); --industry-bg:rgba(166,123,89,.2);
 }
 
 /* ---------- 2. Основа ---------- */
@@ -122,283 +115,262 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cu
 button:focus-visible,input:not(.editor-input):focus-visible{outline:2px solid var(--focus);outline-offset:3px}
 input,button{accent-color:var(--text2)}
 svg{display:block;flex:none}
-.lg-defs{position:absolute;width:0;height:0;overflow:hidden}
 
-/* ---------- 3. Фон: аврора в духе Gemini (статичная — ради скорости) ----------
-   Пятна нарисованы мягкими радиальными градиентами без filter:blur и не двигаются:
-   движущийся фон заставлял телефон заново размывать всё стекло на каждом кадре. */
+/* ---------- 3. Фон: статичная аврора ----------
+   Пятна — мягкие радиальные градиенты без filter:blur и без движения. */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict;background:linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 100%)}
 .bg i,.bg::before{position:absolute;border-radius:50%}
 .bg::before{content:"";width:520px;height:520px;right:-220px;top:-200px;background:var(--aur4)}
 .b1{width:760px;height:760px;left:-330px;top:-260px;background:var(--aur1)}
 .b2{width:720px;height:720px;right:-340px;top:22%;background:var(--aur2)}
 .b3{width:820px;height:820px;left:-300px;bottom:-360px;background:var(--aur3)}
+/* край прокрутки: контент мягко гаснет к нижней капсуле, но остаётся виден сквозь её стекло */
+.edge{position:fixed;left:0;right:0;bottom:0;z-index:25;height:calc(96px + var(--safe-b));pointer-events:none;background:linear-gradient(to top,var(--edge) 0%,var(--edge-0) 100%)}
 
-/* ---------- 4. Материал Liquid Glass ---------- */
-.lg,.card,.day-head,.empty,.sgroup,.glass-controls,.edit-setting,.done,.pill{
-  position:relative;background:var(--glass-bg);
-  -webkit-backdrop-filter:var(--glass-filter);backdrop-filter:var(--glass-filter);
-  box-shadow:var(--glass-shadow);border:0;color:var(--text)
-}
-/* шапка и капсула — плотнее: под ними прокручивается текст */
-.top.lg,#dock{background:var(--bar-bg);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}
-/* карточки пар: плотнее, blur 26px — аврора мягко преломляется по краям */
-.card{background:var(--card-bg);-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:var(--card-shadow)}
-/* 1px преломляющая грань */
-:is(.lg,.card,.day-head,.empty,.sgroup,.glass-controls,.edit-setting,.done,.pill,.edit-top,.ibtn,.chev,.dcell,.qbtn,.theme-seg,.close,.editor-close)::before{
+/* ---------- 4. Материал Liquid Glass — только парящий слой ----------
+   Значения blur записаны числами: старый WebKit не подставляет var() в -webkit-backdrop-filter. */
+.top,.dock,.toast{background:var(--bar-bg);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);box-shadow:var(--glass-shadow);color:var(--text)}
+/* преломляющая грань в 1px — у трёх поверхностей, а не у каждого элемента */
+:is(.top,.dock,.toast)::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:3;
   background:var(--rim);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude
 }
-/* динамический блик под пальцем */
-:is(.card,.day-head,#dock)::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  background:radial-gradient(280px circle at var(--px,50%) var(--py,0%),var(--glare),transparent 65%)
-}
-:is(.card,.day-head,#dock)>*{position:relative;z-index:1}
-/* оптическая рябь на верхней кромке шапки */
 .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;border-radius:inherit;pointer-events:none;z-index:0;
   background:linear-gradient(180deg,transparent,rgba(255,255,255,.05) 70%,rgba(255,255,255,.12));opacity:.8}
-.top>*{position:relative;z-index:1}
+.dock::after{display:none}
+.top>*,.dock>*{position:relative;z-index:1}
 
 /* ---------- 5. Каркас и шапка ---------- */
 .app{position:relative;z-index:1;max-width:560px;margin:0 auto;min-height:100vh;padding-bottom:calc(112px + var(--safe-b))}
-.top{position:sticky;top:0;z-index:20;padding:calc(12px + var(--safe-t)) 14px 13px;border-radius:0 0 30px 30px}
+/* шапка липнет с отрицательным top: название и месяц уезжают вместе с контентом,
+   на экране остаётся только полоса недели. Ни одного обработчика прокрутки. */
+.top{position:sticky;top:calc(var(--safe-t) - var(--head-stick));z-index:20;padding:calc(10px + var(--safe-t)) 14px 12px;border-radius:0 0 var(--r-l) var(--r-l)}
 .top::before{border-top-left-radius:0;border-top-right-radius:0}
-.title-row{display:flex;align-items:center;gap:8px;min-height:48px}
-.group-picker{position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:48px;padding:0 12px 0 8px;border-radius:999px;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
-.group-picker.is-fixed{background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:0 4px 0 6px;cursor:default;opacity:1}
-.group-picker.is-fixed::before,.group-picker.is-fixed .group-symbol,.group-picker.is-fixed .group-arrow{display:none!important}
+.title-row{display:flex;align-items:center;gap:8px;min-height:44px}
+.group-picker{position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:44px;padding:0 12px 0 8px;border-radius:var(--r-full);color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
+.group-picker.is-fixed{background:none;box-shadow:none;padding:0 4px 0 6px;cursor:default;opacity:1}
+.group-picker.is-fixed .group-symbol,.group-picker.is-fixed .group-arrow{display:none!important}
 .group-symbol{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;flex:none;color:var(--text2)}
 .group-name{font-size:17px;font-weight:700;letter-spacing:-.025em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.group-picker.is-fixed .group-name{font-size:27px;font-weight:800;letter-spacing:-.035em;line-height:1.05}
+.group-picker.is-fixed .group-name{font-size:26px;font-weight:700;letter-spacing:-.035em;line-height:1.05}
 .group-arrow{margin-left:auto;color:var(--text2);flex:none;transition:transform .25s}
 .group-picker[aria-expanded=true] .group-arrow{transform:rotate(180deg)}
-.edit-top{position:relative;flex:none;height:44px;min-width:56px;padding:0 14px;border-radius:999px;font-size:16px;font-weight:700;letter-spacing:-.025em;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
-.ibtn{position:relative;flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow);-webkit-backdrop-filter:none;backdrop-filter:none}
+.edit-top{position:relative;flex:none;height:40px;min-width:54px;padding:0 14px;border-radius:var(--r-full);font-size:15.5px;font-weight:700;letter-spacing:-.025em;text-align:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
+.ibtn{position:relative;flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
 .ibtn.spin svg{animation:spin .9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.week-nav{display:flex;align-items:center;justify-content:space-between;margin:12px 0 10px}
-.chev{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
-.month-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:2px 14px;border-radius:14px}
-.month-btn .m{display:flex;align-items:center;gap:5px;font-size:17px;font-weight:700;letter-spacing:-.015em}
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin:8px 0 8px}
+.chev{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
+.month-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:2px 14px;border-radius:var(--r-s)}
+.month-btn .m{display:flex;align-items:center;gap:5px;font-size:16.5px;font-weight:700;letter-spacing:-.015em}
 .month-btn .m svg{color:var(--text2)}
 .month-btn .w{font-size:12.5px;font-weight:500;color:var(--text2)}
 
 /* ---------- 6. Полоса недели ---------- */
-.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;touch-action:pan-y}
-.dcell{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 7px;border-radius:20px;background:var(--pill-bg);box-shadow:var(--pill-shadow);transition:transform .35s var(--spring),background .25s,box-shadow .25s}
-.dcell>*{position:relative;z-index:1}
-.dcell .wd{font-size:11.5px;font-weight:600;color:var(--text2)}
-.dcell .dn{font-size:19px;font-weight:650;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--text)}
-.dots{display:flex;gap:3px;height:5px;align-items:center;justify-content:center}
-.dots i{width:5px;height:5px;border-radius:50%}
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;touch-action:pan-y}
+.dcell{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 8px;border-radius:var(--r-m);transition:transform .35s var(--spring),background .25s,box-shadow .25s}
+.dcell .wd{font-size:11.5px;font-weight:600;color:var(--text3)}
+.dcell .dn{font-size:18px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--text)}
+/* нейтральная метка нагрузки: чем больше пар, тем длиннее */
+.dots{display:flex;height:3px;align-items:center;justify-content:center}
+.load{display:block;height:3px;width:calc(3px + var(--n,1) * 3px);border-radius:3px;background:var(--text3)}
 .dcell.off .dn{color:var(--text3);font-weight:500}
-.dcell.today:not(.sel){box-shadow:var(--pill-shadow),inset 0 0 0 1.5px var(--today-ring)}
+.dcell.today:not(.sel){box-shadow:inset 0 0 0 1.5px var(--today-ring)}
 .dcell.today:not(.sel) .wd{color:var(--text)}
-/* выбранный день — капля жидкого металла */
-.dcell.sel{background:var(--drop-bg);box-shadow:var(--drop-shadow);transform:translateY(-1px)}
-.dcell.sel::after{content:"";position:absolute;left:16%;right:16%;top:3px;height:34%;border-radius:999px;background:linear-gradient(180deg,var(--drop-hl),rgba(255,255,255,0));pointer-events:none;z-index:0}
+.dcell.sel{background:var(--drop-bg);box-shadow:var(--drop-shadow)}
 .dcell.sel .wd,.dcell.sel .dn{color:var(--drop-fg)}
-.dcell.sel .wd{opacity:.7}
-.dcell.sel .dn{font-weight:750}
-.dot-lec{background:var(--lec)}.dot-pr{background:var(--pr)}.dot-lab{background:var(--lab)}.dot-study{background:var(--study)}.dot-industry{background:var(--industry)}
-.dot-exam{background:var(--exam)}.dot-credit{background:var(--cred)}.dot-cons{background:var(--cons)}.dot-other{background:var(--oth)}
+.dcell.sel .wd{opacity:.65}
+.dcell.sel .dn{font-weight:700}
+.dcell.sel .load,.cday.sel .load{background:var(--drop-fg);opacity:.55}
 
 /* ---------- 7. Контент ---------- */
-.content{padding:10px 14px 0}
+.content{padding:12px 14px 0}
 .in-l{animation:inL .32s var(--spring)}
 .in-r{animation:inR .32s var(--spring)}
 .in-f{animation:inF .28s ease}
 @keyframes inL{from{transform:translate3d(28px,0,0)}to{transform:none}}
 @keyframes inR{from{transform:translate3d(-28px,0,0)}to{transform:none}}
 @keyframes inF{from{transform:translate3d(0,8px,0)}to{transform:none}}
-.pills{display:flex;gap:7px;margin:6px 0 12px;overflow-x:auto;scrollbar-width:none}
-.pills::-webkit-scrollbar{display:none}
-.pill{flex:none;padding:8px 13px;border-radius:999px;font-size:13.5px;font-weight:700;white-space:nowrap}
-.banner{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:16px;margin:0 0 10px;font-size:13px;font-weight:600;background:rgba(255,159,10,.14);color:var(--warn-t)}
+.banner{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:var(--r-s);margin:0 0 10px;font-size:13px;font-weight:600;background:rgba(255,159,10,.14);color:var(--warn-t)}
 .editor-sync{font-size:13.5px;color:var(--text2);margin:2px 4px 10px;line-height:1.4}
 
-/* заголовок дня */
+/* заголовок дня: строка текста, без собственной плашки */
 .day-edit-wrap{position:relative}
-.day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:12px 16px;border-radius:var(--r-card);text-align:left;cursor:pointer}
-.dh-left{min-width:0;flex:1}
-.day-title-row{display:flex;align-items:center;gap:8px;min-height:28px}
-.day-open{min-height:40px;display:inline-flex;align-items:center;min-width:0}
-.dh-wd{font-size:clamp(20px,5.4vw,23px);font-weight:750;letter-spacing:-.025em;line-height:1.15;white-space:nowrap;color:var(--text)}
-.dh-sub{display:block;margin-top:1px;font-size:13px;font-weight:500;color:var(--text2)}
-.edited-by{display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-top:5px;overflow-wrap:anywhere}
-.dh-r{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none;min-width:84px;align-self:center}
-.dh-date{font-size:16px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--text)}
-.dh-badge{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:var(--text2);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
-.day-head.compact{padding:8px 14px;border-radius:20px}
-.day-head.compact .dh-wd{font-size:17px}
-.day-head.compact .dh-date{font-size:14.5px}
-.day-head.compact .day-open{min-height:36px}
-.edit-gradient{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:48px;min-height:40px;padding:0 12px;border-radius:999px;font-size:15px;font-weight:700;letter-spacing:-.02em;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
-.wk{margin-bottom:18px;scroll-margin-top:calc(var(--head-h) + 10px)}
-.wk.is-sel .day-head{box-shadow:var(--glass-shadow),inset 0 0 0 1.5px var(--sel-ring)}
+.day-head{display:block;width:100%;padding:4px 4px 2px;text-align:left;cursor:pointer;color:var(--text)}
+.dh-left{display:block;min-width:0}
+.day-title-row{display:flex;align-items:center;gap:8px;min-height:36px}
+.day-open{min-height:36px;display:inline-flex;align-items:center;min-width:0}
+.dh-wd{font-size:clamp(21px,5.8vw,24px);font-weight:700;letter-spacing:-.03em;line-height:1.15;white-space:nowrap;color:var(--text)}
+.dh-sub{display:block;margin-top:1px;font-size:13.5px;font-weight:500;line-height:1.35;color:var(--text2);font-variant-numeric:tabular-nums}
+.edited-by{display:block;font-size:12.5px;font-weight:500;color:var(--text2);margin-top:4px;overflow-wrap:anywhere}
+.dh-r{display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:1px;min-height:1px;margin-left:auto}
+.dh-badge{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r-full);color:var(--text2);background:var(--inner-2)}
+.day-head.compact{padding:2px 4px 0}
+.day-head.compact .dh-wd{font-size:19px}
+.day-head.compact .day-open,.day-head.compact .day-title-row{min-height:32px}
+.edit-gradient{display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:48px;min-height:34px;padding:0 12px;border-radius:var(--r-full);font-size:14.5px;font-weight:700;letter-spacing:-.02em;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
+.wk{margin-bottom:22px;scroll-margin-top:calc(var(--head-h) - var(--head-stick) + var(--safe-t) + 12px)}
 
-/* карточка пары */
-.t-lec{--c:var(--lec);--t:var(--lec-t);--bgc:var(--lec-bg);--s:var(--lec-s)}
-.t-pr{--c:var(--pr);--t:var(--pr-t);--bgc:var(--pr-bg);--s:var(--pr-s)}
-.t-lab{--c:var(--lab);--t:var(--lab-t);--bgc:var(--lab-bg);--s:var(--lab-s)}
-.t-study{--c:var(--study);--t:var(--study-t);--bgc:var(--study-bg);--s:var(--study-s)}
-.t-industry{--c:var(--industry);--t:var(--industry-t);--bgc:var(--industry-bg);--s:var(--industry-s)}
-.t-exam{--c:var(--exam);--t:var(--exam-t);--bgc:var(--exam-bg);--s:var(--exam-s)}
-.t-credit{--c:var(--cred);--t:var(--cred-t);--bgc:var(--cred-bg);--s:var(--cred-s)}
-.t-cons{--c:var(--cons);--t:var(--cons-t);--bgc:var(--cons-bg);--s:var(--cons-s)}
-.t-other{--c:var(--oth);--t:var(--oth-t);--bgc:var(--oth-bg);--s:var(--oth-s)}
-.lessons{display:flex;flex-direction:column;gap:10px;margin-top:10px}
-.lesson{display:block;transition:opacity .3s}
-.card{min-width:0;padding:13px 15px 14px;border-radius:var(--r-card);transition:transform .35s var(--spring),box-shadow .3s}
+/* карточка пары: время слева, цветная полоса типа, справа — что, где и кто */
+.t-lec{--c:var(--lec);--t:var(--lec-t);--s:var(--lec-s)}
+.t-pr{--c:var(--pr);--t:var(--pr-t);--s:var(--pr-s)}
+.t-lab{--c:var(--lab);--t:var(--lab-t);--s:var(--lab-s)}
+.t-study{--c:var(--study);--t:var(--study-t);--s:var(--study-s)}
+.t-industry{--c:var(--industry);--t:var(--industry-t);--s:var(--industry-s)}
+.t-exam{--c:var(--exam);--t:var(--exam-t);--s:var(--exam-s)}
+.t-credit{--c:var(--cred);--t:var(--cred-t);--s:var(--cred-s)}
+.t-cons{--c:var(--cons);--t:var(--cons-t);--s:var(--cons-s)}
+.t-other{--c:var(--oth);--t:var(--oth-t);--s:var(--oth-s)}
+.lessons{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.lesson{display:block}
+.card{position:relative;display:grid;grid-template-columns:52px 3px minmax(0,1fr);column-gap:12px;min-width:0;padding:12px 14px 12px 14px;border-radius:var(--r-m);overflow:hidden;contain:content;color:var(--text);background:var(--card-bg);box-shadow:var(--card-shadow);transition:transform .35s var(--spring)}
 .card:active{transform:scale(.985)}
-.row0{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
-.tm{display:inline-flex;align-items:center;gap:7px;font-size:16.5px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums;color:var(--text)}
-.tm svg{color:var(--text3)}
-.tm .dash{color:var(--text3);font-weight:600}
-.nchip{font-size:12px;font-weight:600;color:var(--text2);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line);padding:4px 10px;border-radius:999px;white-space:nowrap;flex:none}
-.row1{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.tchip{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 9px;border-radius:999px;background:var(--bgc);color:var(--t);font-size:12.5px;font-weight:700;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.tchip i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none}
-.name{margin:8px 0 6px;font-size:17px;line-height:1.25;font-weight:650;letter-spacing:-.015em;word-break:break-word;color:var(--text)}
-.name .pg{white-space:nowrap;color:var(--text2);font-weight:550}
-.meta{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:14px;line-height:1.3;color:var(--text2);min-width:0}
+.c-time{display:flex;flex-direction:column;gap:1px;min-width:0;font-variant-numeric:tabular-nums}
+.c-time b{font-size:16px;font-weight:700;letter-spacing:-.01em;line-height:1.25;color:var(--text)}
+.c-time span{font-size:13px;font-weight:500;line-height:1.3;color:var(--text2)}
+.c-time small{margin-top:auto;padding-top:6px;font-size:11px;font-weight:600;line-height:1.2;color:var(--text3);white-space:nowrap}
+.c-bar{display:block;border-radius:3px;background:var(--c)}
+.c-main{min-width:0}
+.c-type{font-size:12px;font-weight:600;line-height:1.3;letter-spacing:.01em;color:var(--t)}
+.name{margin:2px 0 5px;font-size:16.5px;line-height:1.25;font-weight:600;letter-spacing:-.015em;word-break:break-word;color:var(--text)}
+.name .pg{white-space:nowrap;color:var(--text2);font-weight:500}
+.meta{display:flex;flex-wrap:wrap;align-items:center;column-gap:10px;row-gap:2px;font-size:13.5px;line-height:1.35;color:var(--text2);min-width:0}
+.meta+.meta{margin-top:4px}
 .meta svg{color:var(--text3)}
 .meta span{min-width:0}
-.meta .pos{color:var(--text3);font-size:13px;white-space:nowrap}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.chip{font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px;background:var(--inner-2);color:var(--text)}
+.meta .room{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--text)}
+.meta .pos{color:var(--text3)}
+.meta.topic{flex-wrap:nowrap;align-items:flex-start;column-gap:6px}
+.meta.topic svg{margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:var(--r-full);background:var(--inner-2);color:var(--text)}
 .chip.warn{background:rgba(255,159,10,.16);color:var(--warn-t)}
-.join{margin-top:10px;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border-radius:999px;font-size:13.5px;font-weight:700;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
-.user-addition{font-size:13px;font-weight:500;color:var(--text2);margin-top:10px}
-.lesson.past{opacity:.5}
-/* идущая пара: светящаяся грань цвета типа */
-.lesson.now .card{box-shadow:var(--glass-shadow),0 0 0 1px var(--c),0 0 26px -6px var(--s),inset 0 0 22px -8px var(--s)}
-.lesson.now .card::before{background:linear-gradient(135deg,var(--c) 0%,rgba(255,255,255,.55) 22%,rgba(255,255,255,.04) 55%,var(--c) 100%)}
-.live{margin-top:12px}
-.bar{position:relative;height:6px;border-radius:999px;background:var(--track);overflow:visible}
-.bar i{position:relative;display:block;height:100%;border-radius:999px;overflow:hidden;background:linear-gradient(90deg,var(--s),var(--c));box-shadow:0 0 10px var(--s),0 0 3px var(--c)}
-.live-l{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;font-weight:600;color:var(--text2)}
-.live-l .lv{display:inline-flex;align-items:center;gap:7px;color:var(--t);font-weight:700}
-.pulse{width:8px;height:8px;border-radius:50%;background:var(--c);animation:pulse 1.6s ease-out infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 var(--c)}75%,100%{box-shadow:0 0 0 7px rgba(0,0,0,0)}}
-.soon{display:none!important}
+.join{margin-top:10px;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:var(--r-full);font-size:13.5px;font-weight:700;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
+.user-addition{font-size:12.5px;font-weight:500;color:var(--text2);margin-top:5px}
+/* прошедшая пара: гаснет текст, а не вся карточка */
+.lesson.past .c-time b,.lesson.past .name,.lesson.past .meta .room{color:var(--text2)}
+.lesson.past .c-time span,.lesson.past .meta{color:var(--text3)}
+.lesson.past .c-bar{opacity:.35}
+.lesson.past .c-type{opacity:.6}
+/* идущая пара: тонкая грань цвета типа и полоса прогресса по нижней кромке */
+.lesson.now .card{box-shadow:var(--card-shadow),inset 0 0 0 1.5px var(--s);padding-bottom:15px}
+.live{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:2px 8px;margin-top:7px;font-size:12.5px;font-weight:600;color:var(--text2);font-variant-numeric:tabular-nums}
+.live .lv{display:inline-flex;align-items:center;gap:7px;color:var(--t);font-weight:700}
+.live span{white-space:nowrap}
+.bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--track)}
+.bar i{display:block;height:100%;background:var(--c);transform-origin:0 50%;transition:transform .6s linear}
+.pulse{position:relative;width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+.pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--c);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.55}80%,100%{transform:scale(3);opacity:0}}
 
 /* окно между парами */
 .gap{display:block}
-.gap .gi{display:none}
-.gap .gt{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:18px;border:1px dashed var(--dash);background:var(--gap-bg);font-size:13.5px;font-weight:500;color:var(--text2)}
-.gap .gt b{color:var(--text);font-weight:650}
+.gap .gt{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-m);border:1px dashed var(--dash);font-size:13px;font-weight:500;color:var(--text2)}
+.gap .gt b{color:var(--text);font-weight:600}
 .gap .gt svg{color:var(--text3)}
 
 /* пустые состояния */
-.empty{margin-top:12px;padding:24px 20px 20px;border-radius:28px;text-align:center}
-.empty-art{display:grid;place-items:center;margin-bottom:4px}
-.ea-card{fill:var(--bg-1)}
-.empty h3{margin:6px 0;font-size:19px;font-weight:750;letter-spacing:-.02em}
+.empty{margin-top:12px;padding:26px 20px 20px;border-radius:var(--r-l);text-align:center;color:var(--text);background:var(--card-bg);box-shadow:var(--card-shadow)}
+.empty-art{display:grid;place-items:center;margin-bottom:8px;color:var(--text3)}
+.empty h3{margin:6px 0;font-size:18px;font-weight:700;letter-spacing:-.02em}
 .empty p{margin:0 auto;max-width:300px;font-size:14.5px;line-height:1.42;color:var(--text2)}
-.next-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px 12px 16px;border-radius:20px;text-align:left;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
+.next-btn{margin-top:14px;width:100%;display:flex;align-items:center;gap:10px;padding:12px 12px 12px 16px;border-radius:var(--r-m);text-align:left;color:var(--text);background:var(--inner-2)}
+.next-btn>svg{color:var(--text3)}
 .next-btn .nb{flex:1;min-width:0}
-.next-btn small{display:block;font-size:12px;font-weight:600;opacity:.75}
-.next-btn b{display:block;font-size:15.5px;font-weight:750;margin:1px 0}
-.next-btn.center{justify-content:center;font-weight:750;font-size:15.5px}
-.done{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px 16px;border-radius:22px}
+.next-btn small{display:block;font-size:12px;font-weight:600;color:var(--text2)}
+.next-btn b{display:block;font-size:15.5px;font-weight:700;margin:1px 0}
+.next-btn.center{justify-content:center;padding:12px 16px;font-weight:700;font-size:15.5px;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
+.next-btn.center>svg{color:inherit}
+.day>.next-btn{background:var(--card-bg);box-shadow:var(--card-shadow)}
+.done{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px 16px;border-radius:var(--r-m);color:var(--text);background:var(--card-bg);box-shadow:var(--card-shadow)}
 .done svg{color:var(--success)}
-.done b{display:block;font-size:15px;font-weight:750}
+.done b{display:block;font-size:15px;font-weight:700}
 .done span{display:block;font-size:13px;color:var(--text2);margin-top:1px}
-.noclass{margin-top:8px;padding:12px 15px;border-radius:18px;font-size:14px;font-weight:550;color:var(--text3);background:var(--gap-bg);box-shadow:inset 0 0 0 1px var(--line)}
-.legend{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:22px 0 8px}
-.legend span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 11px 5px 9px;border-radius:999px;background:var(--bgc);color:var(--t)}
-.legend i{width:8px;height:8px;border-radius:50%;background:var(--c)}
-.foot{text-align:center;font-size:12px;line-height:1.55;color:var(--text3);padding:6px 10px 10px}
+.noclass{margin-top:6px;padding:0 4px;font-size:14px;font-weight:500;color:var(--text3)}
+.foot{text-align:center;font-size:12px;line-height:1.55;color:var(--text3);padding:18px 10px 10px}
 
-/* скелет загрузки */
-.sk{border-radius:22px;background:linear-gradient(100deg,var(--inner) 30%,var(--inner-2) 50%,var(--inner) 70%);background-size:300% 100%;animation:sk 1.3s ease-in-out infinite}
-@keyframes sk{from{background-position:100% 0}to{background-position:0 0}}
-.sk-head{height:64px;border-radius:24px}
-.sk-row{display:grid;grid-template-columns:1fr;margin-top:10px}
+/* скелет загрузки: мерцает через opacity, без перерисовки */
+.sk{border-radius:var(--r-m);background:var(--inner-2);animation:sk 1.1s ease-in-out infinite alternate}
+@keyframes sk{from{opacity:.45}to{opacity:1}}
+.sk-head{height:54px;width:62%}
+.sk-row{display:grid;grid-template-columns:1fr;margin-top:8px}
 .sk-row .sk:first-child{display:none}
-.sk-row .sk{height:120px}
+.sk-row .sk{height:88px}
 
 /* ---------- 8. Нижняя капсула ---------- */
-.dock{position:fixed;z-index:30;left:50%;bottom:calc(14px + var(--safe-b));transform:translateX(-50%) translateZ(0);display:flex;align-items:center;gap:4px;padding:6px;border-radius:9999px;isolation:isolate}
-.dbtn{height:46px;min-width:46px;padding:0 15px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text);font-size:15px;font-weight:650;white-space:nowrap;transition:transform .35s var(--spring),background .2s,opacity .2s}
+.dock{position:fixed;z-index:30;left:50%;bottom:calc(14px + var(--safe-b));transform:translateX(-50%) translateZ(0);display:flex;align-items:center;gap:4px;padding:6px;border-radius:var(--r-full);isolation:isolate}
+.dbtn{height:46px;min-width:46px;padding:0 15px;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text);font-size:15px;font-weight:600;white-space:nowrap;transition:transform .35s var(--spring),background .2s,color .2s}
 .dbtn:active{background:var(--inner-2)}
 .dbtn.round{padding:0;width:46px}
-.dbtn.dim{opacity:.45}
-.seg{position:relative;isolation:isolate;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:var(--track);box-shadow:inset 0 1px 2px rgba(0,0,0,.18)}
-.seg button{position:relative;z-index:1;height:40px;padding:0 17px;border-radius:999px;font-size:14.5px;font-weight:600;color:var(--text2);text-align:center;transition:color .25s}
+/* «Сегодня», когда уже открыт сегодняшний день: спокойный цвет вместо прозрачности */
+.dbtn.dim{color:var(--text3)}
+.seg{position:relative;isolation:isolate;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:var(--r-full);background:var(--track)}
+.seg button{position:relative;z-index:1;height:40px;padding:0 17px;border-radius:var(--r-full);font-size:14.5px;font-weight:600;color:var(--text2);text-align:center;transition:color .25s}
 .seg button.on{color:var(--text);font-weight:700}
-.seg .thumb{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:var(--lens-bg);box-shadow:var(--lens-shadow);transition:transform .55s var(--spring);pointer-events:none}
+.seg .thumb{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:var(--r-full);background:var(--lens-bg);box-shadow:var(--lens-shadow);transition:transform .55s var(--spring);pointer-events:none}
 .seg.week .thumb{transform:translateX(100%)}
 
 /* ---------- 9. Шторки ---------- */
 .backdrop{position:fixed;inset:0;z-index:40;background:var(--backdrop);opacity:0;pointer-events:none;transition:opacity .35s}
 .backdrop.show{opacity:1;pointer-events:auto}
-.sheet,.sheet.lg{
+.sheet{
   position:fixed;z-index:41;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:calc(100% - 36px);
   overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:none;
-  padding:8px 16px calc(18px + var(--safe-b));border-radius:32px 32px 0 0;color:var(--text);
-  background:var(--sheet-bg);-webkit-backdrop-filter:var(--sheet-filter);backdrop-filter:var(--sheet-filter);box-shadow:var(--sheet-shadow);
+  padding:8px 16px calc(18px + var(--safe-b));border-radius:var(--r-l) var(--r-l) 0 0;color:var(--text);
+  background:var(--sheet-bg);-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);box-shadow:var(--sheet-shadow);
   transform:translate3d(0,105%,0);visibility:hidden;transition:transform .5s var(--sheet-ease),visibility 0s linear .5s
 }
 .sheet::-webkit-scrollbar{display:none}
 .sheet.show{transform:none;visibility:visible;transition:transform .5s var(--sheet-ease),visibility 0s}
 .sheet:not(.show){pointer-events:none}
-.sheet::before,.sheet.lg::before{content:"";position:absolute;inset:0;padding:1.5px 1px 0;border-radius:inherit;pointer-events:none;z-index:3;background:var(--sheet-lip);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.sheet::before{content:"";position:absolute;inset:0;padding:1.5px 1px 0;border-radius:inherit;pointer-events:none;z-index:3;background:var(--sheet-lip);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
 .grab{width:40px;height:5px;border-radius:3px;background:var(--line-2);margin:4px auto 12px}
 .sh-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
-.sh-title h2{margin:0;font-size:21px;font-weight:750;letter-spacing:-.02em}
+.sh-title h2{margin:0;font-size:21px;font-weight:700;letter-spacing:-.02em}
 #calSheet .sh-title:has(h2[hidden]){justify-content:flex-end;margin-bottom:0}
 .close{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--text2);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
 
 /* календарь */
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin:4px 0 6px}
-.cal-nav .ttl{font-size:18px;font-weight:750;letter-spacing:-.015em}
-.cal-wd,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-nav .ttl{font-size:18px;font-weight:700;letter-spacing:-.015em}
+.cal-wd,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .cal-wd{margin:8px 0 4px}
-.cal-wd span{text-align:center;font-size:12px;font-weight:600;color:var(--text2)}
+.cal-wd span{text-align:center;font-size:12px;font-weight:600;color:var(--text3)}
 .cal-grid{touch-action:pan-y}
-.cday{position:relative;height:48px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:16.5px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--text);background:var(--pill-bg);box-shadow:var(--pill-shadow);transition:transform .3s var(--spring),background .2s}
-.cday .dots{height:4px;gap:2.5px}
-.cday .dots i{width:4px;height:4px}
-.cday.inweek{background:var(--inner-2)}
+.cday{position:relative;height:46px;border-radius:var(--r-m);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:16.5px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);transition:transform .3s var(--spring),background .2s}
+.cday.inweek{background:var(--inner)}
 .cday.none{color:var(--text3);font-weight:500}
-.cday.today{box-shadow:var(--pill-shadow),inset 0 0 0 1.5px var(--today-ring)}
-.cday.sel{background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow);font-weight:750}
+.cday.today{box-shadow:inset 0 0 0 1.5px var(--today-ring)}
+.cday.sel{background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow);font-weight:700}
 .cday.out{opacity:.3}
-.cal-leg{display:flex;gap:14px;justify-content:center;margin:12px 0 2px;font-size:12px;font-weight:600;color:var(--text2)}
-.cal-leg span{display:inline-flex;align-items:center;gap:5px}
-.cal-leg i{width:7px;height:7px;border-radius:50%}
 .quick{display:flex;gap:8px;margin-top:14px}
-.qbtn{position:relative;flex:1;height:44px;padding:0 10px;border-radius:999px;font-size:14.5px;font-weight:650;white-space:nowrap;text-align:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
+.qbtn{position:relative;flex:1;height:44px;padding:0 10px;border-radius:var(--r-full);font-size:14.5px;font-weight:600;white-space:nowrap;text-align:center;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
 .qbtn.primary{background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
-.qbtn.primary::before{display:none}
 
-/* настройки */
-.slabel{font-size:11.5px;font-weight:650;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin:16px 6px 8px}
-.theme-seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:999px;background:var(--track);box-shadow:inset 0 1px 2px rgba(0,0,0,.14)}
-.theme-seg button{position:relative;z-index:4;height:40px;border-radius:999px;font-size:14.5px;font-weight:600;color:var(--text2);text-align:center;transition:background .25s,color .25s,box-shadow .25s}
+/* настройки: внутри шторки — ровные вставки, не стекло на стекле */
+.slabel{font-size:11.5px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin:16px 6px 8px}
+.theme-seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:var(--r-full);background:var(--track)}
+.theme-seg button{position:relative;height:40px;border-radius:var(--r-full);font-size:14.5px;font-weight:600;color:var(--text2);text-align:center;transition:background .25s,color .25s,box-shadow .25s}
 .theme-seg button.on{background:var(--lens-bg);color:var(--text);font-weight:700;box-shadow:var(--lens-shadow)}
-.glass-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;border-radius:22px;background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
+.glass-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;border-radius:var(--r-m);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
 .gopt{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.gprev{position:relative;width:100%;height:112px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 10% 20%,#BAC3CE 0%,transparent 60%),radial-gradient(ellipse at 90% 85%,#8C7C6C,transparent 65%),linear-gradient(145deg,#414750,#101216);box-shadow:0 6px 16px -6px rgba(0,0,0,.45),inset 0 0 0 1px rgba(255,255,255,.12);transition:box-shadow .25s}
-.gprev .gp-time{position:absolute;left:0;right:0;top:12%;text-align:center;color:#fff;font-size:21px;font-weight:700;letter-spacing:-.02em;text-shadow:0 1px 6px rgba(0,0,0,.3)}
-.gprev .gp-card{position:absolute;left:10%;right:10%;top:44%;height:24%;border-radius:12px}
-.gprev .gp-dock{position:absolute;left:14%;right:14%;bottom:8%;height:11%;border-radius:999px}
-.gprev .gp-card,.gprev .gp-dock{-webkit-backdrop-filter:blur(8px) saturate(170%);backdrop-filter:blur(8px) saturate(170%);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 0 0 .5px rgba(255,255,255,.25),0 4px 10px rgba(0,0,0,.25)}
-.gprev .gp-card::after{content:"";position:absolute;left:12%;right:30%;top:30%;height:5px;border-radius:3px;background:rgba(255,255,255,.75);box-shadow:0 10px 0 -1px rgba(255,255,255,.4)}
-.gprev.clear .gp-card,.gprev.clear .gp-dock{background:rgba(240,244,250,.14)}
-.gprev.tinted .gp-card,.gprev.tinted .gp-dock{background:rgba(40,40,48,.86)}
-.gname{font-size:14.5px;font-weight:650;color:var(--text)}
+.gprev{position:relative;width:100%;height:104px;border-radius:var(--r-s);overflow:hidden;background:radial-gradient(ellipse at 8% 10%,rgba(66,133,244,.75) 0%,transparent 58%),radial-gradient(ellipse at 95% 90%,rgba(190,95,140,.7),transparent 62%),radial-gradient(ellipse at 90% 15%,rgba(140,105,215,.6),transparent 55%),linear-gradient(160deg,#151826,#0B0C12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);transition:box-shadow .25s}
+.gprev .gp-time{position:absolute;left:0;right:0;top:11%;text-align:center;color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.gprev .gp-card{position:absolute;left:10%;right:10%;top:44%;height:24%;border-radius:8px}
+.gprev .gp-dock{position:absolute;left:14%;right:14%;bottom:8%;height:11%;border-radius:var(--r-full)}
+.gprev .gp-card,.gprev .gp-dock{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 0 0 .5px rgba(255,255,255,.22)}
+.gprev .gp-card::after{content:"";position:absolute;left:12%;right:30%;top:30%;height:5px;border-radius:3px;background:rgba(255,255,255,.8);box-shadow:0 10px 0 -1px rgba(255,255,255,.45)}
+.gprev.clear .gp-card,.gprev.clear .gp-dock{background:rgba(236,240,250,.2)}
+.gprev.tinted .gp-card,.gprev.tinted .gp-dock{background:rgba(26,28,36,.88)}
+.gname{font-size:14.5px;font-weight:600;color:var(--text)}
 .gradio{width:22px;height:22px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line-2);display:grid;place-items:center;color:var(--drop-fg)}
 .gopt.on .gradio{background:var(--drop-bg);box-shadow:var(--drop-shadow)}
 .gopt.on .gradio::after{content:"";width:9px;height:5px;border-left:2.2px solid currentColor;border-bottom:2.2px solid currentColor;transform:translateY(-1px) rotate(-45deg)}
-.gopt.on .gprev{box-shadow:0 0 0 2px var(--text),0 6px 16px -6px rgba(0,0,0,.45)}
+.gopt.on .gprev{box-shadow:0 0 0 2px var(--text)}
 .ghint{font-size:12.5px;line-height:1.45;color:var(--text2);margin:8px 6px 0}
-.glass-controls{margin-top:14px;padding:16px;border-radius:22px}
-.glass-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;font-weight:650}
+.glass-controls{margin-top:14px;padding:16px;border-radius:var(--r-m);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
+.glass-label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;font-weight:600}
 #glassValue{font-variant-numeric:tabular-nums;color:var(--text2)}
 #glassTransparency{-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:6px 0 0;background:transparent;cursor:pointer;touch-action:pan-y}
 #glassTransparency::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--text3),var(--text))}
@@ -407,21 +379,18 @@ svg{display:block;flex:none}
 #glassTransparency::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .glass-scale{display:flex;justify-content:space-between;font-size:12px;color:var(--text2)}
 .glass-controls p{font-size:13px;line-height:1.45;color:var(--text2);margin:12px 0 0}
-.glass-demo{position:relative;height:92px;margin-top:14px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 20% 20%,#ADB5C2 0%,transparent 60%),radial-gradient(ellipse at 85% 90%,#9C8A78,transparent 60%),linear-gradient(135deg,#454D59,#121418)}
-.glass-demo-card{position:absolute;inset:15px 28px;display:flex;flex-direction:column;justify-content:center;padding:0 16px;border-radius:18px;font-size:14px;color:var(--text);background:var(--glass-bg);-webkit-backdrop-filter:blur(14px) saturate(180%);backdrop-filter:blur(14px) saturate(180%);box-shadow:var(--glass-shadow)}
-.glass-demo-card span{font-size:12px;color:inherit;opacity:.75;margin-top:3px}
-.edit-setting{display:flex;align-items:center;gap:14px;margin:14px 0;padding:14px 16px;border-radius:22px}
+.edit-setting{display:flex;align-items:center;gap:14px;margin:14px 0;padding:14px 16px;border-radius:var(--r-m);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
 .edit-setting>span{flex:1;font-size:15px;font-weight:600;line-height:1.4}
-.edit-setting small{display:block;font-size:13px;font-weight:400;color:var(--text2);margin-top:3px}
+.edit-setting small{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-top:3px}
 .edit-setting input{-webkit-appearance:none;appearance:none;position:relative;flex:none;width:51px;height:31px;margin:0;border-radius:999px;background:rgba(120,120,128,.32);box-shadow:inset 0 0 0 .5px var(--line);cursor:pointer;transition:background .25s}
 .edit-setting input::before{content:"";position:absolute;width:27px;height:27px;border-radius:50%;background:#fff;top:2px;left:2px;box-shadow:0 3px 8px rgba(0,0,0,.18),0 0 0 .5px rgba(0,0,0,.04);transition:transform .35s var(--spring)}
 .edit-setting input:checked{background:var(--success)}
 .edit-setting input:checked::before{transform:translateX(20px)}
-.sgroup{border-radius:22px;overflow:hidden}
-.sitem{position:relative;z-index:4;width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;font-size:16px;font-weight:600;text-align:left;color:var(--text)}
+.sgroup{border-radius:var(--r-m);overflow:hidden;background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
+.sitem{position:relative;width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;font-size:16px;font-weight:600;text-align:left;color:var(--text)}
 .sitem+.sitem{border-top:1px solid var(--line)}
 .sitem:active{background:var(--inner)}
-.sic,.sic.green,.sic.violet,.sic.navy{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--drop-bg);color:var(--drop-fg);box-shadow:var(--drop-shadow)}
+.sic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--inner-2);color:var(--text)}
 .sitem .s2{display:flex;flex-direction:column;min-width:0}
 .sitem .s2 small{font-size:12.5px;font-weight:500;color:var(--text2);margin-top:1px}
 .sv{margin-left:auto;color:var(--text2);font-size:14px;font-weight:500;display:flex;align-items:center;gap:4px}
@@ -431,7 +400,7 @@ svg{display:block;flex:none}
 #groupSheet{height:75vh;max-height:calc(100dvh - 88px);padding:0 16px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden;isolation:isolate}
 #groupSheet .grab{flex:none;margin:10px auto 15px}
 #groupSheet .sh-title{margin:0 0 2px;flex:none}
-#groupSheet h2{font-size:22px;font-weight:750;letter-spacing:-.025em}
+#groupSheet h2{font-size:22px;font-weight:700;letter-spacing:-.025em}
 #groupSheet .close{width:44px;height:44px}
 #groupSheetTitle:focus{outline:0}
 .group-caption{margin:0 0 16px;color:var(--text2);font-size:14px;line-height:1.4}
@@ -444,9 +413,9 @@ svg{display:block;flex:none}
 .group-status{font-size:14px;line-height:1.4;color:var(--text2);padding:10px 8px 0;margin:0}
 .group-scroll{margin-top:18px;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding-bottom:18px;scrollbar-width:none}
 .group-scroll::-webkit-scrollbar{display:none}
-.group-section-title{display:flex;align-items:center;justify-content:space-between;color:var(--text2);font-size:11.5px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;padding:0 8px;margin:2px 0 9px}
+.group-section-title{display:flex;align-items:center;justify-content:space-between;color:var(--text2);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:0 8px;margin:2px 0 9px}
 .group-section-title .sort{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--text3)}
-.group-rows{background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line);border-radius:22px;overflow:hidden;margin-bottom:20px}
+.group-rows{background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line);border-radius:var(--r-m);overflow:hidden;margin-bottom:20px}
 .group-row{width:100%;display:flex;align-items:center;justify-content:space-between;min-height:64px;padding:12px 15px;gap:12px;border-bottom:1px solid var(--line)}
 .group-row:last-child{border-bottom:0}
 .group-row.selected{background:var(--inner-2)}
@@ -463,7 +432,7 @@ svg{display:block;flex:none}
 .editor-sheet{z-index:45;max-height:90dvh;display:flex;flex-direction:column;overflow:hidden;padding:0 20px 0}
 .editor-sheet>.grab{flex:none;margin:10px auto 6px}
 .editor-heading{flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:48px;margin:0 0 12px}
-.editor-heading h2{font-size:22px;line-height:1.2;font-weight:750;margin:0;letter-spacing:-.025em}
+.editor-heading h2{font-size:22px;line-height:1.2;font-weight:700;margin:0;letter-spacing:-.025em}
 .editor-heading h2:focus{outline:none}
 .editor-close{position:relative;display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;color:var(--text);background:var(--ctrl-bg);box-shadow:var(--ctrl-shadow)}
 .editor-close svg{width:20px;height:20px}
@@ -473,7 +442,7 @@ svg{display:block;flex:none}
 #editorFooter:not(:empty){border-top:1px solid var(--line)}
 .editor-caption{font-size:14px;line-height:1.5;color:var(--text2);margin:0 0 18px}
 .editor-field{display:block;font-size:14px;font-weight:600;margin:18px 0 8px}
-.editor-input{width:100%;min-height:50px;padding:12px 20px;border-radius:999px;font:400 16px var(--font);color:var(--text);background:var(--inner);border:1px solid var(--line-2);outline:none;-webkit-user-select:text;user-select:text}
+.editor-input{width:100%;min-height:50px;padding:12px 20px;border-radius:999px;font:500 16px var(--font);color:var(--text);background:var(--inner);border:1px solid var(--line-2);outline:none;-webkit-user-select:text;user-select:text}
 .editor-input::placeholder{color:var(--text3)}
 .editor-input:focus{border-color:var(--focus);box-shadow:0 0 0 3px var(--focus-glow)}
 .editor-step{border:0;padding:0;margin:20px 0 0;min-width:0}
@@ -488,9 +457,9 @@ svg{display:block;flex:none}
 .slot-choice input,.type-choice input{-webkit-appearance:none;appearance:none;flex:none;width:18px;height:18px;margin:0;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--line-2);background:transparent}
 .slot-choice input:checked,.type-choice input:checked{border-color:var(--text)}
 .slot-choice input:checked::after,.type-choice input:checked::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--text)}
-.type-choice i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);flex:none}
-.slot-range{margin-top:16px;padding:14px 16px 2px;border-radius:24px;background:var(--inner);box-shadow:inset 0 0 0 1px var(--line)}
-#slotRangeValue{display:block;font-size:15px;font-weight:650;font-variant-numeric:tabular-nums;color:var(--text);margin:0 0 2px}
+.type-choice i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.slot-range{margin-top:16px;padding:14px 16px 2px;border-radius:var(--r-m);background:var(--inner);box-shadow:inset 0 0 0 1px var(--line)}
+#slotRangeValue{display:block;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);margin:0 0 2px}
 #slotEnd{--p:0%;-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:0;background:transparent;cursor:pointer;touch-action:pan-y}
 #slotEnd::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--text3),var(--text)) 0/var(--p) 100% no-repeat,var(--track)}
 #slotEnd::-moz-range-track{height:6px;border-radius:999px;background:var(--track)}
@@ -514,7 +483,7 @@ svg{display:block;flex:none}
 .editor-added-row small{display:block;color:var(--text2);margin-top:3px}
 .editor-delete{min-height:44px;flex:none;padding:8px;color:var(--danger);font-size:14px;font-weight:600}
 .editor-cancel{min-height:46px;width:100%;text-align:center;color:inherit;font-size:15px;margin-top:8px;border-radius:999px}
-.editor-confirm{padding:16px;border-radius:24px;background:rgba(255,69,58,.09);box-shadow:inset 0 0 0 1px rgba(255,69,58,.26);overflow-wrap:anywhere}
+.editor-confirm{padding:16px;border-radius:var(--r-m);background:rgba(255,69,58,.09);box-shadow:inset 0 0 0 1px rgba(255,69,58,.26);overflow-wrap:anywhere}
 .editor-confirm p{font-size:15px;line-height:1.5}
 .editor-confirm .editor-save{background:rgba(255,69,58,.16);color:var(--danger);box-shadow:inset 0 0 0 1px rgba(255,69,58,.34)}
 .editor-account{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;color:var(--text2);margin:16px 0}
@@ -522,7 +491,7 @@ svg{display:block;flex:none}
 @media(min-width:600px){.editor-sheet{max-width:500px;left:50%;right:auto;width:calc(100% - 32px);transform:translate(-50%,110%)}.editor-sheet.show{transform:translate(-50%,0)}}
 
 /* тост */
-.toast{position:fixed;z-index:60;left:50%;top:calc(12px + var(--safe-t));transform:translate3d(-50%,-170%,0);max-width:calc(100% - 32px);padding:11px 16px;border-radius:999px;font-size:14px;font-weight:650;display:flex;align-items:center;gap:8px;pointer-events:none;transition:transform .45s cubic-bezier(.32,.72,0,1.15)}
+.toast{position:fixed;z-index:60;left:50%;top:calc(12px + var(--safe-t));transform:translate3d(-50%,-170%,0);max-width:calc(100% - 32px);padding:11px 16px;border-radius:var(--r-full);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;pointer-events:none;transition:transform .45s cubic-bezier(.32,.72,0,1.15)}
 .toast.show{transform:translate3d(-50%,0,0)}
 .toast>*{position:relative;z-index:4}
 .toast svg{color:var(--success)}
@@ -530,14 +499,16 @@ svg{display:block;flex:none}
 
 /* ---------- 10. Отклик на нажатие ---------- */
 :is(.ibtn,.edit-top,.chev,.month-btn,.dcell,.cday,.qbtn,.dbtn,.close,.editor-close,.edit-gradient,.next-btn,.join,.editor-save,.group-retry,.theme-seg button,.gopt){transition:transform .35s var(--spring),background .2s,color .2s,box-shadow .25s,opacity .2s}
-:is(.ibtn,.edit-top,.chev,.dcell,.cday,.qbtn,.dbtn,.close,.editor-close,.edit-gradient,.next-btn,.join,.group-retry,.gopt):active{transform:scale(.93)}
-:is(.editor-save:not(:disabled),.month-btn,.sitem,.theme-seg button):active{transform:scale(.97)}
+:is(.ibtn,.edit-top,.chev,.dcell,.cday,.qbtn,.dbtn,.close,.editor-close,.edit-gradient,.join,.group-retry,.gopt):active{transform:scale(.93)}
+:is(.editor-save:not(:disabled),.month-btn,.sitem,.next-btn,.theme-seg button):active{transform:scale(.97)}
 
 /* ---------- 11. Адаптивность и доступность ---------- */
 @media(max-width:359px){
-  .title-row{gap:5px}.title-row>.ibtn{width:40px;height:40px}.edit-top{min-width:46px;padding:0 9px}
+  .title-row{gap:5px}.title-row>.ibtn{width:38px;height:38px}.edit-top{min-width:46px;padding:0 10px}
   .group-picker.is-fixed .group-name{font-size:22px}
-  .day-title-row .dh-wd{font-size:17px}.day-head{padding-left:12px;padding-right:12px}.dh-r{min-width:78px}.dh-date{font-size:14px}
+  .day-title-row .dh-wd{font-size:20px}
+  .card{grid-template-columns:50px 3px minmax(0,1fr);column-gap:9px;padding-left:12px;padding-right:12px}
+  .c-time b{font-size:15px}.name{font-size:16px}
   .seg button{padding:0 12px}.dbtn{padding:0 11px}
   .editor-sheet{padding-left:16px;padding-right:16px}
 }
@@ -546,6 +517,13 @@ svg{display:block;flex:none}
 }
 @media(prefers-reduced-transparency:reduce){:root{--lg-a-dark:.94!important;--lg-a-light:.95!important}}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--lg-a-dark:.94!important;--lg-a-light:.95!important}}
+
+/* ---------- 12. Облегчённый режим ----------
+   Включается из JS только на Android-телефонах, которые Telegram относит к классу LOW
+   (или вручную: ?perf=lite). Размытие заменяется непрозрачной заливкой, остальное без изменений. */
+:root[data-perf=lite]{--lg-a-dark:.94!important;--lg-a-light:.95!important}
+:root[data-perf=lite] :is(.top,.dock,.toast,.sheet){-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--solid)}
+:root[data-perf=lite] .pulse::after{animation:none}
 </style>
 </head>
 <body>
@@ -575,6 +553,8 @@ svg{display:block;flex:none}
   </main>
 </div>
 
+<div class="edge" aria-hidden="true"></div>
+
 <nav class="dock lg strong shine" id="dock">
   <button class="dbtn" id="btnToday"></button>
   <div class="seg" id="modeSeg"><span class="thumb"></span><button data-mode="day" class="on">День</button><button data-mode="week">Неделя</button></div>
@@ -601,7 +581,6 @@ svg{display:block;flex:none}
   </div>
   <div class="cal-wd"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
   <div class="cal-grid" id="calGrid"></div>
-  <div class="cal-leg"><span><i class="dot-lec"></i>Лекция</span><span><i class="dot-pr"></i>Практика</span><span><i class="dot-lab"></i>Лабораторная</span></div>
   <div class="quick">
     <button class="qbtn primary" data-q="today">Сегодня</button>
     <button class="qbtn" data-q="tomorrow">Завтра</button>
@@ -655,6 +634,14 @@ svg{display:block;flex:none}
   };
   var DATA_V = 3;
   var CACHE_KEY = 'kgeu.rasp.v' + DATA_V + '.' + CONFIG.groupId;
+
+  /* Слабые Android-телефоны: Telegram дописывает в User-Agent класс производительности
+     устройства (LOW / AVERAGE / HIGH). Для LOW размытие стекла заменяется плотной заливкой.
+     Проверить вручную: ?perf=lite (включить) или ?perf=full (не включать) в адресе. */
+  (function () {
+    var q = P.get('perf'), m = /Telegram-Android\/[^(]*\([^)]*;\s*(LOW|AVERAGE|HIGH)\s*\)/.exec(navigator.userAgent || '');
+    if (q === 'lite' || (q !== 'full' && m && m[1] === 'LOW')) document.documentElement.setAttribute('data-perf', 'lite');
+  })();
 
   /* ================= УТИЛИТЫ ================= */
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -719,10 +706,12 @@ svg{display:block;flex:none}
     wifiOff: sv('<path d="M3 3l18 18M8.6 16.3a5 5 0 0 1 6.8 0M5 12.8a10 10 0 0 1 4.3-2.4M19 12.8a10 10 0 0 0-2.9-2M2 9.2a15 15 0 0 1 4.3-2.6M22 9.2A15 15 0 0 0 10.6 5.1"/><circle cx="12" cy="19.6" r=".9" fill="currentColor"/>', 18, 2),
     globe: sv('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.5 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.5-3.6-8.5S9.5 6.1 12 3.5z"/>', 18, 2),
     home: sv('<path d="M4 11.2 12 4.5l8 6.7V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M12 10.8v6M9 13.8h6"/>', 18, 2),
-    close: sv('<path d="M7 7l10 10M17 7 7 17"/>', 15, 2.6)
+    close: sv('<path d="M7 7l10 10M17 7 7 17"/>', 15, 2.6),
+    pinS: sv('<path d="M12 21s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0C18.6 15.3 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/>', 13, 2.1),
+    bookS: sv('<path d="M5 5.5a2 2 0 0 1 2-2h11.5v14H7a2 2 0 0 0-2 2z"/><path d="M5 19.5a2 2 0 0 0 2 2h11.5v-4"/>', 14, 2)
   };
-  var ART_EMPTY = '<svg viewBox="0 0 120 120" width="112" height="112" aria-hidden="true"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C7C7CC"/><stop offset=".55" stop-color="#8E8E93"/><stop offset="1" stop-color="#5A5A62"/></linearGradient></defs><circle cx="60" cy="62" r="50" fill="url(#eg)" opacity=".14"/><rect class="ea-card" x="27" y="31" width="66" height="60" rx="16" stroke="url(#eg)" stroke-width="3.2"/><path d="M27.5 50h65" stroke="url(#eg)" stroke-width="3.2"/><path d="M45 24v13M75 24v13" stroke="url(#eg)" stroke-width="4.4" stroke-linecap="round"/><circle cx="49" cy="64" r="3" fill="#8E8E93"/><circle cx="71" cy="64" r="3" fill="#8E8E93"/><path d="M48.5 73c3.2 3.6 7 5.4 11.5 5.4s8.3-1.8 11.5-5.4" stroke="#8E8E93" stroke-width="3.4" stroke-linecap="round" fill="none"/><path d="M98 22l2.2 5 5 2.2-5 2.2-2.2 5-2.2-5-5-2.2 5-2.2z" fill="#C7C7CC"/><path d="M18 84l1.5 3.4 3.4 1.5-3.4 1.5-1.5 3.4-1.5-3.4-3.4-1.5 3.4-1.5z" fill="#8E8E93" opacity=".7"/></svg>';
-  var ART_ERR = '<svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true"><defs><linearGradient id="er" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C7C7CC"/><stop offset="1" stop-color="#5A5A62"/></linearGradient></defs><circle cx="60" cy="60" r="50" fill="url(#er)" opacity=".14"/><path d="M26 52a48 48 0 0 1 68 0M36 63a34 34 0 0 1 48 0M47 74a19 19 0 0 1 26 0" stroke="url(#er)" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="60" cy="86" r="5" fill="#8E8E93"/><path d="M30 30l60 60" stroke="#FF453A" stroke-width="5" stroke-linecap="round"/></svg>';
+  var ART_EMPTY = sv('<rect x="3.5" y="5" width="17" height="15.5" rx="4"/><path d="M3.5 10.2h17M8 3v4M16 3v4"/>', 44, 1.4);
+  var ART_ERR = sv('<path d="M3 3l18 18M8.6 16.3a5 5 0 0 1 6.8 0M5 12.8a10 10 0 0 1 4.3-2.4M19 12.8a10 10 0 0 0-2.9-2M2 9.2a15 15 0 0 1 4.3-2.6M22 9.2A15 15 0 0 0 10.6 5.1"/><circle cx="12" cy="19.6" r=".9" fill="currentColor"/>', 44, 1.4);
 
   /* ================= РАЗБОР ДАННЫХ ================= */
   var TYPES = { lec: 'Лекция', pr: 'Практика', lab: 'Лабораторная работа', exam: 'Экзамен', credit: 'Зачёт', cons: 'Консультация', other: 'Занятие' };
@@ -882,9 +871,10 @@ svg{display:block;flex:none}
   }
 
   /* ================= ОТРИСОВКА ================= */
+  // Нейтральная метка под датой: длина растёт с числом пар (до шести).
   function dotsHTML(list) {
-    var set = {}; list.forEach(function (l) { set[l.type] = 1; });
-    return TYPE_ORDER.filter(function (t) { return set[t]; }).slice(0, 3).map(function (t) { return '<i class="dot-' + t + '"></i>'; }).join('');
+    var n = pairsCount(list);
+    return n ? '<i class="load" style="--n:' + Math.min(n, 6) + '"></i>' : '';
   }
   function relLabel(d) {
     var t = today();
@@ -923,19 +913,6 @@ svg{display:block;flex:none}
     el.classList.remove('in-l', 'in-r', 'in-f'); void el.offsetWidth; el.classList.add(cls);
   }
 
-  function tilesHTML() {
-    var D = S.data, m = monday(S.sel), cnt = 0;
-    if (D) for (var i = 0; i < 7; i++) cnt += pairsCount(lessonsFor(addDays(m, i)));
-    var sem = D && D.sem ? (D.sem === 1 ? '🍂 Осень' : '🌱 Весна') : '—';
-    var year = D && D.year ? D.year.replace(/^(\d{4})\s*-\s*\d{2}(\d{2})$/, '$1–$2') : '—';
-    return '<div class="pills">' +
-      '<span class="pill lg">' + esc(D ? D.group : CONFIG.groupName) + '</span>' +
-      '<span class="pill lg">' + esc(year) + '</span>' +
-      '<span class="pill lg">' + sem + '</span>' +
-      '<span class="pill lg">' + (D ? cnt + ' ' + plural(cnt, PAIRS) + ' за неделю' : '—') + '</span>' +
-      '</div>';
-  }
-
   function dayHeadHTML(date, list, compact) {
     var cnt = pairsCount(list), sub;
     if (list.length) {
@@ -948,31 +925,30 @@ svg{display:block;flex:none}
       '<span class="dh-r">' + (badge ? '<span class="dh-badge">' + badge + '</span>' : '') + '<span class="dh-date">' + dmy(date) + '</span></span></button>';
   }
 
-  var ICON_CLOCK = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>';
   function lessonHTML(l, st, n) {
-    var extra = '';
+    var live = '';
     if (st === 'now') {
-      var s = hm(l.start), e = hm(l.end), p = Math.min(100, Math.max(0, (n - s) / Math.max(1, e - s) * 100));
-      extra = '<div class="live"><div class="bar"><i style="width:' + p.toFixed(1) + '%"></i></div>' +
-        '<div class="live-l"><span class="lv"><b class="pulse"></b>Идёт сейчас</span><span>осталось ' + fmtDur(Math.ceil(e - n)) + '</span></div></div>';
-    } else if (st === 'next') {
-      var left = Math.ceil(hm(l.start) - n);
-      extra = '<div class="soon">' + ICON.checkS.replace('width="18" height="18"', 'width="14" height="14"') + (left <= 1 ? 'Начинается' : 'Через ' + fmtDur(left)) + '</div>';
+      var s = hm(l.start), e = hm(l.end), p = Math.min(1, Math.max(0, (n - s) / Math.max(1, e - s)));
+      live = '<div class="live"><span class="lv"><b class="pulse"></b>Идёт сейчас</span><span class="live-left">осталось ' + fmtDur(Math.ceil(e - n)) + '</span></div>' +
+        '<div class="bar"><i style="transform:scaleX(' + p.toFixed(3) + ')"></i></div>';
     }
-    var chips = [];
-    if (l.repl) chips.push('<span class="chip warn">Замена</span>');
     var pos = l.teacher && l.teacher.indexOf(',') < 0 ? posName(l.pos) : '';
-    return '<article class="lesson t-' + l.type + (st ? ' ' + st : '') + '">' +
+    var meta = '';
+    if (l.room) meta += '<span class="room">' + ICON.pinS + esc(l.room) + '</span>';
+    if (l.teacher) meta += '<span class="who">' + esc(l.teacher) + (pos ? ' <span class="pos">· ' + esc(pos) + '</span>' : '') + '</span>';
+    // data-s / data-e (минуты от полуночи) нужны tick(), чтобы двигать прогресс без пересборки списка
+    return '<article class="lesson t-' + l.type + (st ? ' ' + st : '') + '" data-s="' + hm(l.start) + '" data-e="' + hm(l.end) + '">' +
       '<div class="card">' +
-      '<div class="row0"><span class="tm">' + ICON_CLOCK + esc(l.start) + '<span class="dash">–</span>' + esc(l.end) + '</span>' + (l.num ? '<span class="nchip">' + l.num + '-я пара</span>' : '') + '</div>' +
-      '<div class="row1"><span class="tchip"><i></i>' + TYPES[l.type] + '</span></div>' +
+      '<div class="c-time"><b>' + esc(l.start) + '</b><span>' + esc(l.end) + '</span>' + (l.num ? '<small>' + (+l.num) + '-я пара</small>' : '') + '</div>' +
+      '<i class="c-bar"></i>' +
+      '<div class="c-main"><div class="c-type">' + TYPES[l.type] + '</div>' +
       '<h3 class="name">' + esc(l.name) + (l.sub ? ' <span class="pg">(п/г ' + l.sub + ')</span>' : '') + '</h3>' +
-      (l.teacher ? '<div class="meta">' + ICON.person + '<span>' + esc(l.teacher) + '</span>' + (pos ? '<span class="pos">· ' + esc(pos) + '</span>' : '') + '</div>' : '') +
-      (l.room ? '<div class="meta">' + ICON.pin + '<span>Аудитория ' + esc(l.room) + '</span></div>' : '') +
-      (l.topic ? '<div class="meta">' + ICON.book + '<span>' + esc(l.topic) + '</span></div>' : '') +
-      (chips.length ? '<div class="chips">' + chips.join('') + '</div>' : '') +
+      (meta ? '<div class="meta">' + meta + '</div>' : '') +
+      (l.topic ? '<div class="meta topic">' + ICON.bookS + '<span>' + esc(l.topic) + '</span></div>' : '') +
+      (l.repl ? '<div class="chips"><span class="chip warn">Замена</span></div>' : '') +
       (l.link ? '<button class="join" data-link="' + esc(l.link) + '">' + ICON.video + 'Подключиться</button>' : '') +
-      extra + '</div></article>';
+      (l.custom ? '<div class="user-addition">Добавлено · ' + esc(l.author) + '</div>' : '') +
+      live + '</div></div></article>';
   }
 
   function gapHTML(mins) {
@@ -1005,15 +981,15 @@ svg{display:block;flex:none}
     var D = S.data, title, text;
     if (D && D.maxDate && date > D.maxDate) { title = 'Расписание ещё не опубликовано'; text = 'Сейчас на сайте есть пары до ' + human(D.maxDate) + '. Как только появятся новые — они подтянутся сами.'; }
     else if (D && D.minDate && date < D.minDate) { title = 'Семестр ещё не начался'; text = 'Первые занятия — ' + human(D.minDate) + '.'; }
-    else if (dow(date) === 0) { title = 'Воскресенье — выходной'; text = 'Отдыхай и набирайся сил ☀️'; }
+    else if (dow(date) === 0) { title = 'Воскресенье — выходной'; text = 'Отдыхай и набирайся сил.'; }
     else { title = 'Пар нет'; text = 'Свободный день — можно отдохнуть или заняться своими делами.'; }
     var nx = nextStudyDay(date);
-    return '<div class="empty lg">' + '<div class="empty-art">' + ART_EMPTY + '</div><h3>' + title + '</h3><p>' + text + '</p>' + (nx ? nextBtnHTML(nx) : '') + '</div>';
+    return '<div class="empty">' + '<div class="empty-art">' + ART_EMPTY + '</div><h3>' + title + '</h3><p>' + text + '</p>' + (nx ? nextBtnHTML(nx) : '') + '</div>';
   }
 
   function errorHTML() {
     var msg = S.error && S.error.message ? esc(S.error.message) : '';
-    return '<div class="empty lg"><div class="empty-art">' + ART_ERR + '</div><h3>Не удалось загрузить расписание</h3>' +
+    return '<div class="empty"><div class="empty-art">' + ART_ERR + '</div><h3>Не удалось загрузить расписание</h3>' +
       '<p>Проверь подключение к интернету — возможно, сайт kabinet.kgeu.ru временно недоступен.' + (msg ? '<br><small style="opacity:.7">(' + msg + ')</small>' : '') + '</p>' +
       '<button class="next-btn center retry">' + ICON.refreshS + 'Повторить</button></div>';
   }
@@ -1024,9 +1000,6 @@ svg{display:block;flex:none}
     return h;
   }
 
-  function legendHTML() {
-    return '<div class="legend"><span class="t-lec"><i></i>Лекция</span><span class="t-pr"><i></i>Практика</span><span class="t-lab"><i></i>Лабораторная работа</span></div>';
-  }
   function footHTML() {
     var D = S.data, up = '';
     if (D && D.uploaded && D.uploaded.length >= 16) up = 'Расписание на сайте обновлено ' + dmy(D.uploaded.slice(0, 10)) + ' в ' + D.uploaded.slice(11, 16) + '<br>';
@@ -1048,7 +1021,7 @@ svg{display:block;flex:none}
           var lastEnd = Math.max.apply(null, list.map(function (l) { return hm(l.end); }));
           if (nowMin() >= lastEnd) {
             var nx = nextStudyDay(S.sel);
-            h += '<div class="done lg">' + ICON.check + '<div><b>Пары на сегодня закончились</b><span>Хорошего вечера! 🎉</span></div></div>' + (nx ? nextBtnHTML(nx) : '');
+            h += '<div class="done">' + ICON.check + '<div><b>Пары на сегодня закончились</b><span>Хорошего вечера!</span></div></div>' + (nx ? nextBtnHTML(nx) : '');
           }
         }
       } else h += emptyHTML(S.sel);
@@ -1059,12 +1032,30 @@ svg{display:block;flex:none}
         var d = addDays(m, i), l2 = lessonsFor(d);
         // Show empty Sunday too: every day supports long-press editing.
         h += '<section class="wk' + (d === S.sel ? ' is-sel' : '') + '" id="d-' + d + '">' + dayHeadHTML(d, l2, true) +
-          (l2.length ? '<div class="lessons">' + lessonsHTML(d, l2) + '</div>' : '<div class="noclass">' + (dow(d) === 0 ? 'Выходной' : 'Пар нет') + '</div>') + '</section>';
+          (l2.length ? '<div class="lessons">' + lessonsHTML(d, l2) + '</div>' : '') + '</section>';
       }
     }
     if (S.data) h += footHTML();
     el.innerHTML = h;
+    S.liveSig = liveSig();
     animate(el, anim);
+  }
+
+  // Раз в минуту меняются только полоса прогресса и «осталось N мин». Пока состояния пар
+  // (прошла / идёт / впереди) те же, что при последней отрисовке, список не пересобирается.
+  function liveSig() {
+    var t = today(), shows = S.mode === 'day' ? S.sel === t : monday(S.sel) === monday(t);
+    if (!S.data || !shows) return '';
+    var n = nowMin();
+    return t + ':' + lessonsFor(t).map(function (l) { return n >= hm(l.end) ? 'p' : (n >= hm(l.start) ? 'n' : 'f'); }).join('');
+  }
+  function patchLive() {
+    var n = nowMin();
+    $$('#view .lesson.now').forEach(function (el) {
+      var s = +el.getAttribute('data-s'), e = +el.getAttribute('data-e'), bar = $('.bar i', el), left = $('.live-left', el);
+      if (bar) bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, (n - s) / Math.max(1, e - s))).toFixed(3) + ')';
+      if (left) left.textContent = 'осталось ' + fmtDur(Math.ceil(e - n));
+    });
   }
 
   function render(anim) {
@@ -1176,7 +1167,13 @@ svg{display:block;flex:none}
     haptic('note', kind === 'err' ? 'error' : 'success');
   }
   function spin(on) { $('#btnRefresh').classList.toggle('spin', !!on); }
-  function measureHead() { document.documentElement.style.setProperty('--head-h', $('#top').offsetHeight + 'px'); }
+  // --head-h — полная высота шапки; --head-stick — на сколько она уезжает вверх при прокрутке
+  // (остаётся полоса недели и 8px над ней). Само сворачивание — чистый CSS (position:sticky).
+  function measureHead() {
+    var st = document.documentElement.style;
+    st.setProperty('--head-h', $('#top').offsetHeight + 'px');
+    st.setProperty('--head-stick', Math.max(0, $('#strip').offsetTop - 8) + 'px');
+  }
   function agoText(ts) {
     var m = Math.round((Date.now() - ts) / 60000);
     if (m < 1) return 'только что';
@@ -1377,7 +1374,7 @@ svg{display:block;flex:none}
     if (key === lastTick) return; lastTick = key;
     if (S.lastToday !== t) { if (S.sel === S.lastToday) S.sel = t; S.lastToday = t; renderHeader(); renderStrip(); renderMain(); }
     var showsToday = S.mode === 'day' ? S.sel === t : monday(S.sel) === monday(t);
-    if (S.data && showsToday && !document.hidden && !stack.length) renderMain();
+    if (S.data && showsToday && !document.hidden && !stack.length) { if (liveSig() === S.liveSig) patchLive(); else renderMain(); }
     if (!document.hidden && (!S.data || Date.now() - S.data.fetchedAt > CONFIG.refreshMin * 60000)) load(false);
   }
 
@@ -1550,10 +1547,9 @@ svg{display:block;flex:none}
   var originalRenderHeader=renderHeader;renderHeader=function(){originalRenderHeader();if(typeof E!=='undefined')syncEdits(S.sel,false);};
   var originalRenderCal=renderCal;renderCal=function(anim){originalRenderCal(anim);syncEdits(S.calMonth,false);};
   dayHeadHTML=function(date,list,compact){var author=E.authors[ekey(date)],mark=!E.hidden&&author&&additionsFor(date).length?'<span class="edited-by">edited by '+esc(author)+'</span>':'';
-    // Generate explicitly to keep the day-navigation button and edit button siblings.
-    var cnt=pairsCount(list),end=list.length?list.reduce(function(a,l){return hm(l.end)>hm(a)?l.end:a;},list[0].end):'',sub=list.length?cnt+' '+plural(cnt,PAIRS)+' · '+list[0].start+'–'+end:(dow(date)===0?'Выходной':'Пар нет'),badge=relLabel(date);
-    return '<div class="day-edit-wrap"><div class="day-head'+(compact?' compact':'')+'" data-date="'+date+'" role="group" aria-label="'+WD[dow(date)]+', '+dmy(date)+'"><span class="dh-left"><span class="day-title-row"><button class="day-open" aria-label="Открыть '+dmy(date)+'"><span class="dh-wd">'+WD[dow(date)]+'</span></button>'+(E.editDay===date?'<button class="edit-gradient" data-edit-day="'+date+'" aria-label="Добавить пару на '+dmy(date)+'">edit.</button>':'')+'</span><span class="dh-sub" style="display:block">'+sub+'</span>'+mark+'</span><span class="dh-r">'+(badge?'<span class="dh-badge">'+badge+'</span>':'')+'<span class="dh-date">'+dmy(date)+'</span></span></div></div>' ;};
-  var originalLesson=lessonHTML;lessonHTML=function(l,st,n){var html=originalLesson(l,st,n);if(l.custom)html=html.replace('</div></article>','<div class="user-addition">Добавлено · '+esc(l.author)+'</div></div></article>');return html;};
+    // Кнопка дня, кнопка edit. и бейдж — соседи в одной строке; ниже — дата и сводка по парам.
+    var cnt=pairsCount(list),end=list.length?list.reduce(function(a,l){return hm(l.end)>hm(a)?l.end:a;},list[0].end):'',info=list.length?cnt+' '+plural(cnt,PAIRS)+' · '+list[0].start+'–'+end:(dow(date)===0?'Выходной':'Пар нет'),badge=relLabel(date);
+    return '<div class="day-edit-wrap"><div class="day-head'+(compact?' compact':'')+'" data-date="'+date+'" role="group" aria-label="'+WD[dow(date)]+', '+dmy(date)+'"><span class="dh-left"><span class="day-title-row"><button class="day-open" aria-label="Открыть '+dmy(date)+'"><span class="dh-wd">'+WD[dow(date)]+'</span></button>'+(E.editDay===date?'<button class="edit-gradient" data-edit-day="'+date+'" aria-label="Добавить пару на '+dmy(date)+'">edit.</button>':'')+'<span class="dh-r">'+(badge?'<span class="dh-badge">'+badge+'</span>':'')+'</span></span><span class="dh-sub">'+human(date)+' · '+info+'</span>'+mark+'</span></div></div>';};
   var originalMain=renderMain;renderMain=function(anim){originalMain(anim);if(!E.hidden&&E.error&&$('#view'))$('#view').insertAdjacentHTML('afterbegin','<p class="editor-sync" role="status">Дополнения недоступны или могли устареть. '+esc(E.error)+'</p>');};
   var originalOpenCal=openCal;openCal=function(){E.calendar=false;$('#calSheet').setAttribute('aria-label','Выбор даты');$('#calSheet h2').textContent='Выбор даты';$('#calSheet h2').hidden=false;originalOpenCal();};
   var originalSetSel=setSel;setSel=function(d,opts){if(E.editDay&&E.editDay!==d){E.editDay=null;E.pending=null;E.calendar=false;if(isOpen('editorSheet'))closeSheet('editorSheet');}return originalSetSel(d,opts);};
@@ -1584,7 +1580,7 @@ svg{display:block;flex:none}
   function applyGlassMaterial(){document.documentElement.style.setProperty('--glass-alpha',String((.96-.86*glassTransparency/100).toFixed(3)));var slider=$('#glassTransparency'),value=$('#glassValue');if(slider)slider.value=glassTransparency;if(value)value.textContent=glassTransparency+'%';if(slider)slider.setAttribute('aria-valuetext',glassTransparency+' процентов прозрачности');}
   var originalApplyTheme=applyTheme;applyTheme=function(){originalApplyTheme();applyGlassMaterial();};
   function editorInit(){
-   var glassControls=document.createElement('div');glassControls.className='glass-controls';glassControls.innerHTML='<label class="glass-label" for="glassTransparency">Прозрачность<output id="glassValue" for="glassTransparency"></output></label><input id="glassTransparency" type="range" min="0" max="100" step="5" aria-label="Прозрачность окон"><div class="glass-scale"><span>Плотнее</span><span>Прозрачнее</span></div><div class="glass-demo" aria-hidden="true"><div class="glass-demo-card"><b>Liquid Glass</b><span>Предпросмотр материала</span></div></div><p>Меняется сразу: карточки, шапка, нижний бар и окна. Текст остаётся непрозрачным. Настройка сохраняется на этом устройстве.</p>';$('#glassSeg').after(glassControls);
+   var glassControls=document.createElement('div');glassControls.className='glass-controls';glassControls.innerHTML='<label class="glass-label" for="glassTransparency">Прозрачность<output id="glassValue" for="glassTransparency"></output></label><input id="glassTransparency" type="range" min="0" max="100" step="5" aria-label="Прозрачность окон"><div class="glass-scale"><span>Плотнее</span><span>Прозрачнее</span></div><p>Меняется сразу: карточки, шапка, нижний бар и окна. Текст остаётся непрозрачным. Настройка сохраняется на этом устройстве.</p>';$('#glassSeg').after(glassControls);
    $('#glassTransparency').addEventListener('input',function(){glassTransparency=Number(this.value);LS.set('kgeu.glassTransparency',glassTransparency);applyGlassMaterial();});
    $$('#glassSeg .gopt').forEach(function(b){b.addEventListener('click',function(){glassTransparency=b.dataset.gl==='tinted'?20:70;LS.set('kgeu.glassTransparency',glassTransparency);applyGlassMaterial();});});
    applyGlassMaterial();
@@ -1642,35 +1638,9 @@ svg{display:block;flex:none}
   };
   // Elements whose handlers already call haptic() are skipped to avoid double taps.
   var LG_TAP = '.close,[data-close],.editor-close,.slot-choice,.type-choice,.editor-save,.editor-cancel,.editor-delete,[data-edit-day],.edit-gradient,.retry,.group-retry,.sitem,.edit-setting,#editorBody button,#editorFooter button';
-  // Specular glare: --px / --py on visible .card, .day-head and #dock follow the finger.
-  // Without a pointer the light sits in the upper third of the screen, so it glides while scrolling.
-  var lgPX = null, lgPY = null, lgRAF = 0, lgIdle = null;
-  function lgGlare() {
-    lgRAF = 0;
-    var vh = window.innerHeight || 800;
-    $$('.card, .day-head, #dock').forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (!r.width || r.bottom < 0 || r.top > vh) return;
-      var px, py;
-      if (lgPX == null) { px = 50; py = Math.max(-60, Math.min(160, (vh * .3 - r.top) / Math.max(1, r.height) * 100)); }
-      else { px = (lgPX - r.left) / r.width * 100; py = (lgPY - r.top) / r.height * 100; }
-      el.style.setProperty('--px', px.toFixed(1) + '%');
-      el.style.setProperty('--py', py.toFixed(1) + '%');
-    });
-  }
-  function lgQueue() { if (!lgRAF) lgRAF = requestAnimationFrame(lgGlare); }
-  function lgPoint(x, y) {
-    lgPX = x; lgPY = y; lgQueue();
-    clearTimeout(lgIdle); lgIdle = setTimeout(function () { lgPX = lgPY = null; lgQueue(); }, 1400);
-  }
   function lgInit() {
-    document.addEventListener('pointermove', function (e) { if (e.pointerType === 'mouse') lgPoint(e.clientX, e.clientY); }, { passive: true });
-    document.addEventListener('pointerdown', function (e) { lgPoint(e.clientX, e.clientY); }, { passive: true });
-    // после анимации смены дня снимаем её класс, чтобы контейнер со стеклом не оставался анимированным слоем
+    // после анимации смены дня снимаем её класс, чтобы контейнер не оставался анимированным слоем
     ['#view', '#strip', '#calGrid'].forEach(function (s) { var el = $(s); if (el) el.addEventListener('animationend', function (e) { if (e.target === el) el.classList.remove('in-l', 'in-r', 'in-f'); }); });
-    window.addEventListener('resize', lgQueue);
-    try { new MutationObserver(lgQueue).observe($('#view'), { childList: true }); } catch (err) {}
-    lgQueue();
     document.addEventListener('click', function (e) {
       if (!e.target.closest || !e.target.closest(LG_TAP)) return;
       if (inTG) { haptic('impact', 'light'); return; }
