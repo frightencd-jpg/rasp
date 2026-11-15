@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0A0B10">
+<meta name="theme-color" content="#09090B">
 <meta name="format-detection" content="telephone=no">
 <meta name="description" content="Расписание группы ИМС-1-25 — Казанский государственный энергетический университет">
 <title>Расписание ИМС-1-25 · КГЭУ</title>
@@ -12,11 +12,11 @@
 <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.__onTg&&window.__onTg()"></script>
 <style>
 /* ==========================================================================
-   Расписание ИМС-1-25 · Liquid Glass Graphite + аврора (v2)
+   Расписание ИМС-1-25 · Liquid Glass Graphite (v3, монохром)
    Правило слоёв: стекло с backdrop-filter — только у парящего слоя управления
    (шапка, нижняя капсула, шторки, тост). Контент — карточки пар, шапка дня,
    пустые состояния, блоки настроек — полупрозрачная заливка БЕЗ размытия:
-   под контентом лежит только мягкая аврора, размывать там нечего.
+   под контентом лежит только ровный графитовый фон, размывать там нечего.
    Материал управляется из JS: --glass-alpha (ползунок «Прозрачность»),
    --lg-a-dark / --lg-a-light (плотность слоя для тёмной и светлой темы).
    ========================================================================== */
@@ -25,7 +25,8 @@
 :root{
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Inter","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --safe-b:max(env(safe-area-inset-bottom,0px),var(--tg-safe-area-inset-bottom,0px));
-  --safe-t:var(--tg-content-safe-area-inset-top,0px);
+  /* в полноэкранном режиме Telegram сверху два отступа: вырез/статус-бар и собственные кнопки Telegram */
+  --safe-t:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));
   --head-h:182px;      /* полная высота шапки — уточняется из JS */
   --head-stick:104px;  /* на сколько шапка уезжает вверх при прокрутке — уточняется из JS */
   --spring:cubic-bezier(.22,1,.36,1);
@@ -34,25 +35,26 @@
   --r-s:12px; --r-m:20px; --r-l:28px; --r-full:999px;
 
   /* типы занятий */
-  --lec:#30D158; --pr:#FF453A; --lab:#BF5AF2; --study:#DC963F; --industry:#A67B59;
-  --exam:#FF9F0A; --cred:#12B8C6; --cons:#3E8BFF; --oth:#8E8E93;
+  --lec:#7FAE8C; --pr:#CF7F68; --lab:#A58AC9; --study:#C9A05E; --industry:#A88A72;
+  --exam:#D2A24C; --cred:#6FB1B5; --cons:#7F9FD0; --oth:#9A9AA2;
   --lec-s:rgba(48,209,88,.38); --pr-s:rgba(255,69,58,.36); --lab-s:rgba(191,90,242,.38); --study-s:rgba(220,150,63,.36);
   --industry-s:rgba(166,123,89,.36); --exam-s:rgba(255,159,10,.36); --cred-s:rgba(18,184,198,.36); --cons-s:rgba(62,139,255,.36); --oth-s:rgba(142,142,147,.3);
 
   /* светлый графит (по умолчанию) */
   color-scheme:light;
-  --bg-0:#ECEEF4; --bg-1:#F5F6FA;
-  --aur1:radial-gradient(circle,rgba(66,133,244,.20) 0%,rgba(56,182,255,.10) 45%,transparent 72%);
-  --aur2:radial-gradient(circle,rgba(155,114,203,.20) 0%,rgba(123,97,255,.08) 45%,transparent 70%);
-  --aur3:radial-gradient(circle,rgba(217,101,112,.16) 0%,rgba(155,114,203,.12) 48%,transparent 75%);
-  --aur4:radial-gradient(circle,rgba(56,182,255,.16) 0%,rgba(66,133,244,.06) 50%,transparent 72%);
-  --edge:rgba(240,241,246,.62); --edge-0:rgba(240,241,246,0); --solid:#F8F9FC;
+  --bg-0:#E4E3E0; --bg-1:#EFEEEB;
+  /* рассеянный свет: два светлых пятна сверху, две мягкие тени — только оттенки серого */
+  --amb1:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(255,255,255,.42) 45%,rgba(255,255,255,0) 72%);
+  --amb2:radial-gradient(circle,rgba(110,106,98,.14) 0%,rgba(110,106,98,.05) 45%,rgba(110,106,98,0) 70%);
+  --amb3:radial-gradient(circle,rgba(110,106,98,.16) 0%,rgba(110,106,98,.06) 48%,rgba(110,106,98,0) 75%);
+  --amb4:radial-gradient(circle,rgba(255,255,255,.85) 0%,rgba(255,255,255,.3) 50%,rgba(255,255,255,0) 72%);
+  --edge:rgba(236,235,232,.62); --edge-0:rgba(236,235,232,0); --solid:#F6F5F2; --grain:.085; --glint-c:rgba(255,255,255,.95); --glint-sc:#FFFFFF;
   --text:#1C1C1E; --text2:#4A4A52; --text3:#6E6E76;
   /* стекло парящего слоя */
-  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.14) 48%,rgba(255,255,255,.34) 100%),rgba(255,255,255,clamp(.7,calc(var(--lg-a-light,.62) + .16),.96));
+  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.06) 48%,rgba(255,255,255,.18) 100%),rgba(240,239,236,clamp(.7,calc(var(--lg-a-light,.62) + .16),.96));
   --glass-shadow:0 12px 30px -10px rgba(20,20,30,.11),0 0 0 .5px rgba(20,20,30,.06),inset 0 1.5px 1px rgba(255,255,255,.98),inset 0 -1px 1.5px rgba(20,20,30,.035),inset 0 -10px 16px -12px rgba(20,20,30,.10);
   --rim:linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(255,255,255,.45) 32%,rgba(20,20,30,.06) 62%,rgba(255,255,255,.85) 100%);
-  --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.28) 55%),rgba(246,246,249,clamp(.72,calc(var(--lg-a-light,.62) + .2),.97));
+  --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.28) 55%),rgba(245,244,241,clamp(.72,calc(var(--lg-a-light,.62) + .2),.97));
   --sheet-shadow:0 -18px 50px -14px rgba(20,20,30,.18),inset 0 1.5px 1px rgba(255,255,255,1),inset 0 0 0 .5px rgba(20,20,30,.07);
   --sheet-lip:linear-gradient(180deg,rgba(255,255,255,1),rgba(255,255,255,.4) 30%,rgba(255,255,255,0) 60%);
   /* поверхности контента: без blur, одна тонкая линия вместо шести теней */
@@ -60,58 +62,74 @@
   --card-shadow:0 0 0 .5px rgba(20,20,30,.07),0 1px 3px -1px rgba(20,20,30,.08);
   --inner:rgba(20,20,30,.045); --inner-2:rgba(20,20,30,.07); --line:rgba(20,20,30,.08); --line-2:rgba(20,20,30,.16);
   --track:rgba(20,20,30,.08); --dash:rgba(20,20,30,.16);
+  /* блики — статичные слои фона, без анимации и без отдельных элементов:
+     --glint    основной свет сверху слева;
+     --glint-b  ответный свет (на светлой теме — мягкая тень) снизу справа, даёт объём;
+     --glint-s  маленький резкий блик для линзы выбора и зажатых бегунков;
+     --glint-bar широкий блик для шапки, нижней капсулы и тоста */
+  --glint:radial-gradient(ellipse 58% 46% at 26% 0%,rgba(255,255,255,1) 0%,rgba(255,255,255,.5) 45%,rgba(255,255,255,0) 72%);
+  --glint-b:radial-gradient(ellipse 52% 42% at 80% 100%,rgba(20,20,30,.085) 0%,rgba(20,20,30,0) 72%);
+  --glint-s:radial-gradient(ellipse 36% 24% at 27% 13%,rgba(255,255,255,1) 0%,rgba(255,255,255,0) 72%);
+  --glint-bar:radial-gradient(ellipse 44% 70% at 15% 0%,rgba(255,255,255,.95) 0%,rgba(255,255,255,0) 72%),radial-gradient(ellipse 36% 60% at 88% 100%,rgba(20,20,30,.05) 0%,rgba(20,20,30,0) 72%);
   /* стеклянная кнопка: блик сверху, тёмная кромка снизу, мягкая тень — глубина без blur */
-  --ctrl-bg:linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.56));
+  --ctrl-bg:var(--glint),var(--glint-b),linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.56));
   --ctrl-shadow:0 0 0 .5px rgba(20,20,30,.09),0 3px 8px -4px rgba(20,20,30,.22),inset 0 1px 0 #fff,inset 0 -2px 4px -2px rgba(20,20,30,.09);
   /* линза выбора: выбранный день, бегунки переключателей */
-  --lens-bg:linear-gradient(180deg,#FFFFFF,rgba(255,255,255,.7));
+  --lens-bg:var(--glint-b),linear-gradient(180deg,#FFFFFF,rgba(255,255,255,.7));
   --lens-shadow:0 0 0 .5px rgba(20,20,30,.11),0 6px 14px -5px rgba(20,20,30,.3),inset 0 1px 0 #fff,inset 0 -3px 6px -3px rgba(20,20,30,.13);
   /* главное действие: тонированное стекло */
-  --drop-bg:linear-gradient(180deg,rgba(52,52,60,.9),rgba(24,24,28,.94)); --drop-fg:#FFFFFF;
+  --drop-bg:radial-gradient(ellipse 58% 46% at 26% 0%,rgba(255,255,255,.36) 0%,rgba(255,255,255,.1) 45%,rgba(255,255,255,0) 72%),radial-gradient(ellipse 46% 36% at 80% 100%,rgba(255,255,255,.13) 0%,rgba(255,255,255,0) 70%),linear-gradient(180deg,rgba(52,52,60,.9),rgba(24,24,28,.94)); --drop-fg:#FFFFFF;
   --drop-shadow:0 0 0 .5px rgba(0,0,0,.22),0 6px 14px -6px rgba(10,10,14,.5),inset 0 1px .5px rgba(255,255,255,.3),inset 0 -3px 6px -3px rgba(0,0,0,.45);
   /* блик под пальцем и бегунок ползунка в зажатом состоянии */
   --sheen:rgba(255,255,255,.95); --sheen-0:rgba(255,255,255,0);
-  --thumb-glass:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.22));
+  --thumb-glass:var(--glint-s),linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.22));
   --thumb-glass-shadow:inset 0 1px 0 #fff,inset 0 0 0 .5px rgba(20,20,30,.18),inset 0 -3px 5px -3px rgba(20,20,30,.22),0 5px 12px -4px rgba(20,20,30,.32);
   --today-ring:rgba(28,28,30,.55); --focus:rgba(28,28,30,.5); --focus-glow:rgba(28,28,30,.12);
   --backdrop:rgba(20,20,30,.22);
   --warn-t:#B86A00; --danger:#D7261C; --success:#30D158;
-  --lec-t:#1E9E3E; --pr-t:#D7261C; --lab-t:#9A34D1; --study-t:#955613; --industry-t:#79512F;
-  --exam-t:#B86A00; --cred-t:#0A8F9C; --cons-t:#1D63E0; --oth-t:#5A5A62;
+  --lec-t:#3F7350; --pr-t:#A8492F; --lab-t:#74559B; --study-t:#8A5A14; --industry-t:#74543A;
+  --exam-t:#8F6410; --cred-t:#2C7478; --cons-t:#3F5F9A; --oth-t:#5A5A62;
+  /* единственный акцент — тёплый «шампань»: идущая пара, её прогресс */
+  --accent:#B08D4F; --accent-t:#7D5F22; --accent-s:rgba(176,141,79,.55); --hero-tint:rgba(255,255,255,.7);
 }
 :root[data-theme=dark]{
   color-scheme:dark;
-  --bg-0:#0A0B10; --bg-1:#111218;
-  --aur1:radial-gradient(circle,rgba(66,133,244,.30) 0%,rgba(56,182,255,.12) 45%,transparent 72%);
-  --aur2:radial-gradient(circle,rgba(155,114,203,.28) 0%,rgba(123,97,255,.10) 45%,transparent 70%);
-  --aur3:radial-gradient(circle,rgba(217,101,112,.24) 0%,rgba(155,114,203,.18) 48%,transparent 75%);
-  --aur4:radial-gradient(circle,rgba(56,182,255,.20) 0%,rgba(66,133,244,.08) 50%,transparent 72%);
-  --edge:rgba(12,13,18,.6); --edge-0:rgba(12,13,18,0); --solid:#1B1D25;
+  --bg-0:#09090B; --bg-1:#131315;
+  --amb1:radial-gradient(circle,rgba(255,255,255,.13) 0%,rgba(255,255,255,.05) 45%,rgba(255,255,255,0) 72%);
+  --amb2:radial-gradient(circle,rgba(255,255,255,.085) 0%,rgba(255,255,255,.03) 45%,rgba(255,255,255,0) 70%);
+  --amb3:radial-gradient(circle,rgba(255,255,255,.10) 0%,rgba(255,255,255,.04) 48%,rgba(255,255,255,0) 75%);
+  --amb4:radial-gradient(circle,rgba(255,255,255,.07) 0%,rgba(255,255,255,.025) 50%,rgba(255,255,255,0) 72%);
+  --edge:rgba(9,9,11,.6); --edge-0:rgba(9,9,11,0); --solid:#1C1C1F; --grain:.11; --glint-c:rgba(255,255,255,.15); --glint-sc:rgba(255,255,255,.6);
   --text:#F5F5F7; --text2:#A9A9B2; --text3:#80808A;
-  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.04) 48%,rgba(255,255,255,.09) 100%),rgba(24,26,34,clamp(.62,calc(var(--lg-a-dark,.42) + .26),.95));
+  --bar-bg:linear-gradient(135deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.04) 48%,rgba(255,255,255,.09) 100%),rgba(26,26,29,clamp(.62,calc(var(--lg-a-dark,.42) + .26),.95));
   --glass-shadow:0 18px 38px -12px rgba(0,0,0,.6),0 0 1px 0 rgba(255,255,255,.28),inset 0 1.5px 1px 0 rgba(255,255,255,.52),inset 0 -1px 1.5px 0 rgba(255,255,255,.12),inset 0 -12px 18px -12px rgba(0,0,0,.38);
   --rim:linear-gradient(135deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.14) 32%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.38) 100%);
-  --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.05) 100%),rgba(24,26,34,clamp(.72,calc(var(--lg-a-dark,.42) + .32),.96));
+  --sheet-bg:linear-gradient(170deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.02) 50%,rgba(255,255,255,.05) 100%),rgba(26,26,29,clamp(.72,calc(var(--lg-a-dark,.42) + .32),.96));
   --sheet-shadow:0 -20px 60px -10px rgba(0,0,0,.6),inset 0 1.5px 1px rgba(255,255,255,.42),inset 0 0 0 .5px rgba(255,255,255,.12);
   --sheet-lip:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.1) 30%,rgba(255,255,255,0) 60%);
-  --card-bg:linear-gradient(135deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.025) 48%,rgba(255,255,255,.06) 100%),rgba(28,30,38,clamp(.3,calc(var(--lg-a-dark,.42) + .16),.96));
+  --card-bg:linear-gradient(135deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.025) 48%,rgba(255,255,255,.06) 100%),rgba(30,30,33,clamp(.3,calc(var(--lg-a-dark,.42) + .16),.96));
   --card-shadow:inset 0 0 0 .5px rgba(255,255,255,.10),inset 0 1px 0 rgba(255,255,255,.07);
   --inner:rgba(255,255,255,.06); --inner-2:rgba(255,255,255,.1); --line:rgba(255,255,255,.1); --line-2:rgba(255,255,255,.2);
   --track:rgba(255,255,255,.1); --dash:rgba(255,255,255,.16);
-  --ctrl-bg:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
+  --glint:radial-gradient(ellipse 58% 46% at 26% 0%,rgba(255,255,255,.4) 0%,rgba(255,255,255,.1) 45%,rgba(255,255,255,0) 72%);
+  --glint-b:radial-gradient(ellipse 46% 36% at 80% 100%,rgba(255,255,255,.15) 0%,rgba(255,255,255,0) 70%);
+  --glint-s:radial-gradient(ellipse 36% 24% at 27% 13%,rgba(255,255,255,.6) 0%,rgba(255,255,255,0) 72%);
+  --glint-bar:radial-gradient(ellipse 44% 70% at 15% 0%,rgba(255,255,255,.2) 0%,rgba(255,255,255,0) 72%),radial-gradient(ellipse 36% 60% at 88% 100%,rgba(255,255,255,.08) 0%,rgba(255,255,255,0) 72%);
+  --ctrl-bg:var(--glint),var(--glint-b),linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.05));
   --ctrl-shadow:inset 0 1px .5px rgba(255,255,255,.44),inset 0 0 0 .5px rgba(255,255,255,.10),inset 0 -3px 6px -3px rgba(0,0,0,.42),0 4px 10px -6px rgba(0,0,0,.6);
-  --lens-bg:linear-gradient(160deg,rgba(255,255,255,.30),rgba(255,255,255,.10) 55%,rgba(255,255,255,.18));
+  --lens-bg:var(--glint-b),linear-gradient(160deg,rgba(255,255,255,.30),rgba(255,255,255,.10) 55%,rgba(255,255,255,.18));
   --lens-shadow:inset 0 1px .5px rgba(255,255,255,.75),inset 0 0 0 .5px rgba(255,255,255,.22),inset 0 -1px .5px rgba(255,255,255,.2),inset 0 -5px 9px -5px rgba(0,0,0,.42),0 6px 14px -6px rgba(0,0,0,.65);
-  --drop-bg:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.17)); --drop-fg:#FFFFFF;
+  --drop-bg:var(--glint),var(--glint-b),linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.17)); --drop-fg:#FFFFFF;
   --drop-shadow:inset 0 1px .5px rgba(255,255,255,.8),inset 0 0 0 .5px rgba(255,255,255,.26),inset 0 -5px 9px -5px rgba(0,0,0,.36),0 6px 16px -8px rgba(0,0,0,.7);
   --sheen:rgba(255,255,255,.36); --sheen-0:rgba(255,255,255,0);
-  --thumb-glass:linear-gradient(180deg,rgba(255,255,255,.36),rgba(255,255,255,.10));
+  --thumb-glass:var(--glint-s),linear-gradient(180deg,rgba(255,255,255,.36),rgba(255,255,255,.10));
   --thumb-glass-shadow:inset 0 1px .5px rgba(255,255,255,.85),inset 0 0 0 .5px rgba(255,255,255,.36),inset 0 -3px 5px -3px rgba(0,0,0,.4),0 5px 12px -4px rgba(0,0,0,.55);
   --today-ring:rgba(245,245,247,.6); --focus:rgba(245,245,247,.55); --focus-glow:rgba(245,245,247,.12);
   --backdrop:rgba(0,0,0,.42);
   --warn-t:#FFB54A; --danger:#FF6961;
-  --lec-t:#30D158; --pr-t:#FF6961; --lab-t:#D08CF7; --study-t:#E5B26F; --industry-t:#CFA785;
-  --exam-t:#FFB54A; --cred-t:#4FD8E3; --cons-t:#7FB2FF; --oth-t:#AEAEB2;
+  --lec-t:#9CC7A7; --pr-t:#E09A85; --lab-t:#BDA6DC; --study-t:#DDBB80; --industry-t:#C9AB91;
+  --exam-t:#E3BC72; --cred-t:#8CCCD0; --cons-t:#A3BDE6; --oth-t:#AEAEB2;
+  --accent:#E3CD9F; --accent-t:#EAD8B2; --accent-s:rgba(227,205,159,.5); --hero-tint:rgba(255,255,255,.055);
 }
 
 /* ---------- 2. Основа ---------- */
@@ -125,20 +143,23 @@ button:focus-visible,input:not(.editor-input):focus-visible{outline:2px solid va
 input,button{accent-color:var(--text2)}
 svg{display:block;flex:none}
 
-/* ---------- 3. Фон: статичная аврора ----------
-   Пятна — мягкие радиальные градиенты без filter:blur и без движения. */
+/* ---------- 3. Фон: графит с рассеянным светом ----------
+   Монохром: оттенки чёрного и серого. Пятна света — мягкие радиальные градиенты
+   без filter:blur и без движения; стеклу нужно, чтобы под ним было что преломлять. */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict;background:linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 100%)}
 .bg i,.bg::before{position:absolute;border-radius:50%}
-.bg::before{content:"";width:520px;height:520px;right:-220px;top:-200px;background:var(--aur4)}
-.b1{width:760px;height:760px;left:-330px;top:-260px;background:var(--aur1)}
-.b2{width:720px;height:720px;right:-340px;top:22%;background:var(--aur2)}
-.b3{width:820px;height:820px;left:-300px;bottom:-360px;background:var(--aur3)}
+.bg::before{content:"";width:520px;height:520px;right:-220px;top:-200px;background:var(--amb4)}
+.b1{width:760px;height:760px;left:-330px;top:-260px;background:var(--amb1)}
+.b2{width:720px;height:720px;right:-340px;top:22%;background:var(--amb2)}
+.b3{width:820px;height:820px;left:-300px;bottom:-360px;background:var(--amb3)}
 /* край прокрутки: контент мягко гаснет к нижней капсуле, но остаётся виден сквозь её стекло */
 .edge{position:fixed;left:0;right:0;bottom:0;z-index:25;height:calc(96px + var(--safe-b));pointer-events:none;background:linear-gradient(to top,var(--edge) 0%,var(--edge-0) 100%)}
 
 /* ---------- 4. Материал Liquid Glass — только парящий слой ----------
    Значения blur записаны числами: старый WebKit не подставляет var() в -webkit-backdrop-filter. */
 .top,.dock,.toast{background:var(--bar-bg);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);box-shadow:var(--glass-shadow);color:var(--text)}
+/* блик на тосте — слой фона; у шапки и нижней капсулы блик живой (блок 10c) */
+.toast{background:var(--glint-bar),var(--bar-bg)}
 /* преломляющая грань в 1px — у трёх поверхностей, а не у каждого элемента */
 :is(.top,.dock,.toast)::before{
   content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:3;
@@ -194,7 +215,7 @@ svg{display:block;flex:none}
 .dcell.off .dn{color:var(--text3);font-weight:500}
 .dcell.today:not(.sel){box-shadow:inset 0 0 0 1.5px var(--today-ring)}
 .dcell.today:not(.sel) .wd{color:var(--text)}
-.dcell.sel .wd{color:var(--text2)}
+.dcell.sel .wd{color:var(--text)}
 .dcell.sel .dn{color:var(--text);font-weight:700}
 
 /* ---------- 7. Контент ---------- */
@@ -369,7 +390,7 @@ svg{display:block;flex:none}
 .theme-seg .thumb{position:absolute;z-index:0;top:3px;bottom:3px;left:3px;width:calc((100% - 12px) / 3);transform:translateX(calc(var(--i,0) * (100% + 3px)));transition:transform .55s var(--spring);pointer-events:none}
 .glass-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;border-radius:var(--r-m);background:var(--inner);box-shadow:inset 0 0 0 .5px var(--line)}
 .gopt{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.gprev{position:relative;width:100%;height:104px;border-radius:var(--r-s);overflow:hidden;background:radial-gradient(ellipse at 8% 10%,rgba(66,133,244,.75) 0%,transparent 58%),radial-gradient(ellipse at 95% 90%,rgba(190,95,140,.7),transparent 62%),radial-gradient(ellipse at 90% 15%,rgba(140,105,215,.6),transparent 55%),linear-gradient(160deg,#151826,#0B0C12);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);transition:box-shadow .25s}
+.gprev{position:relative;width:100%;height:104px;border-radius:var(--r-s);overflow:hidden;background:radial-gradient(ellipse at 10% 6%,rgba(255,255,255,.36) 0%,rgba(255,255,255,0) 58%),radial-gradient(ellipse at 96% 94%,rgba(255,255,255,.2),rgba(255,255,255,0) 62%),linear-gradient(160deg,#2C2C30,#0B0B0D);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);transition:box-shadow .25s}
 .gprev .gp-time{position:absolute;left:0;right:0;top:11%;text-align:center;color:#fff;font-size:20px;font-weight:700;letter-spacing:-.02em}
 .gprev .gp-card{position:absolute;left:10%;right:10%;top:44%;height:24%;border-radius:8px}
 .gprev .gp-dock{position:absolute;left:14%;right:14%;bottom:8%;height:11%;border-radius:var(--r-full)}
@@ -505,8 +526,10 @@ svg{display:block;flex:none}
 @media(min-width:600px){.editor-sheet{max-width:500px;left:50%;right:auto;width:calc(100% - 32px);transform:translate(-50%,110%)}.editor-sheet.show{transform:translate(-50%,0)}}
 
 /* тост */
-.toast{position:fixed;z-index:60;left:50%;top:calc(12px + var(--safe-t));transform:translate3d(-50%,-170%,0);max-width:calc(100% - 32px);padding:11px 16px;border-radius:var(--r-full);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;pointer-events:none;transition:transform .45s cubic-bezier(.32,.72,0,1.15)}
+.toast{position:fixed;z-index:60;left:50%;top:calc(12px + var(--safe-t));transform:translate3d(-50%,calc(-170% - var(--safe-t) - 12px),0);max-width:calc(100% - 32px);padding:11px 16px;border-radius:var(--r-full);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;pointer-events:none;transition:transform .45s cubic-bezier(.32,.72,0,1.15)}
 .toast.show{transform:translate3d(-50%,0,0)}
+/* спрятанный тост уезжает выше верхнего отступа: в полноэкранном режиме Telegram отступ большой */
+.toast:not(.show){visibility:hidden;transition:transform .45s cubic-bezier(.32,.72,0,1.15),visibility 0s linear .45s}
 .toast>*{position:relative;z-index:4}
 .toast svg{color:var(--success)}
 .toast.err svg{color:var(--danger)}
@@ -533,6 +556,71 @@ svg{display:block;flex:none}
 #glassTransparency:active::-webkit-slider-thumb,#slotEnd:active::-webkit-slider-thumb{transform:scale(1.3,1.5);background:var(--thumb-glass);box-shadow:var(--thumb-glass-shadow)}
 #glassTransparency::-moz-range-thumb,#slotEnd::-moz-range-thumb{width:38px;height:24px;border-radius:12px;background:#fff;border:0;box-shadow:0 2px 6px rgba(0,0,0,.24);transition:transform .35s var(--spring),background .2s,box-shadow .2s}
 #glassTransparency:active::-moz-range-thumb,#slotEnd:active::-moz-range-thumb{transform:scale(1.3,1.5);background:var(--thumb-glass);box-shadow:var(--thumb-glass-shadow)}
+
+/* ---------- 10b. Иерархия и типографика ----------
+   Больше воздуха, спокойные подписи, а идущая пара — главный элемент экрана:
+   крупное «осталось», единственный акцент (--accent) вместо цвета типа. */
+.content{padding:18px 14px 0}
+.dh-wd{font-size:clamp(25px,7vw,28px);font-weight:600;letter-spacing:-.035em}
+.day-head.compact .dh-wd{font-size:21px}
+.dh-sub{margin-top:3px;font-size:14px}
+.lessons{gap:10px;margin-top:14px}
+.wk{margin-bottom:28px}
+.card{padding:14px 14px}
+.c-type{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase}
+.name{margin:3px 0 6px}
+.lesson.now .card{padding:16px 14px 20px;background:linear-gradient(180deg,var(--hero-tint),rgba(255,255,255,0)),var(--card-bg);box-shadow:var(--card-shadow),inset 0 0 0 1.5px var(--accent-s)}
+.lesson.now .c-time b{font-size:18px}
+.lesson.now .c-main{display:flex;flex-direction:column}
+.lesson.now .live{order:-1;align-items:flex-end;margin:0 0 10px}
+.lesson.now .lv{color:var(--accent-t);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;padding-bottom:4px}
+.live-left{display:flex;flex-direction:column;align-items:flex-end;line-height:1.05}
+.live-left small{font-size:11.5px;font-weight:500;color:var(--text3);margin-bottom:2px}
+.live-left b{font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.lesson.now .name{font-size:19px;margin:3px 0 8px}
+.lesson.now .meta{font-size:14.5px}
+.lesson.now .bar{height:4px}
+.lesson.now .bar i,.lesson.now .pulse,.lesson.now .pulse::after{background:var(--accent)}
+.done svg{color:var(--accent-t)}
+
+/* ---------- 10c. Детали ---------- */
+/* зерно: одна статичная плитка шума поверх фона — графит перестаёт быть «плоским», пропадают ступеньки градиента */
+.bg::after{content:"";position:absolute;inset:0;border-radius:0;opacity:var(--grain);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 1.5 0 0 0 -.35'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* окно между парами: тонкая линия с подписью по центру вместо пунктирной плашки */
+.gap .gt{gap:10px;padding:1px 4px;border:0;border-radius:0;font-size:12.5px;color:var(--text3)}
+.gap .gt::before,.gap .gt::after{content:"";flex:1;height:1px;background:var(--line)}
+.gap .gt svg{display:none}
+.gap .gt b{color:var(--text2)}
+
+/* каскад: при смене дня карточки появляются одна за другой (только transform и opacity).
+   viewHold ничего не рисует — он держит класс анимации на #view, пока не доиграет последняя карточка. */
+#view.in-l{animation:inL .32s var(--spring),viewHold .72s linear}
+#view.in-r{animation:inR .32s var(--spring),viewHold .72s linear}
+#view.in-f{animation:inF .28s ease,viewHold .72s linear}
+@keyframes viewHold{from{opacity:1}to{opacity:1}}
+#view:is(.in-l,.in-r,.in-f) .lessons>*{animation:cardIn .42s var(--spring) both;animation-delay:calc(var(--k,0) * 32ms)}
+@keyframes cardIn{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:none}}
+.lessons>:nth-child(2){--k:1}.lessons>:nth-child(3){--k:2}.lessons>:nth-child(4){--k:3}.lessons>:nth-child(5){--k:4}
+.lessons>:nth-child(6){--k:5}.lessons>:nth-child(7){--k:6}.lessons>:nth-child(8){--k:7}.lessons>:nth-child(n+9){--k:8}
+
+/* аудитория — кнопка: нажатие копирует её (зона нажатия больше текста) */
+.meta .room{padding:5px 7px;margin:-5px -7px;border-radius:8px;cursor:pointer;transition:opacity .2s}
+.meta .room:active{opacity:.5}
+
+/* живой блик: у шапки, нижней капсулы, линзы дня и бегунков он сдвигается при наклоне телефона.
+   JS пишет --gx / --gy (от -1 до 1) только в эти несколько элементов; двигает блик transform. */
+.top>.glint,.dock>.glint{position:absolute;inset:0;z-index:0;border-radius:inherit;overflow:hidden;pointer-events:none}
+.glint::before{content:"";position:absolute;left:-12%;top:-42%;width:62%;height:130%;background:radial-gradient(ellipse closest-side,var(--glint-c) 0%,rgba(255,255,255,0) 100%);transform:translate3d(calc(var(--gx,0) * 24px),calc(var(--gy,0) * 12px),0);transition:transform .3s linear}
+.dock>.glint::before{left:-4%;top:-75%;width:48%;height:175%}
+.lens i,.thumb i{overflow:hidden}
+.lens i::after,.thumb i::after{content:"";position:absolute;left:7%;top:3%;width:42%;height:32%;border-radius:50%;background:radial-gradient(ellipse closest-side,var(--glint-sc) 0%,rgba(255,255,255,0) 100%);transform:translate3d(calc(var(--gx,0) * 8px),calc(var(--gy,0) * 4px),0);transition:transform .3s linear}
+
+/* свёрнутая шапка: строки над полосой недели гаснут. В обычном режиме они и так за краем экрана,
+   а в полноэкранном не просвечивают под кнопками Telegram. */
+.stick-sentinel{position:absolute;left:0;top:0;width:1px;height:max(1px,calc(var(--head-stick) - var(--safe-t)));pointer-events:none}
+.title-row,.week-nav{transition:opacity .22s}
+.top.is-stuck .title-row,.top.is-stuck .week-nav{opacity:0;pointer-events:none}
 
 /* ---------- 11. Адаптивность и доступность ---------- */
 @media(max-width:359px){
@@ -562,7 +650,9 @@ svg{display:block;flex:none}
 <div class="bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
 
 <div class="app">
+  <i class="stick-sentinel" id="stickSentinel" aria-hidden="true"></i>
   <header class="top lg" id="top">
+    <i class="glint" aria-hidden="true"></i>
     <div class="title-row">
       <button class="group-picker lg is-fixed" id="groupPicker" aria-label="Группа ИМС-1-25" aria-expanded="false" aria-controls="groupSheet" disabled><span class="group-symbol"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="group-name" id="groupName">ИМС-1-25</span><svg class="group-arrow" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><span id="subTitle" hidden></span>
       <button class="edit-top" id="btnEdit" aria-label="Редактировать расписание">edit.</button>
@@ -588,6 +678,7 @@ svg{display:block;flex:none}
 <div class="edge" aria-hidden="true"></div>
 
 <nav class="dock lg strong shine" id="dock">
+<i class="glint" aria-hidden="true"></i>
   <button class="dbtn" id="btnToday"></button>
   <div class="seg" id="modeSeg"><span class="thumb"><i></i></span><button data-mode="day" class="on">День</button><button data-mode="week">Неделя</button></div>
   <button class="dbtn round" id="btnCal" aria-label="Выбрать дату"></button>
@@ -662,7 +753,9 @@ svg{display:block;flex:none}
     editorApi: 'https://kgeu-brs.frightencd.workers.dev/edits',
     scheduleApi: 'https://kgeu-brs.frightencd.workers.dev/schedule', // публичное расписание через наш Worker
     tz: 180,             // часовой пояс Казани: UTC+3 (в минутах)
-    refreshMin: 15       // как часто обновлять данные в фоне (минуты)
+    refreshMin: 15,      // как часто обновлять данные в фоне (минуты)
+    fullscreen: P.get('fs') !== '0',  // полноэкранный режим в Telegram на телефоне (выключить: false)
+    tilt: true           // блики сдвигаются при наклоне телефона (выключить: false)
   };
   var DATA_V = 3;
   var CACHE_KEY = 'kgeu.rasp.v' + DATA_V + '.' + CONFIG.groupId;
@@ -965,12 +1058,12 @@ svg{display:block;flex:none}
     var live = '';
     if (st === 'now') {
       var s = hm(l.start), e = hm(l.end), p = Math.min(1, Math.max(0, (n - s) / Math.max(1, e - s)));
-      live = '<div class="live"><span class="lv"><b class="pulse"></b>Идёт сейчас</span><span class="live-left">осталось ' + fmtDur(Math.ceil(e - n)) + '</span></div>' +
+      live = '<div class="live"><span class="lv"><b class="pulse"></b>Идёт сейчас</span><span class="live-left"><small>осталось</small><b>' + fmtDur(Math.ceil(e - n)) + '</b></span></div>' +
         '<div class="bar"><i style="transform:scaleX(' + p.toFixed(3) + ')"></i></div>';
     }
     var pos = l.teacher && l.teacher.indexOf(',') < 0 ? posName(l.pos) : '';
     var meta = '';
-    if (l.room) meta += '<span class="room">' + ICON.pinS + esc(l.room) + '</span>';
+    if (l.room) meta += '<button class="room" aria-label="Скопировать аудиторию ' + esc(l.room) + '">' + ICON.pinS + esc(l.room) + '</button>';
     if (l.teacher) meta += '<span class="who">' + esc(l.teacher) + (pos ? ' <span class="pos">· ' + esc(pos) + '</span>' : '') + '</span>';
     // data-s / data-e (минуты от полуночи) нужны tick(), чтобы двигать прогресс без пересборки списка
     return '<article class="lesson t-' + l.type + (st ? ' ' + st : '') + '" data-s="' + hm(l.start) + '" data-e="' + hm(l.end) + '">' +
@@ -1088,9 +1181,9 @@ svg{display:block;flex:none}
   function patchLive() {
     var n = nowMin();
     $$('#view .lesson.now').forEach(function (el) {
-      var s = +el.getAttribute('data-s'), e = +el.getAttribute('data-e'), bar = $('.bar i', el), left = $('.live-left', el);
+      var s = +el.getAttribute('data-s'), e = +el.getAttribute('data-e'), bar = $('.bar i', el), left = $('.live-left b', el);
       if (bar) bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, (n - s) / Math.max(1, e - s))).toFixed(3) + ')';
-      if (left) left.textContent = 'осталось ' + fmtDur(Math.ceil(e - n));
+      if (left) left.textContent = fmtDur(Math.ceil(e - n));
     });
   }
 
@@ -1203,6 +1296,20 @@ svg{display:block;flex:none}
     haptic('note', kind === 'err' ? 'error' : 'success');
   }
   function spin(on) { $('#btnRefresh').classList.toggle('spin', !!on); }
+  // Копирование в буфер: современный способ, а где он недоступен — через временное поле.
+  function copyText(text, okMsg) {
+    function ok() { toast(okMsg + ': ' + text, 'ok'); }
+    function legacy() {
+      try {
+        var a = document.createElement('textarea'); a.value = text; a.setAttribute('readonly', '');
+        a.style.cssText = 'position:fixed;left:-999px;top:0;opacity:0;-webkit-user-select:text;user-select:text';
+        document.body.appendChild(a); a.select(); a.setSelectionRange(0, text.length);
+        var done = document.execCommand('copy'); document.body.removeChild(a);
+        if (done) ok(); else toast('Не удалось скопировать', 'err');
+      } catch (e) { toast('Не удалось скопировать', 'err'); }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, legacy); else legacy();
+  }
   // --head-h — полная высота шапки; --head-stick — на сколько она уезжает вверх при прокрутке
   // (остаётся полоса недели и 8px над ней). Само сворачивание — чистый CSS (position:sticky).
   function measureHead() {
@@ -1260,6 +1367,9 @@ svg{display:block;flex:none}
     inTG = !!(tg.initData || (tg.platform && tg.platform !== 'unknown'));
     if (!inTG) return;
     try { tg.ready(); tg.expand(); } catch (e) {}
+    // Полный экран — только на телефоне: на компьютере Mini App открыт окном, там это лишнее.
+    try { if (CONFIG.fullscreen && tg.isVersionAtLeast('8.0') && (tg.platform === 'android' || tg.platform === 'ios')) tg.requestFullscreen(); } catch (e) {}
+    try { ['fullscreenChanged', 'safeAreaChanged', 'contentSafeAreaChanged'].forEach(function (ev) { tg.onEvent(ev, function () { requestAnimationFrame(measureHead); }); }); } catch (e) {}
     try { if (tg.isVersionAtLeast('7.7')) tg.disableVerticalSwipes(); } catch (e) {}
     try { tg.onEvent('themeChanged', applyTheme); } catch (e) {}
     try { tg.onEvent('viewportChanged', measureHead); } catch (e) {}
@@ -1267,10 +1377,45 @@ svg{display:block;flex:none}
     try { if (tg.isVersionAtLeast('7.0')) { tg.SettingsButton.show(); tg.SettingsButton.onClick(function () { openSheet('setSheet'); }); } } catch (e) {}
     try { tg.onEvent('homeScreenAdded', function () { toast('Добавлено на экран «Домой»', 'ok'); updateHomeItem(); }); } catch (e) {}
     applyTheme();
+    tiltInit();
     var sp = tg.initDataUnsafe && tg.initDataUnsafe.start_param;
     if (sp && applyStart(sp)) { syncMode(); render('in-f'); }
   }
   window.__onTg = tgInit;
+
+  /* Живой блик. Датчик наклона берём у Telegram (Bot API 8.0+), 10 раз в секунду.
+     Значения --gx / --gy пишутся только в пять элементов и только если наклон заметно изменился;
+     сам блик двигает transform. Датчик останавливается, когда приложение свёрнуто или неактивно.
+     Не включается в облегчённом режиме и при «уменьшении движения». Проверка без телефона: ?tilt=0.8,-0.5 */
+  var tiltOn = false;
+  function tiltInit() {
+    if (tiltOn) return;
+    var gx = 0, gy = 0, base = null, running = false;
+    function apply(x, y) {
+      if (Math.abs(x - gx) < .03 && Math.abs(y - gy) < .03) return;
+      gx = x; gy = y;
+      [$('#top'), $('#dock'), $('#stripLens'), $('#modeSeg .thumb'), $('#themeSeg .thumb')].forEach(function (el) {
+        if (el) { el.style.setProperty('--gx', x.toFixed(2)); el.style.setProperty('--gy', y.toFixed(2)); }
+      });
+    }
+    function clamp(v) { return Math.max(-1, Math.min(1, v)); }
+    var q = P.get('tilt');
+    if (q) { tiltOn = true; var p = q.split(','); apply(clamp(+p[0] || 0), clamp(+p[1] || 0)); return; }
+    if (!CONFIG.tilt || !inTG || document.documentElement.getAttribute('data-perf') === 'lite') return;
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    try { if (!tg.isVersionAtLeast('8.0') || !tg.DeviceOrientation) return; } catch (e) { return; }
+    tiltOn = true;
+    function onChange() {
+      var o = tg.DeviceOrientation; if (!o || o.beta == null || o.gamma == null) return;
+      if (!base) base = { b: o.beta, g: o.gamma };          // как телефон держат сейчас — это «ровно»
+      apply(clamp((o.gamma - base.g) / .45), clamp((o.beta - base.b) / .45));   // углы в радианах; .45 ≈ 26°
+    }
+    function start() { if (running || document.hidden) return; running = true; base = null; try { tg.DeviceOrientation.start({ refresh_rate: 100, need_absolute: false }); } catch (e) {} }
+    function stop() { if (!running) return; running = false; try { tg.DeviceOrientation.stop(); } catch (e) {} }
+    try { tg.onEvent('deviceOrientationChanged', onChange); tg.onEvent('activated', start); tg.onEvent('deactivated', stop); } catch (e) {}
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); else start(); });
+    start();
+  }
   function applyStart(sp) {
     sp = String(sp).toLowerCase();
     if (sp === 'today') { S.sel = today(); return true; }
@@ -1348,6 +1493,7 @@ svg{display:block;flex:none}
     $('#backdrop').addEventListener('click', function () { closeSheet(); });
 
     $('#view').addEventListener('click', function (e) {
+      var rm = e.target.closest('.room'); if (rm) { copyText(rm.textContent.trim(), 'Аудитория скопирована'); return; }
       var go = e.target.closest('[data-go]'); if (go) { setSel(go.getAttribute('data-go')); return; }
       var r = e.target.closest('.retry'); if (r) { S.error = null; renderMain(); load(true); return; }
       var j = e.target.closest('[data-link]'); if (j) { openLink(j.getAttribute('data-link')); return; }
@@ -1648,8 +1794,8 @@ svg{display:block;flex:none}
      Ничего не удаляет: только оборачивает applyTheme и добавляет
      делегированную хаптику для элементов, где её ещё не было. */
   var LG_COLORS = {
-    dark:  { head: '#0A0B10', bg: '#0A0B10', bar: '#111218' },
-    light: { head: '#ECEEF4', bg: '#ECEEF4', bar: '#F5F6FA' }
+    dark:  { head: '#09090B', bg: '#09090B', bar: '#131315' },
+    light: { head: '#E4E3E0', bg: '#E4E3E0', bar: '#EFEEEB' }
   };
   var lgApplyTheme = applyTheme;
   applyTheme = function () {
@@ -1679,12 +1825,15 @@ svg{display:block;flex:none}
   var LG_TAP = '.close,[data-close],.editor-close,.slot-choice,.type-choice,.editor-save,.editor-cancel,.editor-delete,[data-edit-day],.edit-gradient,.retry,.group-retry,.sitem,.edit-setting,#editorBody button,#editorFooter button';
   function lgInit() {
     // после анимации смены дня снимаем её класс, чтобы контейнер не оставался анимированным слоем
-    ['#view', '#strip', '#calGrid'].forEach(function (s) { var el = $(s); if (el) el.addEventListener('animationend', function (e) { if (e.target === el) el.classList.remove('in-l', 'in-r', 'in-f'); }); });
+    ['#view', '#strip', '#calGrid'].forEach(function (s) { var el = $(s); if (el) el.addEventListener('animationend', function (e) { if (e.target === el && (s !== '#view' || e.animationName === 'viewHold')) el.classList.remove('in-l', 'in-r', 'in-f'); }); });
     document.addEventListener('click', function (e) {
       if (!e.target.closest || !e.target.closest(LG_TAP)) return;
       if (inTG) { haptic('impact', 'light'); return; }
       try { window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback && window.Telegram.WebApp.HapticFeedback.impactOccurred('light'); } catch (err) {}
     }, true);
+    tiltInit();   // вне Telegram сработает только проверочный параметр ?tilt=
+    // свёрнута ли шапка: наблюдатель за маркером высотой с «уезжающую» часть, без обработчика прокрутки
+    if ('IntersectionObserver' in window && $('#stickSentinel')) new IntersectionObserver(function (en) { $('#top').classList.toggle('is-stuck', !en[0].isIntersecting); }).observe($('#stickSentinel'));
     // блик под пальцем: точка касания записывается в один зажатый элемент, один раз на нажатие
     var GLASS = '.ibtn,.edit-top,.chev,.close,.editor-close,.qbtn,.edit-gradient,.join,.editor-save,.group-retry,.next-btn,.dbtn,.dcell,.cday,.month-btn,.seg button,.theme-seg button';
     document.addEventListener('pointerdown', function (e) {
